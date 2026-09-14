@@ -1,0 +1,25 @@
+{
+  "gui_light":"front",
+  "ambientocclusion":false,
+  "textures":{
+    "shell":"minecraft:block/polished_blackstone",
+    "metal":"minecraft:block/iron_block",
+    "label":"minecraft:block/yellow_concrete",
+    "accent":"minecraft:block/orange_concrete"
+  },
+  "elements":[
+    {"from":[5,3,6],"to":[11,13,10],"faces":{"north":{"texture":"#shell"},"south":{"texture":"#shell"},"east":{"texture":"#shell"},"west":{"texture":"#shell"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[4.7,4,6.2],"to":[11.3,11.8,9.8],"faces":{"north":{"texture":"#label"},"south":{"texture":"#label"},"east":{"texture":"#label"},"west":{"texture":"#label"},"up":{"texture":"#label"},"down":{"texture":"#label"}}},
+    {"from":[4.55,6.2,6.05],"to":[11.45,8.2,9.95],"faces":{"north":{"texture":"#accent"},"south":{"texture":"#accent"},"east":{"texture":"#accent"},"west":{"texture":"#accent"},"up":{"texture":"#accent"},"down":{"texture":"#accent"}}},
+    {"from":[6.2,13,6.8],"to":[9.8,13.7,9.2],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[7,13.7,7.3],"to":[9,14.5,8.7],"faces":{"north":{"texture":"#shell"},"south":{"texture":"#shell"},"east":{"texture":"#shell"},"west":{"texture":"#shell"},"up":{"texture":"#metal"},"down":{"texture":"#shell"}}},
+    {"from":[4.6,2.5,6.1],"to":[11.4,3.2,9.9],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}}
+  ],
+  "display":{
+    "gui":{"rotation":[20,210,0],"translation":[0,0,0],"scale":[0.92,0.92,0.92]},
+    "ground":{"translation":[0,2,0],"scale":[0.6,0.6,0.6]},
+    "fixed":{"rotation":[0,180,0],"scale":[0.8,0.8,0.8]},
+    "firstperson_righthand":{"rotation":[0,210,0],"translation":[1.5,2.5,1],"scale":[0.65,0.65,0.65]},
+    "thirdperson_righthand":{"rotation":[0,180,0],"translation":[0,2,1],"scale":[0.58,0.58,0.58]}
+  }
+}
