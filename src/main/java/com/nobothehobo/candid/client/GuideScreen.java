@@ -56,16 +56,16 @@ public class GuideScreen extends Screen {
             }
             case 1 -> {
                 heading(g, "2. Film Stocks", y);
-                iconRow(g, x, y + 28, CandidItems.FILM_DAYLIGHT_100, CandidItems.FILM_SUN_200, CandidItems.FILM_PORTRAIT_400, CandidItems.FILM_NIGHT_800, CandidItems.FILM_MONO_400);
-                text(g, "Daylight 100: clean, fine grain. Sun 200: warm consumer color. Portrait 400: softer contrast and skin-friendly warmth.", x, y + 62);
-                text(g, "Night 800: faster, grainier low-light color. Mono 400: classic black-and-white.", x, y + 105);
-                text(g, "Higher ISO needs less light but adds more grain.", x, y + 137);
+                iconRow(g, x, y + 28, CandidItems.FILM_DAYLIGHT_100, CandidItems.FILM_SUN_200, CandidItems.FILM_EVERYDAY_400, CandidItems.FILM_PORTRAIT_400, CandidItems.FILM_NIGHT_800, CandidItems.FILM_MONO_400, CandidItems.FILM_FINE_MONO_400);
+                text(g, "Vivid 100: fine grain, crisp, saturated. Golden 200: warm color, fine grain and forgiving highlights. Everyday 400: punchy all-purpose color.", x, y + 54);
+                text(g, "Portrait 400: soft contrast, natural color and wide latitude. Portrait 800: low-light color with stronger underexposure protection.", x, y + 92);
+                text(g, "Classic Mono 400: traditional visible grain and bite. Fine Mono 400: smoother, sharper B&W. Faster film gains speed at the cost of grain.", x, y + 130);
             }
             case 2 -> {
                 heading(g, "3. Exposure Controls", y);
                 text(g, "Aperture: f/1.4 → f/16. Smaller f-number = more light. Shutter: 1/15 → 1/1000. Slower shutter = more light.", x, y + 30);
                 text(g, "Steam Deck: D-pad adjusts exposure, A fires, X manually winds, Y opens body controls, B exits. Keyboard: arrows adjust, Enter/Space fires, R winds, C opens controls.", x, y + 83);
-                text(g, "Meter left = underexposed. Meter right = overexposed. Center it for a normal negative, or expose creatively.", x, y + 126);
+                text(g, "Meter left = underexposed; right = overexposed. Negative film keeps highlights more gracefully than shadows, and each stock has different latitude.", x, y + 126);
             }
             case 3 -> {
                 heading(g, "4. Darkroom Basin", y);
