@@ -35,7 +35,7 @@ public class GuideScreen extends Screen {
         pollGamepad();
         g.fill(0, 0, width, height, 0xE1141210);
         g.fill(width / 2 - 130, 18, width / 2 + 130, height - 48, 0xFFF0E4C8);
-        g.renderOutline(width / 2 - 130, 18, 260, height - 66, 0xFF5A4934);
+        g.submitOutline(width / 2 - 130, 18, 260, height - 66, 0xFF5A4934);
         g.drawCenteredString(font, "CANDID • 35mm FIELD GUIDE", width / 2, 28, 0xFF3A2B1C);
         g.drawCenteredString(font, (page + 1) + " / " + PAGES, width / 2, height - 29, 0xFF8A765D);
         renderPage(g);
