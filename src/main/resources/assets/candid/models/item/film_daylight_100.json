@@ -1,1 +1,9 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"minecraft:item/charcoal"}}
+{
+  "parent": "candid:item/film_cartridge",
+  "textures": {
+    "shell": "minecraft:block/polished_blackstone",
+    "metal": "minecraft:block/iron_block",
+    "label": "minecraft:block/cyan_concrete",
+    "accent": "minecraft:block/red_concrete"
+  }
+}
