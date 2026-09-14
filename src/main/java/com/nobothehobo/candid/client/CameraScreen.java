@@ -54,8 +54,8 @@ public class CameraScreen extends Screen {
 
         int cx = width / 2;
         int cy = height / 2;
-        graphics.renderOutline(cx - 38, cy - 26, 76, 52, 0xCCFFFFFF);
-        graphics.renderOutline(cx - 9, cy - 9, 18, 18, 0xAAFFFFFF);
+        graphics.submitOutline(cx - 38, cy - 26, 76, 52, 0xCCFFFFFF);
+        graphics.submitOutline(cx - 9, cy - 9, 18, 18, 0xAAFFFFFF);
         graphics.fill(cx - 1, cy - 8, cx + 1, cy + 9, 0x99FFFFFF);
         graphics.fill(cx - 8, cy - 1, cx + 9, cy + 1, 0x99FFFFFF);
 
