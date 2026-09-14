@@ -10,10 +10,10 @@ Candid is a Fabric film-photography mod for Minecraft Java Edition. It turns pho
 - Single-player / integrated server and Fabric multiplayer
 - Steam Deck-first camera controls
 
-## Included in 0.2
-- Candid 35 rangefinder-style camera with a custom 3D item model
+## Included in 0.3
+- Candid 35 mechanical rangefinder with a rebuilt detailed 3D model: stepped lens barrel, finder/rangefinder windows, top plate, shutter dial/button, rewind knob, advance lever, strap lugs, leatherette body, and back-door seam
 - 36-exposure film rolls
-- Candid Daylight 100, Sun 200, Portrait 400, Night 800, and Mono 400
+- Seven 36-exposure stocks: Vivid 100, Golden 200, Everyday 400, Portrait 400, Portrait 800, Classic Mono 400, and Fine Mono 400
 - Apertures f/1.4, 2, 2.8, 4, 5.6, 8, 11, 16
 - Shutters 1/15 through 1/1000
 - Live reflected light meter in the viewfinder
@@ -21,7 +21,7 @@ Candid is a Fabric film-photography mod for Minecraft Java Edition. It turns pho
 - Camera-body control screen with physical-style aperture/shutter dials, film selector, and advance lever
 - Animated film loading: camera back opens, cartridge enters the chamber, leader stretches to the take-up spool, back closes, and the camera advances to frame 1
 - Mechanical Candid shutter, advance, film-loading, and back-latch foley
-- Film-specific contrast, saturation, color bias, exposure response, and grain
+- Film-response simulation with stock-specific highlight shoulder, shadow toe, under/overexposure tolerance, contrast, saturation, color response, luminance/chroma grain, and extra shadow grain when underexposed
 - Actual framebuffer photograph capture, downsampled into the Minecraft map palette
 - Persistent exposed color-negative maps
 - Darkroom Basin + Developer Chemistry processing
@@ -29,7 +29,7 @@ Candid is a Fabric film-photography mod for Minecraft Java Edition. It turns pho
 - Photo Enlarger + Photo Paper for duplicate prints
 - In-game Candid Field Guide with visual crafting-grid diagrams and controller help
 
-The film profiles are original Candid looks inspired by the broad visual character of classic consumer, portrait, high-speed, and monochrome film. No third-party film logos or textures are copied.
+The film profiles use original Candid names and art, with behavior informed by published Kodak characteristics such as GOLD 200, ULTRA MAX 400, PORTRA 400/800, TRI-X 400, and T-MAX 400. They are not claimed as exact colorimetric emulations. See `FILM_REFERENCE.md` for the reference methodology. No third-party film logos, packaging, or textures are copied.
 
 The audio included in the repository is original Candid mechanical foley. See `SOUND_ASSETS.md` for provenance and vetted CC0 real-camera reference recordings that can be substituted in a future audio pass.
 
@@ -37,7 +37,7 @@ The audio included in the repository is original Candid mechanical foley. See `S
 1. Create or edit a Prism instance for Minecraft 1.21.10.
 2. Install Fabric Loader for that instance.
 3. Add Fabric API for 1.21.10.
-4. Put `candid-0.2.0.jar` in the instance's `mods` folder.
+4. Put `candid-0.3.0.jar` in the instance's `mods` folder.
 5. Launch Minecraft. No Paper server is required for single player.
 
 ### Camera controls
