@@ -59,7 +59,7 @@ public final class PhotoCapture {
             int sy = Math.min(height - 1, (int) (((127 - y) + 0.5) * height / 128.0));
             for (int x = 0; x < 128; x++) {
                 int sx = Math.min(width - 1, (int) ((x + 0.5) * width / 128.0));
-                int argb = ARGB.fromABGR(image.getPixelRGBA(sx, sy));
+                int argb = image.getPixel(sx, sy);
                 float r = ARGB.red(argb) / 255f;
                 float g = ARGB.green(argb) / 255f;
                 float b = ARGB.blue(argb) / 255f;
