@@ -9,11 +9,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWGamepadState;
 
 public class FilmLoadScreen extends Screen {
     private final FilmStock stock;
     private int age;
     private boolean woundSent;
+    private final boolean[] pad = new boolean[15];
 
     public FilmLoadScreen(FilmStock stock) {
         super(Component.literal("Loading Film"));
@@ -44,6 +47,7 @@ public class FilmLoadScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float delta) {
+        pollGamepad();
         g.fill(0, 0, width, height, 0xEF080808);
         int cx = width / 2;
         int cy = height / 2;
@@ -88,6 +92,25 @@ public class FilmLoadScreen extends Screen {
         g.drawCenteredString(font, step, cx, top + 121, 0xFFFFD070);
         g.drawCenteredString(font, "B / Esc skips the animation; use X to wind if needed.", cx, top + 136, 0xFFAAAAAA);
         super.render(g, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public void onClose() {
+        if (minecraft != null) minecraft.setScreen(new CameraControlScreen());
+    }
+
+    private void pollGamepad() {
+        if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
+        try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
+            if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
+        }
+    }
+
+    private void edge(GLFWGamepadState state, int button, Runnable action) {
+        boolean now = state.buttons(button) == GLFW.GLFW_PRESS;
+        if (now && !pad[button]) action.run();
+        pad[button] = now;
     }
 
     private int phase() {
