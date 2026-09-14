@@ -22,7 +22,7 @@ public final class PhotoCapture {
 
     public static void queue(ItemStack camera, int apertureIndex, int shutterIndex, float meterStops) {
         FilmStock stock = CameraData.film(camera);
-        if (stock == null || CameraData.frames(camera) <= 0) return;
+        if (stock == null || CameraData.frames(camera) <= 0 || !CameraData.isWound(camera)) return;
         pending = new Pending(stock, apertureIndex, shutterIndex, meterStops);
         waitTicks = 2;
     }
