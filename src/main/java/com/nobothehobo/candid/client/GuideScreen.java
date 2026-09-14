@@ -51,7 +51,7 @@ public class GuideScreen extends Screen {
                 drawRecipe(g, x + 28, y + 28,
                         new Item[][]{{Items.IRON_INGOT, Items.GLASS_PANE, Items.IRON_INGOT}, {Items.COPPER_INGOT, Items.REDSTONE, Items.COPPER_INGOT}, {Items.IRON_INGOT, Items.GLASS_PANE, Items.IRON_INGOT}},
                         CandidItems.CAMERA);
-                text(g, "Use: open the viewfinder. Sneak + Use: load a film roll. Each roll has 36 exposures.", x, y + 96);
+                text(g, "Use: open the viewfinder. Crouch + Use: open the camera body controls, film door, and physical dials. Each roll has 36 exposures.", x, y + 96);
                 text(g, "The meter reads scene brightness. Adjust aperture and shutter until the needle is near 0.", x, y + 126);
             }
             case 1 -> {
@@ -64,7 +64,7 @@ public class GuideScreen extends Screen {
             case 2 -> {
                 heading(g, "3. Exposure Controls", y);
                 text(g, "Aperture: f/1.4 → f/16. Smaller f-number = more light. Shutter: 1/15 → 1/1000. Slower shutter = more light.", x, y + 30);
-                text(g, "Keyboard: arrows adjust settings, Enter/Space fires. Steam Deck: D-pad adjusts, A fires, B exits.", x, y + 83);
+                text(g, "Steam Deck: D-pad adjusts exposure, A fires, X manually winds, Y opens body controls, B exits. Keyboard: arrows adjust, Enter/Space fires, R winds, C opens controls.", x, y + 83);
                 text(g, "Meter left = underexposed. Meter right = overexposed. Center it for a normal negative, or expose creatively.", x, y + 126);
             }
             case 3 -> {
@@ -85,8 +85,8 @@ public class GuideScreen extends Screen {
             }
             case 5 -> {
                 heading(g, "6. Quick Workflow", y);
-                text(g, "1  Craft camera + film.   2  Sneak + Use to load.   3  Use camera to enter viewfinder.", x, y + 30);
-                text(g, "4  Meter and expose.   5  Develop exposed negatives in the basin.   6  Frame the finished map print.", x, y + 80);
+                text(g, "1  Craft camera + film.   2  Crouch + Use, select FILM, press A and watch the back-loading sequence.   3  Use camera to enter viewfinder.", x, y + 30);
+                text(g, "4  Meter and expose with A.   5  Press X to wind before the next frame.   6  Develop exposed negatives in the basin.", x, y + 80);
                 text(g, "7  Use the Enlarger + Photo Paper for duplicates. Film looks are original Candid profiles inspired by classic color-negative photography.", x, y + 130);
             }
         }

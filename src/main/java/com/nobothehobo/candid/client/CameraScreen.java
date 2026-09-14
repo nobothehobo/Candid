@@ -1,8 +1,11 @@
 package com.nobothehobo.candid.client;
 
 import com.nobothehobo.candid.content.CandidItems;
+import com.nobothehobo.candid.content.CandidSounds;
 import com.nobothehobo.candid.data.CameraData;
 import com.nobothehobo.candid.film.FilmStock;
+import com.nobothehobo.candid.network.CameraActionPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -14,6 +17,7 @@ import org.lwjgl.glfw.GLFWGamepadState;
 public class CameraScreen extends Screen {
     private int apertureIndex = 4;
     private int shutterIndex = 3;
+    private int windAnim;
     private final boolean[] pad = new boolean[15];
 
     public CameraScreen() {
@@ -37,6 +41,11 @@ public class CameraScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        if (windAnim > 0) windAnim--;
+    }
+
+    @Override
     public boolean isPauseScreen() { return false; }
 
     @Override
@@ -45,10 +54,11 @@ public class CameraScreen extends Screen {
         ItemStack camera = camera();
         FilmStock stock = camera.isEmpty() ? null : CameraData.film(camera);
         int frames = camera.isEmpty() ? 0 : CameraData.frames(camera);
+        boolean wound = !camera.isEmpty() && CameraData.isWound(camera);
         float meter = meterStops(stock);
 
         graphics.fill(0, 0, width, 28, 0xB9000000);
-        graphics.fill(0, height - 42, width, height, 0xC9000000);
+        graphics.fill(0, height - 46, width, height, 0xC9000000);
         graphics.fill(0, 0, 20, height, 0x9A000000);
         graphics.fill(width - 20, 0, width, height, 0x9A000000);
 
@@ -59,17 +69,35 @@ public class CameraScreen extends Screen {
         graphics.fill(cx - 1, cy - 8, cx + 1, cy + 9, 0x99FFFFFF);
         graphics.fill(cx - 8, cy - 1, cx + 9, cy + 1, 0x99FFFFFF);
 
-        String filmText = stock == null ? "NO FILM • Sneak + Use to load" : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36";
-        graphics.drawCenteredString(font, filmText, cx, 9, stock == null ? 0xFFFF7070 : 0xFFFFFFFF);
+        String filmText = stock == null
+                ? "NO FILM • Crouch + Use for camera controls"
+                : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
+        graphics.drawCenteredString(font, filmText, cx, 9,
+                stock == null ? 0xFFFF7070 : (wound ? 0xFFFFFFFF : 0xFFFFD060));
 
         String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     1/" + CameraData.SHUTTERS[shutterIndex];
-        graphics.drawCenteredString(font, exposure, cx, height - 33, 0xFFFFFFFF);
-        drawMeter(graphics, cx, height - 17, meter);
-        graphics.drawString(font, "D-pad ↑↓ aperture  ←→ shutter", 28, height - 14, 0xFFCCCCCC, false);
-        graphics.drawString(font, "A shutter  B close", width - 116, height - 14, 0xFFCCCCCC, false);
+        graphics.drawCenteredString(font, exposure, cx, height - 37, 0xFFFFFFFF);
+        drawMeter(graphics, cx, height - 21, meter);
+        drawWindLever(graphics, width - 45, height - 34, wound);
 
-        if (stock == null) graphics.drawCenteredString(font, "Load a roll before taking a photograph", cx, cy + 45, 0xFFFFC070);
+        graphics.drawString(font, "D-pad ↑↓ aperture  ←→ shutter", 28, height - 14, 0xFFCCCCCC, false);
+        graphics.drawString(font, "A shutter  X wind  Y controls  B close", width - 207, height - 14, 0xFFCCCCCC, false);
+
+        if (stock == null) {
+            graphics.drawCenteredString(font, "Load a roll from Crouch + Use / Y controls", cx, cy + 45, 0xFFFFC070);
+        } else if (!wound && frames > 0) {
+            graphics.drawCenteredString(font, "Advance film before the next exposure • X", cx, cy + 45, 0xFFFFD060);
+        } else if (frames <= 0) {
+            graphics.drawCenteredString(font, "Roll finished • open camera controls to load another", cx, cy + 45, 0xFFFF9090);
+        }
         super.render(graphics, mouseX, mouseY, delta);
+    }
+
+    private void drawWindLever(GuiGraphics graphics, int x, int y, boolean wound) {
+        int color = wound ? 0xFF8CFF8C : 0xFFFFD060;
+        graphics.submitOutline(x - 10, y - 8, 22, 16, color);
+        int length = windAnim > 0 ? 18 : 7;
+        graphics.fill(x + 4, y - 1, x + 4 + length, y + 2, color);
     }
 
     private void drawMeter(GuiGraphics graphics, int cx, int y, float stops) {
@@ -99,22 +127,51 @@ public class CameraScreen extends Screen {
     private static double log2(double v) { return Math.log(v) / Math.log(2.0); }
     private static String trim(float value) { return value == (int) value ? Integer.toString((int) value) : Float.toString(value); }
 
+    private void changeAperture(int delta) {
+        apertureIndex = Math.floorMod(apertureIndex + delta, CameraData.APERTURES.length);
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.SET_APERTURE, apertureIndex));
+    }
+
+    private void changeShutter(int delta) {
+        shutterIndex = Math.floorMod(shutterIndex + delta, CameraData.SHUTTERS.length);
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.SET_SHUTTER, shutterIndex));
+    }
+
+    private void wind() {
+        ItemStack camera = camera();
+        if (camera.isEmpty() || CameraData.film(camera) == null || CameraData.frames(camera) <= 0 || CameraData.isWound(camera)) return;
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.WIND, 0));
+        windAnim = 12;
+        CandidClient.playLocal(CandidSounds.WIND);
+    }
+
     private void shoot() {
         ItemStack camera = camera();
         FilmStock stock = camera.isEmpty() ? null : CameraData.film(camera);
         if (stock == null || CameraData.frames(camera) <= 0 || minecraft == null) return;
+        if (!CameraData.isWound(camera)) {
+            if (minecraft.player != null) minecraft.player.displayClientMessage(Component.literal("Wind the film first • X / R"), true);
+            return;
+        }
+        CandidClient.playLocal(CandidSounds.SHUTTER);
         PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock));
         minecraft.setScreen(null);
+    }
+
+    private void openControls() {
+        if (minecraft != null) minecraft.setScreen(new CameraControlScreen());
     }
 
     @Override
     public boolean keyPressed(KeyEvent input) {
         return switch (input.key()) {
-            case GLFW.GLFW_KEY_UP -> { apertureIndex = Math.floorMod(apertureIndex - 1, CameraData.APERTURES.length); yield true; }
-            case GLFW.GLFW_KEY_DOWN -> { apertureIndex = Math.floorMod(apertureIndex + 1, CameraData.APERTURES.length); yield true; }
-            case GLFW.GLFW_KEY_LEFT -> { shutterIndex = Math.floorMod(shutterIndex - 1, CameraData.SHUTTERS.length); yield true; }
-            case GLFW.GLFW_KEY_RIGHT -> { shutterIndex = Math.floorMod(shutterIndex + 1, CameraData.SHUTTERS.length); yield true; }
+            case GLFW.GLFW_KEY_UP -> { changeAperture(-1); yield true; }
+            case GLFW.GLFW_KEY_DOWN -> { changeAperture(1); yield true; }
+            case GLFW.GLFW_KEY_LEFT -> { changeShutter(-1); yield true; }
+            case GLFW.GLFW_KEY_RIGHT -> { changeShutter(1); yield true; }
             case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE -> { shoot(); yield true; }
+            case GLFW.GLFW_KEY_R -> { wind(); yield true; }
+            case GLFW.GLFW_KEY_C -> { openControls(); yield true; }
             default -> super.keyPressed(input);
         };
     }
@@ -123,11 +180,13 @@ public class CameraScreen extends Screen {
         if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
         try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
             if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, () -> apertureIndex = Math.floorMod(apertureIndex - 1, CameraData.APERTURES.length));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> apertureIndex = Math.floorMod(apertureIndex + 1, CameraData.APERTURES.length));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> shutterIndex = Math.floorMod(shutterIndex - 1, CameraData.SHUTTERS.length));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> shutterIndex = Math.floorMod(shutterIndex + 1, CameraData.SHUTTERS.length));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, () -> changeAperture(-1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> changeAperture(1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> changeShutter(-1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> changeShutter(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_A, this::shoot);
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_X, this::wind);
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_Y, this::openControls);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
         }
     }

@@ -15,6 +15,7 @@ public final class CameraData {
     private static final String FRAMES = "candid_frames";
     private static final String APERTURE = "candid_aperture";
     private static final String SHUTTER = "candid_shutter";
+    private static final String WOUND = "candid_wound";
 
     private CameraData() { }
 
@@ -38,6 +39,10 @@ public final class CameraData {
         return Math.floorMod(tag(stack).getIntOr(SHUTTER, 3), SHUTTERS.length);
     }
 
+    public static boolean isWound(ItemStack stack) {
+        return tag(stack).getBooleanOr(WOUND, false);
+    }
+
     public static float aperture(ItemStack stack) { return APERTURES[apertureIndex(stack)]; }
     public static int shutter(ItemStack stack) { return SHUTTERS[shutterIndex(stack)]; }
 
@@ -45,6 +50,7 @@ public final class CameraData {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.putString(FILM, film.name());
             tag.putInt(FRAMES, FRAME_COUNT);
+            tag.putBoolean(WOUND, false);
             if (!tag.contains(APERTURE)) tag.putInt(APERTURE, 4);
             if (!tag.contains(SHUTTER)) tag.putInt(SHUTTER, 3);
         });
@@ -54,13 +60,23 @@ public final class CameraData {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(FILM);
             tag.putInt(FRAMES, 0);
+            tag.putBoolean(WOUND, false);
         });
+    }
+
+    public static boolean wind(ItemStack stack) {
+        if (film(stack) == null || frames(stack) <= 0 || isWound(stack)) return false;
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean(WOUND, true));
+        return true;
     }
 
     public static boolean consumeFrame(ItemStack stack) {
         int current = frames(stack);
-        if (current <= 0) return false;
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(FRAMES, current - 1));
+        if (current <= 0 || !isWound(stack)) return false;
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putInt(FRAMES, current - 1);
+            tag.putBoolean(WOUND, false);
+        });
         return true;
     }
 
