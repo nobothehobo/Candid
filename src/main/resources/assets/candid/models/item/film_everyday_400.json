@@ -1,0 +1,9 @@
+{
+  "parent": "candid:item/film_cartridge",
+  "textures": {
+    "shell": "minecraft:block/polished_blackstone",
+    "metal": "minecraft:block/iron_block",
+    "label": "minecraft:block/red_concrete",
+    "accent": "minecraft:block/yellow_concrete"
+  }
+}
