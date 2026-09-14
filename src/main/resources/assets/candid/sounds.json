@@ -1,0 +1,7 @@
+{
+  "camera_shutter": {"sounds":[{"name":"candid:camera/shutter","stream":false}]},
+  "camera_wind": {"sounds":[{"name":"candid:camera/wind","stream":false}]},
+  "film_load": {"sounds":[{"name":"candid:camera/film_load","stream":false}]},
+  "camera_back_open": {"sounds":[{"name":"candid:camera/back_open","stream":false}]},
+  "camera_back_close": {"sounds":[{"name":"candid:camera/back_close","stream":false}]}
+}
