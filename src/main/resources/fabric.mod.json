@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "candid",
+  "version": "${version}",
+  "name": "Candid",
+  "description": "A survival-friendly 35mm film photography mod with real in-world photographs.",
+  "authors": ["Noah Payne", "OpenAI"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.nobothehobo.candid.Candid"],
+    "client": ["com.nobothehobo.candid.client.CandidClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
