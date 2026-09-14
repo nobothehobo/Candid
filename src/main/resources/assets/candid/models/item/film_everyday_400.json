@@ -3,7 +3,7 @@
   "textures": {
     "shell": "minecraft:block/polished_blackstone",
     "metal": "minecraft:block/iron_block",
-    "label": "minecraft:block/gray_concrete",
-    "accent": "minecraft:block/white_concrete"
+    "label": "minecraft:block/red_concrete",
+    "accent": "minecraft:block/yellow_concrete"
   }
 }
