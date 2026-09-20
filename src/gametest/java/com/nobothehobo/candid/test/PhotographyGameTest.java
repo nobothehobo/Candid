@@ -43,6 +43,13 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 p.getInventory().setItem(3,new ItemStack(CandidItems.PHOTO_PAPER,8));
             });
             context.waitFor(c->c.player!=null&&c.player.getMainHandItem().is(CandidItems.CAMERA));
+            world.getServer().runCommand("execute at @p run fill ~-4 ~ ~8 ~4 ~4 ~8 minecraft:bricks");
+            world.getServer().runCommand("execute at @p run fill ~-3 ~2 ~8 ~-2 ~3 ~8 minecraft:glass");
+            world.getServer().runCommand("execute at @p run fill ~2 ~2 ~8 ~3 ~3 ~8 minecraft:glass");
+            world.getServer().runCommand("execute at @p run fill ~ ~ ~8 ~ ~2 ~8 minecraft:dark_oak_planks");
+            world.getServer().runCommand("execute at @p run fill ~-5 ~5 ~8 ~5 ~5 ~8 minecraft:stone_bricks");
+            context.runOnClient(c->{c.player.setYRot(0);c.player.setXRot(0);});
+            context.waitTicks(20);context.takeScreenshot("candid-camera-held");
             context.setScreen(()->new FilmLoadScreen(FilmStock.WARM_200));
             context.waitFor(c->CameraData.isWound(c.player.getMainHandItem()),400);
             context.setScreen(CameraControlScreen::new);context.waitTicks(3);context.takeScreenshot("candid-controls");
@@ -59,6 +66,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             });
             long ready=world.getServer().computeOnServer(s->RollManager.store(s.getPlayerList().getPlayers().getFirst()).get(rollId[0]).readyAt());
             context.setScreen(GuideScreen::new);
+            context.takeScreenshot("candid-guide");
             context.waitFor(c->System.currentTimeMillis()>=ready,2000);
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();RollManager.open(p,rollItem(p,rollId[0]));
                 check(p.containerMenu instanceof ContactSheet,"Contact sheet not opened");
@@ -68,6 +76,12 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(map!=null&&map.locked,"Print must be locked");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Print changed photo colors");
             });
             context.waitTicks(4);context.takeScreenshot("candid-contact-sheet");
+            context.runOnClient(c->{
+                c.setScreen(null);
+                for(int i=0;i<9;i++)if(c.player.getInventory().getItem(i).is(Items.FILLED_MAP)){c.player.getInventory().setSelectedSlot(i);break;}
+                c.player.setXRot(20);
+            });
+            context.waitTicks(20);context.takeScreenshot("candid-photo-print");
         }
         try(var reopened=save.open()){
             reopened.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var r=RollManager.store(p).get(rollId[0]);

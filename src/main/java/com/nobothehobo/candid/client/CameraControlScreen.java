@@ -97,7 +97,11 @@ public class CameraControlScreen extends Screen {
         g.fill(cx - 23, cy - 23, cx + 24, cy + 24, 0xFF111111);
         g.submitOutline(cx - 23, cy - 23, 47, 47, border);
         g.fill(cx - 1, cy - 19, cx + 2, cy - 6, border);
-        g.drawCenteredString(font, font.plainSubstrByWidth(value,60), cx, cy - 4, 0xFFFFFFFF);
+        if(font.width(value)>42&&value.contains(" ")){
+            int split=value.lastIndexOf(' ');
+            g.drawCenteredString(font,font.plainSubstrByWidth(value.substring(0,split),42),cx,cy-10,0xFFFFFFFF);
+            g.drawCenteredString(font,value.substring(split+1),cx,cy+2,0xFFFFFFFF);
+        }else g.drawCenteredString(font,font.plainSubstrByWidth(value,42),cx,cy-4,0xFFFFFFFF);
         g.drawCenteredString(font, label, cx, cy + 29, active ? 0xFFFFD060 : 0xFFBFBFBF);
     }
 

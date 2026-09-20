@@ -2,6 +2,7 @@
   "gui_light":"front",
   "ambientocclusion":false,
   "textures":{
+    "particle":"#label",
     "shell":"minecraft:block/polished_blackstone",
     "metal":"minecraft:block/iron_block",
     "label":"minecraft:block/yellow_concrete",

@@ -52,6 +52,10 @@ public class CameraScreen extends Screen {
     @Override
     public boolean isPauseScreen() { return false; }
 
+    // The finder is an optical overlay, not a menu: preserve the sharp world image.
+    @Override
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) { }
+
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         pollGamepad();

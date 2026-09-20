@@ -15,7 +15,7 @@ import java.util.*;
 public final class ContactSheet extends ChestMenu {
     private final ServerPlayer owner;private final UUID rollId;private final SimpleContainer icons;
     private ContactSheet(int sync,ServerPlayer p,UUID roll,SimpleContainer container){super(MenuType.GENERIC_9x6,sync,p.getInventory(),container,6);owner=p;rollId=roll;icons=container;refresh();}
-    public static void open(ServerPlayer p,UUID roll){p.openMenu(new SimpleMenuProvider((id,inventory,player)->new ContactSheet(id,p,roll,new SimpleContainer(54)),Component.literal("Candid • Contact Sheet • 1 paper / print")));}
+    public static void open(ServerPlayer p,UUID roll){p.openMenu(new SimpleMenuProvider((id,inventory,player)->new ContactSheet(id,p,roll,new SimpleContainer(54)),Component.literal("Candid • Contact Sheet")));}
     @Override public boolean stillValid(Player p){
         if(p!=owner||!p.isAlive())return false;
         for(int i=0;i<p.getInventory().getContainerSize();i++)try{var s=p.getInventory().getItem(i);if(CandidItems.stockFor(s.getItem())!=null&&rollId.equals(RollManager.token(s)))return true;}catch(IllegalArgumentException ignored){}
