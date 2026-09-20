@@ -21,9 +21,19 @@ public final class PhotographyGameTest implements FabricClientGameTest {
     private static ItemStack rollItem(ServerPlayer p,UUID id){
         for(int i=0;i<p.getInventory().getContainerSize();i++){var s=p.getInventory().getItem(i);if(CandidItems.stockFor(s.getItem())!=null&&id.equals(RollManager.token(s)))return s;}throw new AssertionError("Roll item missing");
     }
+    private static net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext createWorld(ClientGameTestContext context){
+        try{return context.worldBuilder().create();}
+        catch(AssertionError failure){
+            Thread.getAllStackTraces().forEach((thread,stack)->{
+                System.err.println("Candid startup diagnostic: "+thread.getName()+" "+thread.getState());
+                for(var line:stack)System.err.println("  at "+line);
+            });
+            throw failure;
+        }
+    }
     @Override public void runTest(ClientGameTestContext context){
         UUID[] rollId={null};int[] mapId={-1};
-        var world=context.worldBuilder().create();var save=world.getWorldSave();
+        var world=createWorld(context);var save=world.getWorldSave();
         try(world){
             world.getServer().runCommand("time set noon");
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();
