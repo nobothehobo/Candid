@@ -57,7 +57,7 @@ public final class GuideScreen extends Screen {
             int line=y+23;for(var ingredient:totals.entrySet()){text(g,ingredient.getValue()+" × "+stack(ingredient.getKey()).getHoverName().getString(),x+120,line,140);line+=22;}
             String note=data.has("pattern")?"Place ingredients as shown.":"Shapeless: any arrangement works.";
             if(id.startsWith("film_"))note+=" One complete 36-shot roll.";
-            text(g,note,x,y+92,260);
+            text(g,note,x,y+114,260);
         }catch(Exception e){text(g,"Recipe unavailable; check your installed data pack.",x,y+20,250);}
     }
     private static ItemStack stack(String id){return new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id)));}

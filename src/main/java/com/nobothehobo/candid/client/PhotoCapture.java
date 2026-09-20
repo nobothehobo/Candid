@@ -21,7 +21,7 @@ public final class PhotoCapture {
     private static Pending pending;
     private static boolean reading,processing;
     private static int waitTicks;
-    private static long started;
+    private static long started, generation;
     private static Object level;
     private PhotoCapture(){}
     public static boolean hiding(){return pending!=null||reading;}
@@ -30,28 +30,30 @@ public final class PhotoCapture {
         Minecraft mc=Minecraft.getInstance();FilmStock stock=CameraData.film(camera);
         if(busy()||stock==null||CameraData.frames(camera)<=0||!CameraData.isWound(camera)||CameraData.cameraId(camera).isEmpty()||CameraData.rollId(camera).isEmpty())return false;
         pending=new Pending(stock,aperture,shutter,offset,CameraData.cameraId(camera),CameraData.rollId(camera),UUID.randomUUID().toString());
-        waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
+        generation++;waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
     }
     public static void tick(Minecraft client){
         if(!busy())return;
-        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>10000){pending=null;reading=false;processing=false;return;}
+        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>10000){generation++;pending=null;reading=false;processing=false;return;}
         if(pending==null||waitTicks-->0)return;
-        Pending shot=pending;Object capturedLevel=level;pending=null;reading=true;
+        Pending shot=pending;long captureGeneration=generation;Object capturedLevel=level;pending=null;reading=true;
         try{Screenshot.takeScreenshot(client.getMainRenderTarget(),image->{
             try {
+                if(captureGeneration!=generation)return;
                 int[] samples=sample(image);reading=false;processing=true;
                 PROCESSOR.execute(()->{
                     try {byte[] result=convert(samples,shot);client.execute(()->{
+                        if(captureGeneration!=generation)return;
                         processing=false;
                         if(client.level!=capturedLevel||client.player==null)return;
                         if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID))ClientPlayNetworking.send(new CapturePhotoPayload(result,shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
                         if(client.screen==null)client.setScreen(new CameraScreen());
-                    });}catch(Exception e){client.execute(()->failure(client,e));}
+                    });}catch(Exception e){client.execute(()->failure(client,e,captureGeneration));}
                 });
-            }catch(Exception e){failure(client,e);}finally{image.close();}
-        });}catch(Exception e){failure(client,e);}
+            }catch(Exception e){failure(client,e,captureGeneration);}finally{image.close();}
+        });}catch(Exception e){failure(client,e,captureGeneration);}
     }
-    private static void failure(Minecraft client,Exception e){pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);}
+    private static void failure(Minecraft client,Exception e,long captureGeneration){if(captureGeneration!=generation)return;pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);}
     private static int[] sample(NativeImage image){
         FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[126*84];
         // Screenshot already returns top-left-oriented pixels. Do not flip a second time.

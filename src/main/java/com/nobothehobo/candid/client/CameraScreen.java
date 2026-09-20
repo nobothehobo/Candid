@@ -21,6 +21,7 @@ public class CameraScreen extends Screen {
     private final SceneMeter sceneMeter=new SceneMeter();
     private long lastAim=System.nanoTime();
     private final boolean[] pad = new boolean[15];
+    private boolean padPrimed;
 
     public CameraScreen() {
         super(Component.literal("Candid Viewfinder"));
@@ -70,20 +71,21 @@ public class CameraScreen extends Screen {
         graphics.submitOutline(cx-14,cy-10,28,20,0xAAADE9DE);
         graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
         graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
-        graphics.drawCenteredString(font,"3:2 FRAME • center-weighted meter • right stick / hold right mouse to aim",cx,23,0xFFB7B3A5);
+        graphics.drawCenteredString(font,"3:2 frame • right stick / right-drag to aim",cx,23,0xFFB7B3A5);
         String filmText = stock == null
                 ? "NO FILM • Crouch + Use for camera controls"
                 : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
         graphics.drawCenteredString(font, filmText, cx, 9,
                 stock == null ? 0xFFFF7070 : (wound ? 0xFFFFFFFF : 0xFFFFD060));
 
-        String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     1/" + CameraData.SHUTTERS[shutterIndex];
-        graphics.drawCenteredString(font, exposure, cx, height - 37, 0xFFFFFFFF);
-        drawMeter(graphics, cx, height - 21, meter);
-        drawWindLever(graphics, width - 45, height - 34, wound);
+        String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     1/" + CameraData.SHUTTERS[shutterIndex] + String.format(java.util.Locale.ROOT,"    %+.1f EV",meter);
+        graphics.drawCenteredString(font, exposure, cx, height - 48, 0xFFFFFFFF);
+        drawMeter(graphics, cx, height - 31, meter);
+        drawWindLever(graphics, width - 45, height - 38, wound);
 
-        graphics.drawString(font, "D-pad ↑↓ aperture  ←→ shutter", 28, height - 14, 0xFFCCCCCC, false);
-        graphics.drawString(font, "A shutter  X wind  Y controls  B close", width - 207, height - 14, 0xFFCCCCCC, false);
+        graphics.drawCenteredString(font, GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)
+                ? "D-pad: exposure • A: shoot • X: wind • Y: controls"
+                : "Arrows: exposure • Enter: shoot • R: wind • C: controls", cx, height-10, 0xFFCCCCCC);
 
         if (stock == null) {
             graphics.drawCenteredString(font, "Load a roll from Crouch + Use / Y controls", cx, cy + 45, 0xFFFFC070);
@@ -123,7 +125,6 @@ public class CameraScreen extends Screen {
             new com.nobothehobo.candid.core.Exposure.Settings(CameraData.APERTURES[apertureIndex],CameraData.SHUTTERS[shutterIndex]),stock.iso());
     }
 
-    private static double log2(double v) { return Math.log(v) / Math.log(2.0); }
     private static String trim(float value) { return value == (int) value ? Integer.toString((int) value) : Float.toString(value); }
 
     private void changeAperture(int delta) {
@@ -178,6 +179,7 @@ public class CameraScreen extends Screen {
         if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
         try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
             if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
+            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==GLFW.GLFW_PRESS;padPrimed=true;return;}
             long now=System.nanoTime();double dt=Math.min(.05,(now-lastAim)/1e9);lastAim=now;
             if(minecraft!=null&&minecraft.player!=null){
                 float ax=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X),ay=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);

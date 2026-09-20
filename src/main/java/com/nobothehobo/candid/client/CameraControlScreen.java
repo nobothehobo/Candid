@@ -28,6 +28,7 @@ public class CameraControlScreen extends Screen {
     private int filmChoice;
     private int windAnim;
     private final boolean[] pad = new boolean[15];
+    private boolean padPrimed;
 
     public CameraControlScreen() {
         super(Component.literal("Candid Camera Controls"));
@@ -183,6 +184,7 @@ public class CameraControlScreen extends Screen {
         if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
         try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
             if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
+            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==GLFW.GLFW_PRESS;padPrimed=true;return;}
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> selected = Math.floorMod(selected - 1, 4));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> selected = Math.floorMod(selected + 1, 4));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, () -> change(-1));
