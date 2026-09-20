@@ -14,9 +14,22 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.1'
-      - run: gradle build --stacktrace
+      - run: bash gradlew build --stacktrace
+      - name: Client and single-player workflow test
+        run: xvfb-run -a bash gradlew runClientGameTest --stacktrace
+        env:
+          LIBGL_ALWAYS_SOFTWARE: 'true'
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: Candid-0.3.0-Mod
-          path: build/libs/candid-0.3.0.jar
+          name: Candid-0.4.0-Mod
+          path: build/libs/candid-0.4.0.jar
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Candid-test-evidence
+          path: |
+            build/reports/tests/
+            build/run/clientGameTest/screenshots/
+            build/run/clientGameTest/logs/
+            build/run/clientGameTest/crash-reports/

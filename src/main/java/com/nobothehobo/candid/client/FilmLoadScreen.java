@@ -16,6 +16,7 @@ public class FilmLoadScreen extends Screen {
     private final FilmStock stock;
     private int age;
     private boolean woundSent;
+    private boolean loadSent;
     private final boolean[] pad = new boolean[15];
 
     public FilmLoadScreen(FilmStock stock) {
@@ -25,7 +26,7 @@ public class FilmLoadScreen extends Screen {
 
     @Override
     protected void init() {
-        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.LOAD_FILM, stock.ordinal()));
+        if(!loadSent){loadSent=true;ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.LOAD_FILM, stock.ordinal()));}
     }
 
     @Override
@@ -33,6 +34,11 @@ public class FilmLoadScreen extends Screen {
 
     @Override
     public void tick() {
+        if(minecraft==null||minecraft.player==null)return;
+        ItemStack held=minecraft.player.getMainHandItem().is(CandidItems.CAMERA)?minecraft.player.getMainHandItem():minecraft.player.getOffhandItem();
+        if(com.nobothehobo.candid.data.CameraData.film(held)!=stock){
+            if(++age>100)minecraft.setScreen(new CameraControlScreen());return;
+        }
         age++;
         if (age == 2) CandidClient.playLocal(CandidSounds.BACK_OPEN);
         if (age == 20) CandidClient.playLocal(CandidSounds.FILM_LOAD);

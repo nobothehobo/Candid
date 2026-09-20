@@ -1,177 +1,78 @@
 package com.nobothehobo.candid.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.nobothehobo.candid.core.*;
 import com.nobothehobo.candid.data.CameraData;
 import com.nobothehobo.candid.film.FilmStock;
 import com.nobothehobo.candid.network.CapturePhotoPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.util.ARGB;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.MapColor;
+import java.util.*;
+import java.util.concurrent.*;
 
-import java.util.Random;
-
+/** One bounded capture at a time. GPU access on the render thread; pure film processing off-thread. */
 public final class PhotoCapture {
-    private static final int[] PALETTE = buildPalette();
+    private static final ExecutorService PROCESSOR=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"Candid-film-response");t.setDaemon(true);return t;});
+    private static final int[] PALETTE=palette();
     private static Pending pending;
+    private static boolean reading,processing;
     private static int waitTicks;
-
-    private PhotoCapture() { }
-
-    public static void queue(ItemStack camera, int apertureIndex, int shutterIndex, float meterStops) {
-        FilmStock stock = CameraData.film(camera);
-        if (stock == null || CameraData.frames(camera) <= 0 || !CameraData.isWound(camera)) return;
-        pending = new Pending(stock, apertureIndex, shutterIndex, meterStops);
-        waitTicks = 2;
+    private static long started;
+    private static Object level;
+    private PhotoCapture(){}
+    public static boolean hiding(){return pending!=null||reading;}
+    public static boolean busy(){return pending!=null||reading||processing;}
+    public static boolean queue(ItemStack camera,int aperture,int shutter,float offset){
+        Minecraft mc=Minecraft.getInstance();FilmStock stock=CameraData.film(camera);
+        if(busy()||stock==null||CameraData.frames(camera)<=0||!CameraData.isWound(camera)||CameraData.cameraId(camera).isEmpty()||CameraData.rollId(camera).isEmpty())return false;
+        pending=new Pending(stock,aperture,shutter,offset,CameraData.cameraId(camera),CameraData.rollId(camera),UUID.randomUUID().toString());
+        waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
     }
-
-    public static void tick(Minecraft client) {
-        if (pending == null || client.level == null || client.player == null) return;
-        if (waitTicks-- > 0) return;
-        Pending shot = pending;
-        pending = null;
-
-        Screenshot.takeScreenshot(client.getMainRenderTarget(), image -> {
+    public static void tick(Minecraft client){
+        if(!busy())return;
+        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>10000){pending=null;reading=false;processing=false;return;}
+        if(pending==null||waitTicks-->0)return;
+        Pending shot=pending;Object capturedLevel=level;pending=null;reading=true;
+        try{Screenshot.takeScreenshot(client.getMainRenderTarget(),image->{
             try {
-                byte[] colors = convert(image, shot);
-                client.execute(() -> {
-                    if (ClientPlayNetworking.canSend(CapturePhotoPayload.ID)) {
-                        ClientPlayNetworking.send(new CapturePhotoPayload(colors, shot.apertureIndex, shot.shutterIndex));
-                    }
-                    if (client.player != null) client.setScreen(new CameraScreen());
+                int[] samples=sample(image);reading=false;processing=true;
+                PROCESSOR.execute(()->{
+                    try {byte[] result=convert(samples,shot);client.execute(()->{
+                        processing=false;
+                        if(client.level!=capturedLevel||client.player==null)return;
+                        if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID))ClientPlayNetworking.send(new CapturePhotoPayload(result,shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
+                        if(client.screen==null)client.setScreen(new CameraScreen());
+                    });}catch(Exception e){client.execute(()->failure(client,e));}
                 });
-            } finally {
-                image.close();
-            }
-        });
+            }catch(Exception e){failure(client,e);}finally{image.close();}
+        });}catch(Exception e){failure(client,e);}
     }
-
-    private static byte[] convert(NativeImage image, Pending shot) {
-        byte[] out = new byte[128 * 128];
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float rawStops = Math.max(-5.0f, Math.min(5.0f, shot.meterStops));
-        float response = rawStops < 0 ? shot.stock.underResponse() : shot.stock.overResponse();
-        float effectiveStops = rawStops * response;
-        double exposure = Math.pow(2.0, effectiveStops);
-
-        // Deliberately deterministic per capture dimensions so map photos remain stable.
-        Random random = new Random(0xCA4D1DL + width * 31L + height * 17L + shot.stock.ordinal() * 101L);
-
-        for (int y = 0; y < 128; y++) {
-            int sy = Math.min(height - 1, (int) (((127 - y) + 0.5) * height / 128.0));
-            for (int x = 0; x < 128; x++) {
-                int sx = Math.min(width - 1, (int) ((x + 0.5) * width / 128.0));
-                int argb = image.getPixel(sx, sy);
-
-                float r = ARGB.red(argb) / 255f;
-                float g = ARGB.green(argb) / 255f;
-                float b = ARGB.blue(argb) / 255f;
-
-                // Exposure first, then a negative-film-like shoulder instead of hard digital clipping.
-                r = filmShoulder((float) (r * exposure), shot.stock.overResponse());
-                g = filmShoulder((float) (g * exposure), shot.stock.overResponse());
-                b = filmShoulder((float) (b * exposure), shot.stock.overResponse());
-
-                // Underexposure progressively loses shadow separation. Faster portrait film is intentionally
-                // more forgiving because its underResponse is lower.
-                if (rawStops < 0) {
-                    float severity = Math.min(1.6f, -rawStops / 3.0f);
-                    float toe = 1.0f + (shot.stock.shadowToe() - 1.0f) * severity;
-                    r = (float) Math.pow(clamp(r), toe);
-                    g = (float) Math.pow(clamp(g), toe);
-                    b = (float) Math.pow(clamp(b), toe);
-
-                    // Mild color-neg underexposure contamination: consumer stocks go a little cool/green,
-                    // portrait stocks remain more neutral.
-                    if (!shot.stock.monochrome()) {
-                        float consumerShift = Math.max(0f, shot.stock.saturation() - 0.97f);
-                        r *= 1.0f - severity * (0.025f + consumerShift * 0.10f);
-                        g *= 1.0f + severity * 0.015f;
-                        b *= 1.0f + severity * (0.018f + consumerShift * 0.07f);
-                    }
-                }
-
-                float luma = r * 0.2126f + g * 0.7152f + b * 0.0722f;
-                r = luma + (r - luma) * shot.stock.saturation();
-                g = luma + (g - luma) * shot.stock.saturation();
-                b = luma + (b - luma) * shot.stock.saturation();
-
-                r = (r - 0.5f) * shot.stock.contrast() + 0.5f;
-                g = (g - 0.5f) * shot.stock.contrast() + 0.5f;
-                b = (b - 0.5f) * shot.stock.contrast() + 0.5f;
-
-                r *= shot.stock.red();
-                g *= shot.stock.green();
-                b *= shot.stock.blue();
-
-                if (shot.stock.monochrome()) {
-                    // Panchromatic weighting: green contributes most, then red, then blue.
-                    float mono = r * 0.30f + g * 0.59f + b * 0.11f;
-                    r = g = b = mono;
-                }
-
-                // Grain grows in underexposure and in darker parts of the frame, as real scans tend to show.
-                float finalLuma = clamp(r * 0.2126f + g * 0.7152f + b * 0.0722f);
-                float shadowGrain = 0.70f + (1.0f - finalLuma) * 0.75f;
-                float underGrain = 1.0f + Math.max(0f, -rawStops) * 0.14f;
-                float grainAmp = shot.stock.grain() * shadowGrain * underGrain;
-
-                float monoNoise = (random.nextFloat() - 0.5f) * grainAmp;
-                float chroma = shot.stock.chromaGrain() * grainAmp;
-                float rNoise = monoNoise + (random.nextFloat() - 0.5f) * chroma;
-                float gNoise = monoNoise + (random.nextFloat() - 0.5f) * chroma * 0.70f;
-                float bNoise = monoNoise + (random.nextFloat() - 0.5f) * chroma * 0.90f;
-
-                r = clamp(r + rNoise);
-                g = clamp(g + gNoise);
-                b = clamp(b + bNoise);
-
-                out[y * 128 + x] = (byte) nearest(
-                        Math.round(r * 255),
-                        Math.round(g * 255),
-                        Math.round(b * 255)
-                );
-            }
-        }
+    private static void failure(Minecraft client,Exception e){pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);}
+    private static int[] sample(NativeImage image){
+        FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[126*84];
+        // Screenshot already returns top-left-oriented pixels. Do not flip a second time.
+        for(int y=0;y<84;y++)for(int x=0;x<126;x++){
+            int r=0,g=0,b=0;for(double dy:new double[]{.25,.75})for(double dx:new double[]{.25,.75}){
+                int sx=crop.x()+Math.min(crop.width()-1,(int)((x+dx)*crop.width()/126)),sy=crop.y()+Math.min(crop.height()-1,(int)((y+dy)*crop.height()/84));
+                int c=image.getPixel(sx,sy);r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;
+            }out[y*126+x]=((r/4)<<16)|((g/4)<<8)|(b/4);
+        }return out;
+    }
+    private static byte[] convert(int[] rgb,Pending shot){
+        byte[] out=new byte[16384];Arrays.fill(out,(byte)nearest(0xe5dfd1,false));Random noise=new Random(UUID.fromString(shot.id).getLeastSignificantBits());
+        for(int y=0;y<84;y++)for(int x=0;x<126;x++)out[(y+22)*128+x+1]=(byte)nearest(FilmSignal.process(rgb[y*126+x],shot.stock,shot.offset,noise),shot.stock.monochrome());
         return out;
     }
-
-    private static float filmShoulder(float value, float overResponse) {
-        value = Math.max(0f, value);
-        if (value <= 0.72f) return value;
-
-        float shoulderStrength = 1.25f + (1.0f - overResponse) * 2.0f;
-        float t = (value - 0.72f) / 0.28f;
-        float compressed = 1.0f - (float) Math.exp(-t / shoulderStrength);
-        return 0.72f + 0.28f * compressed;
-    }
-
-    private static float clamp(float value) { return Math.max(0f, Math.min(1f, value)); }
-
-    private static int[] buildPalette() {
-        int[] palette = new int[256];
-        for (int i = 0; i < palette.length; i++) palette[i] = MapColor.getColorFromPackedId(i);
-        return palette;
-    }
-
-    private static int nearest(int r, int g, int b) {
-        int best = 4;
-        long bestDistance = Long.MAX_VALUE;
-        for (int i = 4; i < PALETTE.length; i++) {
-            int c = PALETTE[i];
-            int cr = (c >> 16) & 255;
-            int cg = (c >> 8) & 255;
-            int cb = c & 255;
-            long dr = r - cr, dg = g - cg, db = b - cb;
-            long d = dr * dr + dg * dg + db * db;
-            if (d < bestDistance) { bestDistance = d; best = i; }
-        }
+    private static int[] palette(){int[] p=new int[248];for(int i=4;i<p.length;i++)p[i]=MapColor.getColorFromPackedId(i);return p;}
+    private static int nearest(int rgb,boolean mono){
+        int best=4;long distance=Long.MAX_VALUE;
+        for(int i=4;i<PALETTE.length;i++){int c=PALETTE[i];if((c>>>24)==0)continue;int r=(c>>16)&255,g=(c>>8)&255,b=c&255;if(mono&&(Math.abs(r-g)>3||Math.abs(g-b)>3))continue;
+            long dr=((rgb>>16)&255)-r,dg=((rgb>>8)&255)-g,db=(rgb&255)-b,d=2*dr*dr+4*dg*dg+db*db;if(d<distance){distance=d;best=i;}}
         return best;
     }
-
-    private record Pending(FilmStock stock, int apertureIndex, int shutterIndex, float meterStops) { }
+    private record Pending(FilmStock stock,int aperture,int shutter,float offset,String camera,String roll,String id){}
 }

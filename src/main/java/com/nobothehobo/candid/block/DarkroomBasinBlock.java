@@ -20,6 +20,10 @@ public class DarkroomBasinBlock extends Block {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if(CandidItems.stockFor(stack.getItem())!=null){
+            if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.RollManager.safely(p,()->com.nobothehobo.candid.photo.RollManager.develop(p,stack));
+            return InteractionResult.SUCCESS;
+        }
         if (!PhotoMaps.isExposed(stack)) return InteractionResult.PASS;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;

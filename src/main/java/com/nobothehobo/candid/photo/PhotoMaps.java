@@ -23,6 +23,15 @@ public final class PhotoMaps {
 
     private PhotoMaps() { }
 
+    public static ItemStack createPrint(ServerPlayer player, byte[] colors) {
+        if(colors.length!=16384)throw new IllegalArgumentException("Invalid photo size");
+        ItemStack map=MapItem.create(player.level(),0,0,(byte)0,false,false);
+        MapItemSavedData data=MapItem.getSavedData(map,player.level()).locked();
+        System.arraycopy(colors,0,data.colors,0,colors.length);data.setDirty();
+        player.level().setMapData(map.get(DataComponents.MAP_ID),data);return map;
+    }
+    public static void markDeveloped(ItemStack map) {CustomData.update(DataComponents.CUSTOM_DATA,map,t->t.putBoolean(DEVELOPED,true));}
+
     public static ItemStack createNegative(ServerPlayer player, byte[] positive, FilmStock stock, float aperture, int shutter) {
         ServerLevel level = player.level();
         ItemStack map = MapItem.create(level, player.getBlockX(), player.getBlockZ(), (byte) 0, false, false);

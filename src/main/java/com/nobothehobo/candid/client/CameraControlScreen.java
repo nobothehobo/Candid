@@ -42,6 +42,10 @@ public class CameraControlScreen extends Screen {
 
     @Override
     protected void init() {
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.SYNC,0));
+        addRenderableWidget(net.minecraft.client.gui.components.Button.builder(Component.literal("Rewind / unload"),b->{
+            if(CameraData.film(camera())!=null&&minecraft!=null)minecraft.setScreen(new FilmUnloadScreen());
+        }).bounds(width/2-72,height-28,144,20).build());
         ItemStack stack = camera();
         if (!stack.isEmpty()) {
             apertureIndex = CameraData.apertureIndex(stack);
@@ -83,7 +87,7 @@ public class CameraControlScreen extends Screen {
                 ? "No film loaded"
                 : loaded.displayName() + " • ISO " + loaded.iso() + " • " + frames + "/36 • " + (wound ? "READY" : "WIND FILM");
         g.drawCenteredString(font, status, width / 2, top + 149, loaded == null ? 0xFFFFB060 : (wound ? 0xFF8CFF8C : 0xFFFFD060));
-        g.drawCenteredString(font, "D-pad ←→ select   ↑↓ turn dial   A operate   X wind   B close", width / 2, top + 160, 0xFFD0D0D0);
+        g.drawCenteredString(font, "←→ select  ↑↓ turn  A operate  X wind  Y rewind  B close", width / 2, top + 160, 0xFFD0D0D0);
         super.render(g, mouseX, mouseY, delta);
     }
 
@@ -92,7 +96,7 @@ public class CameraControlScreen extends Screen {
         g.fill(cx - 23, cy - 23, cx + 24, cy + 24, 0xFF111111);
         g.submitOutline(cx - 23, cy - 23, 47, 47, border);
         g.fill(cx - 1, cy - 19, cx + 2, cy - 6, border);
-        g.drawCenteredString(font, value, cx, cy - 4, 0xFFFFFFFF);
+        g.drawCenteredString(font, font.plainSubstrByWidth(value,60), cx, cy - 4, 0xFFFFFFFF);
         g.drawCenteredString(font, label, cx, cy + 29, active ? 0xFFFFD060 : 0xFFBFBFBF);
     }
 
@@ -143,7 +147,7 @@ public class CameraControlScreen extends Screen {
         if (selected == FILM) {
             ItemStack stack = camera();
             FilmStock loaded = stack.isEmpty() ? null : CameraData.film(stack);
-            if (loaded != null && CameraData.frames(stack) > 0) return;
+            if (loaded != null) return;
             List<FilmStock> films = availableFilms();
             if (films.isEmpty() || minecraft == null) return;
             filmChoice = Math.floorMod(filmChoice, films.size());
@@ -170,6 +174,7 @@ public class CameraControlScreen extends Screen {
             case GLFW.GLFW_KEY_DOWN -> { change(1); yield true; }
             case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE -> { operate(); yield true; }
             case GLFW.GLFW_KEY_R -> { wind(); yield true; }
+            case GLFW.GLFW_KEY_U -> { if(CameraData.film(camera())!=null)minecraft.setScreen(new FilmUnloadScreen()); yield true; }
             default -> super.keyPressed(input);
         };
     }
@@ -184,6 +189,7 @@ public class CameraControlScreen extends Screen {
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> change(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_A, this::operate);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_X, this::wind);
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_Y, ()->{if(CameraData.film(camera())!=null)minecraft.setScreen(new FilmUnloadScreen());});
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
         }
     }

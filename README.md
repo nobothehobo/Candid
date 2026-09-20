@@ -1,5 +1,28 @@
 # Candid
 
+## 0.4 integration build
+
+The Lumen35 exposure/meter core is now integrated into Candid. This version adds
+scene-weighted metering, matching 3:2 viewfinder/capture framing, HUD-free capture,
+partial-roll rewind/unload/reload, persistent negatives, 20-second whole-roll
+development, contact sheets, and repeat printing for one Photo Paper. New prints
+are locked maps, preserving their image when held or displayed.
+
+Install `candid-0.4.0.jar` in a **Minecraft 1.21.10 Fabric** instance alongside
+Fabric API **0.138.4+1.21.10**. Remove the older Candid JAR. The artwork is bundled;
+single player needs no separate server. For a first test, create a creative world
+and use the Candid Photography creative tab. The in-game Field Guide explains
+every step and the actual recipes.
+
+**Updated workflow:** load → wind → expose → rewind/unload → use roll on basin
+with developer → wait 20 seconds → use developed roll → click frame with paper.
+In camera-body controls, **Y / U / Rewind button** unloads. Partial rolls retain
+their frames. Right stick or right-mouse drag aims inside the finder.
+
+See [integration, upgrade and testing notes](docs/INTEGRATION.md). The older 0.3
+overview below describes the original loose-negative workflow; new 0.4 captures
+remain on their roll until development.
+
 Candid is a Fabric film-photography mod for Minecraft Java Edition. It turns photography into a compact survival gameplay loop: craft a rangefinder, load a 36-exposure roll, meter the scene, choose aperture and shutter speed, manually advance the film, shoot an exposed negative, develop it, and hang the finished photograph in an item frame.
 
 ## Target

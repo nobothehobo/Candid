@@ -18,6 +18,8 @@ public class CameraScreen extends Screen {
     private int apertureIndex = 4;
     private int shutterIndex = 3;
     private int windAnim;
+    private final SceneMeter sceneMeter=new SceneMeter();
+    private long lastAim=System.nanoTime();
     private final boolean[] pad = new boolean[15];
 
     public CameraScreen() {
@@ -33,6 +35,7 @@ public class CameraScreen extends Screen {
 
     @Override
     protected void init() {
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.SYNC,0));
         ItemStack camera = camera();
         if (!camera.isEmpty()) {
             apertureIndex = CameraData.apertureIndex(camera);
@@ -57,18 +60,17 @@ public class CameraScreen extends Screen {
         boolean wound = !camera.isEmpty() && CameraData.isWound(camera);
         float meter = meterStops(stock);
 
-        graphics.fill(0, 0, width, 28, 0xB9000000);
-        graphics.fill(0, height - 46, width, height, 0xC9000000);
-        graphics.fill(0, 0, 20, height, 0x9A000000);
-        graphics.fill(width - 20, 0, width, height, 0x9A000000);
-
-        int cx = width / 2;
-        int cy = height / 2;
-        graphics.submitOutline(cx - 38, cy - 26, 76, 52, 0xCCFFFFFF);
-        graphics.submitOutline(cx - 9, cy - 9, 18, 18, 0xAAFFFFFF);
-        graphics.fill(cx - 1, cy - 8, cx + 1, cy + 9, 0x99FFFFFF);
-        graphics.fill(cx - 8, cy - 1, cx + 9, cy + 1, 0x99FFFFFF);
-
+        var frame=com.nobothehobo.candid.core.FrameGeometry.of(width,height);
+        int cx=width/2,cy=height/2;
+        graphics.fill(0,0,width,frame.y(),0xCA090B0D);
+        graphics.fill(0,frame.y()+frame.height(),width,height,0xCA090B0D);
+        graphics.fill(0,frame.y(),frame.x(),frame.y()+frame.height(),0xA9090B0D);
+        graphics.fill(frame.x()+frame.width(),frame.y(),width,frame.y()+frame.height(),0xA9090B0D);
+        graphics.submitOutline(frame.x(),frame.y(),frame.width(),frame.height(),0xF2F4EBD2);
+        graphics.submitOutline(cx-14,cy-10,28,20,0xAAADE9DE);
+        graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
+        graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
+        graphics.drawCenteredString(font,"3:2 FRAME • center-weighted meter • right stick / hold right mouse to aim",cx,23,0xFFB7B3A5);
         String filmText = stock == null
                 ? "NO FILM • Crouch + Use for camera controls"
                 : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
@@ -88,7 +90,7 @@ public class CameraScreen extends Screen {
         } else if (!wound && frames > 0) {
             graphics.drawCenteredString(font, "Advance film before the next exposure • X", cx, cy + 45, 0xFFFFD060);
         } else if (frames <= 0) {
-            graphics.drawCenteredString(font, "Roll finished • open camera controls to load another", cx, cy + 45, 0xFFFF9090);
+            graphics.drawCenteredString(font, "Roll finished • open controls and REWIND / UNLOAD", cx, cy + 45, 0xFFFF9090);
         }
         super.render(graphics, mouseX, mouseY, delta);
     }
@@ -116,12 +118,9 @@ public class CameraScreen extends Screen {
 
     private float meterStops(FilmStock stock) {
         if (stock == null || minecraft == null || minecraft.player == null || minecraft.level == null) return 0f;
-        int light = minecraft.level.getMaxLocalRawBrightness(minecraft.player.blockPosition());
-        double sceneEv = 1.5 + (light / 15.0) * 13.5;
-        double n = CameraData.APERTURES[apertureIndex];
-        double shutter = CameraData.SHUTTERS[shutterIndex];
-        double cameraEv = log2(n * n * shutter) - log2(stock.iso() / 100.0);
-        return (float) (sceneEv - cameraEv);
+        double sceneEv=sceneMeter.read(minecraft);
+        return (float)com.nobothehobo.candid.core.Exposure.offset(sceneEv,
+            new com.nobothehobo.candid.core.Exposure.Settings(CameraData.APERTURES[apertureIndex],CameraData.SHUTTERS[shutterIndex]),stock.iso());
     }
 
     private static double log2(double v) { return Math.log(v) / Math.log(2.0); }
@@ -154,8 +153,7 @@ public class CameraScreen extends Screen {
             return;
         }
         CandidClient.playLocal(CandidSounds.SHUTTER);
-        PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock));
-        minecraft.setScreen(null);
+        if(PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock))) minecraft.setScreen(null);
     }
 
     private void openControls() {
@@ -180,6 +178,12 @@ public class CameraScreen extends Screen {
         if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
         try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
             if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
+            long now=System.nanoTime();double dt=Math.min(.05,(now-lastAim)/1e9);lastAim=now;
+            if(minecraft!=null&&minecraft.player!=null){
+                float ax=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X),ay=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+                if(Math.abs(ax)>.18)minecraft.player.setYRot(minecraft.player.getYRot()+(float)(ax*70*dt));
+                if(Math.abs(ay)>.18)minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)(ay*55*dt))));
+            }
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, () -> changeAperture(-1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> changeAperture(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> changeShutter(-1));
@@ -191,6 +195,14 @@ public class CameraScreen extends Screen {
         }
     }
 
+    private double lastMouseX,lastMouseY;
+    @Override public void mouseMoved(double x,double y){
+        if(minecraft!=null&&minecraft.player!=null&&GLFW.glfwGetMouseButton(minecraft.getWindow().handle(),GLFW.GLFW_MOUSE_BUTTON_RIGHT)==GLFW.GLFW_PRESS){
+            minecraft.player.setYRot(minecraft.player.getYRot()+(float)((x-lastMouseX)*.22));
+            minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)((y-lastMouseY)*.22))));
+        }
+        lastMouseX=x;lastMouseY=y;super.mouseMoved(x,y);
+    }
     private void edge(GLFWGamepadState state, int button, Runnable action) {
         boolean now = state.buttons(button) == GLFW.GLFW_PRESS;
         if (now && !pad[button]) action.run();
