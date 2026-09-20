@@ -16,7 +16,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class DarkroomBasinBlock extends Block {
+    private static final net.minecraft.world.phys.shapes.VoxelShape SHAPE = Block.box(2, 1, 2, 14, 14.5, 14);
     public DarkroomBasinBlock(BlockBehaviour.Properties properties) { super(properties); }
+
+    @Override
+    protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level,
+            BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return SHAPE;
+    }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

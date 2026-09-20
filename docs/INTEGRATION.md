@@ -10,8 +10,10 @@ JAR in `mods`; remove the older Candid JAR when updating. Back up existing world
 The platform-independent Lumen35 `Exposure` and `LightMeter` calculations were
 imported into `com.nobothehobo.candid.core`. Their source provenance is the local
 Lumen35 commit `e7bc1d64c26baf198232b30f1641bbdcfb0319ae`. Candid retains its own
-registry IDs, original models, sound assets, controller screens and client
-framebuffer capture. There is no Paper, Nexo, SQLite or server plugin dependency.
+registry IDs, sound assets, controller screens and client framebuffer capture.
+The original Lumen camera, developing tank, pixel atlas and editable Blockbench
+sources are also included. The basin registry ID is retained for world compatibility.
+There is no Paper, Nexo, SQLite or server plugin dependency.
 
 ## Gameplay
 
@@ -80,6 +82,10 @@ eviction and storage quotas before large-server use.
 mod. `xvfb-run -a bash gradlew runClientGameTest` runs the real client/integrated
 server workflow on Linux with a virtual display. These tests are in the separate
 `gametest` source set, not the release mod.
+
+The client test uses Fabric's supported asynchronous-network mode because the
+legacy synchronized packet queue stalled during 1.21.10 login in CI. Assertions
+wait for actual client/server state instead of assuming packets arrive in a tick.
 
 This Work host's Loom socket-capability probe is restricted. Local validation
 uses a build-only adapter that reports optional Unix sockets as unavailable;

@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public final class CandidBlocks {
     public static final Block DARKROOM_BASIN = register("darkroom_basin", DarkroomBasinBlock::new,
-            BlockBehaviour.Properties.of().strength(2.5f).sound(SoundType.METAL));
+            BlockBehaviour.Properties.of().strength(2.5f).sound(SoundType.METAL).noOcclusion());
     public static final Block ENLARGER = register("enlarger", EnlargerBlock::new,
             BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.METAL).lightLevel(state -> 4));
 
