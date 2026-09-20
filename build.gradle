@@ -27,6 +27,11 @@ fabricApi {
         eula = false
     }
 }
+// Minecraft 1.21.10 processes login packets outside the test harness's legacy
+// task queue. Use its supported asynchronous-network mode; tests await state.
+loom.runs.named('clientGameTest') {
+    vmArg '-Dfabric.client.gametest.disableNetworkSynchronizer=true'
+}
 
 processResources {
     inputs.property 'version', version
