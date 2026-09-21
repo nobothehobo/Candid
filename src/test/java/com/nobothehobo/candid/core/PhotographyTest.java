@@ -55,4 +55,21 @@ class PhotographyTest {
     }
     @Test void legacyFramesStillRead(){var f=frame(1);assertNull(f.highColors());assertNull(f.tiles());assertEquals(f.id(),f.withMap(2).id());}
     @Test void focusImageKeepsDimensions(){int[] pixels=new int[252*168];Arrays.fill(pixels,0x808080);float[] depth=new float[32*21];Arrays.fill(depth,20);assertArrayEquals(pixels,DepthOfField.apply(pixels,depth,252,168,50,2,2));}
+    @Test void severeExposureHasVisibleConsequence(){
+        int neutral=FilmSignal.process(0x808080,FilmStock.WARM_200,0,new Random(1))&255;
+        int under=FilmSignal.process(0x808080,FilmStock.WARM_200,-2,new Random(1))&255;
+        int over=FilmSignal.process(0x808080,FilmStock.WARM_200,2,new Random(1))&255;
+        assertTrue(neutral-under>40);assertTrue(over-neutral>40);
+    }
+    @Test void offPlaneDetailSoftens(){
+        int[] rgb=new int[252*168];for(int i=0;i<rgb.length;i++)rgb[i]=i%2==0?0xffffff:0;
+        float[] d=new float[32*21];Arrays.fill(d,10);
+        assertArrayEquals(rgb,DepthOfField.apply(rgb,d,252,168,90,1.4,10));
+        assertFalse(Arrays.equals(rgb,DepthOfField.apply(rgb,d,252,168,90,1.4,.7)));
+    }
+    @Test void scanFilesSurviveReopen()throws Exception{
+        UUID id=UUID.randomUUID();byte[] data={1,2,3,4};
+        try(var repo=new RollRepository(directory.resolve("rolls"))){repo.saveScan(id,data);assertArrayEquals(data,repo.readScan(id).join());}
+        try(var repo=new RollRepository(directory.resolve("rolls"))){assertArrayEquals(data,repo.readScan(id).join());}
+    }
 }

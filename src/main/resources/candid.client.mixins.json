@@ -6,7 +6,8 @@
     "PhotoHudMixin",
     "PhotoHandMixin",
     "CameraFovMixin",
-    "TripodCameraMixin"
+    "TripodCameraMixin",
+    "LoadingHandsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

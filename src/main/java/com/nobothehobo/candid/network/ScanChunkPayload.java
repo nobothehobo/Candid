@@ -11,6 +11,6 @@ public record ScanChunkPayload(String shot,int kind,int total,int index,byte[] c
     public static final Type<ScanChunkPayload> ID=new Type<>(Candid.id("scan_chunk_v2"));
     public static final StreamCodec<RegistryFriendlyByteBuf,ScanChunkPayload> CODEC=StreamCodec.of(
         (b,p)->{b.writeUtf(p.shot,36);b.writeVarInt(p.kind);b.writeVarInt(p.total);b.writeVarInt(p.index);b.writeByteArray(p.colors);},
-        b->new ScanChunkPayload(b.readUtf(36),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readByteArray(16384)));
+        b->new ScanChunkPayload(b.readUtf(36),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readByteArray(16384)));
     @Override public Type<? extends CustomPacketPayload> type(){return ID;}
 }

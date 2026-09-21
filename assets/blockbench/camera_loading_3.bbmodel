@@ -1,0 +1,5913 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "Candid loading 3",
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "Brushed silver top",
+      "from": [
+        0.8,
+        11,
+        5.5
+      ],
+      "to": [
+        15.2,
+        12.6,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a01c3169-edb5-5f00-9d53-21f3b75726cb",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Bright top bevel",
+      "from": [
+        1.1,
+        12.6,
+        5.8
+      ],
+      "to": [
+        14.9,
+        12.9,
+        10.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "7e17f8b1-838e-5385-846b-2093ca163ee1",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Bottom plate",
+      "from": [
+        0.8,
+        3.2,
+        5.5
+      ],
+      "to": [
+        15.2,
+        4,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "62ad4de3-0576-5591-8b58-e4ed01775a9c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Finder bezel",
+      "from": [
+        2,
+        10.7,
+        5.1
+      ],
+      "to": [
+        5,
+        12.1,
+        5.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "c0fc9b0d-a630-5358-850a-bdc05b906326",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Finder glass",
+      "from": [
+        2.3,
+        10.9,
+        5
+      ],
+      "to": [
+        4.7,
+        11.9,
+        5.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "20553d10-6640-5cf6-98f7-31883ee07d85",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Rangefinder bezel",
+      "from": [
+        10.4,
+        10.7,
+        5.1
+      ],
+      "to": [
+        12.4,
+        11.9,
+        5.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "32e71681-d471-5609-acd4-d06b8a309f03",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Rangefinder glass",
+      "from": [
+        10.7,
+        10.9,
+        5
+      ],
+      "to": [
+        12.1,
+        11.7,
+        5.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a9dadc4d-16b2-548d-984d-aef5a9e73fe3",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Shutter collar",
+      "from": [
+        12.4,
+        12.9,
+        7
+      ],
+      "to": [
+        14,
+        13.2,
+        8.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "25ab0727-08bf-5eb8-a4dd-ddffdbc539bc",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Shutter release",
+      "from": [
+        12.7,
+        13.2,
+        7.3
+      ],
+      "to": [
+        13.7,
+        13.7,
+        8.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "51ac584a-f13d-576a-bb20-1bfc899a8908",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Rewind dial",
+      "from": [
+        2,
+        12.9,
+        7
+      ],
+      "to": [
+        4.2,
+        13.5,
+        9.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "000a5583-eef4-5dc1-af73-eb516946d2f5",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Rewind cap",
+      "from": [
+        2.2,
+        13.5,
+        7.2
+      ],
+      "to": [
+        4,
+        13.7,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "f998e319-5d87-536d-ba9b-58e278f29763",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Advance lever",
+      "from": [
+        10.5,
+        13,
+        9
+      ],
+      "to": [
+        14.2,
+        13.35,
+        9.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1abbbc40-4c3e-5863-a9f0-e5c892308ac2",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        12,
+        13,
+        9
+      ],
+      "rotation": [
+        0,
+        -22.5,
+        0
+      ]
+    },
+    {
+      "name": "Lever grip",
+      "from": [
+        13.6,
+        13,
+        9
+      ],
+      "to": [
+        14.8,
+        13.5,
+        9.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "3864971d-1d9e-57c8-8254-462d7e43381f",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Gold maker plaque",
+      "from": [
+        11.3,
+        7.5,
+        5.3
+      ],
+      "to": [
+        13.7,
+        8.6,
+        5.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a4fc2f4b-8de2-5dfe-99a2-a4fc7a7de051",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Left strap eyelet",
+      "from": [
+        0.2,
+        10,
+        7
+      ],
+      "to": [
+        1,
+        11,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "2b1ef529-c06b-5899-8926-fe66f63690ca",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Right strap eyelet",
+      "from": [
+        15,
+        10,
+        7
+      ],
+      "to": [
+        15.8,
+        11,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "98cc5108-fb57-5e9c-87ea-dda113ac7c8f",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens mount0",
+      "from": [
+        5.08,
+        4.3,
+        4.9
+      ],
+      "to": [
+        8.92,
+        5.58,
+        5.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "47bbf792-6e5b-5731-acbd-cce541e691cd",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens mount1",
+      "from": [
+        4.067151555228262,
+        5.58,
+        4.9
+      ],
+      "to": [
+        9.932848444771738,
+        6.859999999999999,
+        5.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "7487c197-1044-508e-95c5-629046970948",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens mount2",
+      "from": [
+        3.8,
+        6.859999999999999,
+        4.9
+      ],
+      "to": [
+        10.2,
+        8.14,
+        5.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "3727eb1c-8c67-5640-a045-c2465cfa82b3",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens mount3",
+      "from": [
+        4.067151555228262,
+        8.14,
+        4.9
+      ],
+      "to": [
+        9.932848444771738,
+        9.42,
+        5.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "514c0362-0ca1-55d3-b9b5-a641e6ddeb6e",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens mount4",
+      "from": [
+        5.08,
+        9.42,
+        4.9
+      ],
+      "to": [
+        8.92,
+        10.7,
+        5.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1da12d40-83a1-5b39-b99b-92e423664a95",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus knurl0",
+      "from": [
+        5.26,
+        4.6,
+        3.6
+      ],
+      "to": [
+        8.74,
+        5.76,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "e9dc7b45-ee44-5653-a63a-dff2077a982c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus knurl1",
+      "from": [
+        4.342106096925614,
+        5.76,
+        3.6
+      ],
+      "to": [
+        9.657893903074386,
+        6.92,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "11a7a164-f092-51ee-b91e-881517fcad0c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus knurl2",
+      "from": [
+        4.1,
+        6.92,
+        3.6
+      ],
+      "to": [
+        9.9,
+        8.08,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "75f42ab3-0a3b-5f33-aa84-3997c458539e",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus knurl3",
+      "from": [
+        4.342106096925613,
+        8.08,
+        3.6
+      ],
+      "to": [
+        9.657893903074388,
+        9.24,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "14997789-0c7d-5934-856f-3c6c9eceb34c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus knurl4",
+      "from": [
+        5.26,
+        9.24,
+        3.6
+      ],
+      "to": [
+        8.74,
+        10.4,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "69da547e-f241-5270-8e65-6c4254055533",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus ring0",
+      "from": [
+        5.41,
+        4.85,
+        3.1
+      ],
+      "to": [
+        8.59,
+        5.91,
+        3.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "ef100c31-141b-59fd-b1ba-4808247ef5a3",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus ring1",
+      "from": [
+        4.571234881673405,
+        5.91,
+        3.1
+      ],
+      "to": [
+        9.428765118326595,
+        6.970000000000001,
+        3.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "93908a74-ee86-5da3-91f5-6665d0e3b158",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus ring2",
+      "from": [
+        4.35,
+        6.970000000000001,
+        3.1
+      ],
+      "to": [
+        9.65,
+        8.03,
+        3.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a8f79595-d486-547c-8112-57901041f1d9",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus ring3",
+      "from": [
+        4.571234881673405,
+        8.03,
+        3.1
+      ],
+      "to": [
+        9.428765118326595,
+        9.09,
+        3.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1266b87b-8027-5918-b9b5-8ca33a43b947",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Focus ring4",
+      "from": [
+        5.41,
+        9.09,
+        3.1
+      ],
+      "to": [
+        8.59,
+        10.15,
+        3.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5e6a86b5-3e79-5b63-9921-894f694c3e8d",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Aperture ring0",
+      "from": [
+        5.53,
+        5.05,
+        2.3
+      ],
+      "to": [
+        8.469999999999999,
+        6.029999999999999,
+        3.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "75f558b7-eaa5-5280-8d99-016f7057e31c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Aperture ring1",
+      "from": [
+        4.7545379094716385,
+        6.029999999999999,
+        2.3
+      ],
+      "to": [
+        9.245462090528362,
+        7.01,
+        3.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1ae533c5-c0af-5369-939e-9f6caf943ff9",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Aperture ring2",
+      "from": [
+        4.55,
+        7.01,
+        2.3
+      ],
+      "to": [
+        9.45,
+        7.99,
+        3.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a56e1f03-e8d3-5c82-abbf-16bc7dc2fba0",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Aperture ring3",
+      "from": [
+        4.7545379094716385,
+        7.99,
+        2.3
+      ],
+      "to": [
+        9.245462090528362,
+        8.97,
+        3.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "e7acccc8-d13b-53b6-94eb-93700052eb9c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Aperture ring4",
+      "from": [
+        5.53,
+        8.97,
+        2.3
+      ],
+      "to": [
+        8.469999999999999,
+        9.95,
+        3.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5f1a24a5-1e68-5e50-b565-075943eb9e20",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Silver lens rim0",
+      "from": [
+        5.65,
+        5.25,
+        1.9
+      ],
+      "to": [
+        8.35,
+        6.15,
+        2.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "b5b22c8e-4749-5223-b86e-7c85946e1585",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Silver lens rim1",
+      "from": [
+        4.937840937269872,
+        6.15,
+        1.9
+      ],
+      "to": [
+        9.062159062730128,
+        7.05,
+        2.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "46700077-fc74-5dd4-810a-abe24765095f",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Silver lens rim2",
+      "from": [
+        4.75,
+        7.05,
+        1.9
+      ],
+      "to": [
+        9.25,
+        7.95,
+        2.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "409504fa-2a0c-57c9-b065-7e779c65b393",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Silver lens rim3",
+      "from": [
+        4.937840937269872,
+        7.95,
+        1.9
+      ],
+      "to": [
+        9.062159062730128,
+        8.85,
+        2.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "94784a3c-2950-55fd-9991-95c39881965d",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Silver lens rim4",
+      "from": [
+        5.65,
+        8.85,
+        1.9
+      ],
+      "to": [
+        8.35,
+        9.75,
+        2.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "0cdf2a32-bfd5-5ba5-9cf2-68268aac8ef7",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glass0",
+      "from": [
+        5.86,
+        5.6,
+        1.75
+      ],
+      "to": [
+        8.14,
+        6.36,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "dd67c4fa-dacc-5c68-8e3a-68c17aa1bfee",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glass1",
+      "from": [
+        5.258621235916781,
+        6.36,
+        1.75
+      ],
+      "to": [
+        8.741378764083219,
+        7.12,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "2ba247d4-c5f9-534b-b296-3d71bfc55064",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glass2",
+      "from": [
+        5.1,
+        7.12,
+        1.75
+      ],
+      "to": [
+        8.9,
+        7.88,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a8f83ac0-2e7c-5724-9e9c-5593eebfc517",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glass3",
+      "from": [
+        5.258621235916781,
+        7.88,
+        1.75
+      ],
+      "to": [
+        8.741378764083219,
+        8.64,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5d64d2a2-602e-528c-8e8f-747e938469bd",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glass4",
+      "from": [
+        5.86,
+        8.64,
+        1.75
+      ],
+      "to": [
+        8.14,
+        9.4,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            80,
+            0,
+            96,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1ef6e1ec-ac3f-54d9-8fb5-bec929258d4d",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Lens glint",
+      "from": [
+        6.1,
+        8,
+        1.68
+      ],
+      "to": [
+        6.7,
+        8.6,
+        1.78
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "3235183e-eedf-57b4-84bb-1c73d6d8a690",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "front chassis",
+      "from": [
+        1,
+        4,
+        5.8
+      ],
+      "to": [
+        15,
+        11,
+        6.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "f33b5ed7-64c8-57df-a5f9-267db6140503",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left chassis",
+      "from": [
+        1,
+        4,
+        6.6
+      ],
+      "to": [
+        2,
+        11,
+        10.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "7bab9e7a-7871-5672-afc7-0d32bdeab395",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right chassis",
+      "from": [
+        14,
+        4,
+        6.6
+      ],
+      "to": [
+        15,
+        11,
+        10.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "5a3edca5-dad9-5433-9a0a-bb087b09950f",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "film pressure channel",
+      "from": [
+        2,
+        4.4,
+        6.6
+      ],
+      "to": [
+        14,
+        10.6,
+        6.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "496e88af-ab3f-58ed-8385-b3233bf48210",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "top guide rail",
+      "from": [
+        2,
+        10.2,
+        8.8
+      ],
+      "to": [
+        14,
+        10.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a90b9b73-e6dc-5703-880a-5c774f57dd24",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bottom guide rail",
+      "from": [
+        2,
+        4.5,
+        8.8
+      ],
+      "to": [
+        14,
+        4.8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "29ac3494-cc7b-53f3-bef6-07da412bd3f5",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hinged camera back",
+      "from": [
+        14.6,
+        4.1,
+        10.3
+      ],
+      "to": [
+        14.9,
+        10.9,
+        23.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "1206eda0-b73f-530a-a435-6fa45afcfd89",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "takeup spool",
+      "from": [
+        11.5,
+        5,
+        7
+      ],
+      "to": [
+        13,
+        10,
+        8.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "91fa09cb-f2a6-527e-9d41-05cdaa569010",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "takeup crown",
+      "from": [
+        11.25,
+        9.8,
+        6.8
+      ],
+      "to": [
+        13.25,
+        10.3,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            0,
+            32,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "c51e7b8f-f73d-542b-b607-9c9e009d938c",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "film cartridge core",
+      "from": [
+        2.5,
+        5,
+        7
+      ],
+      "to": [
+        4.7,
+        10,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "b30d419d-adcf-5426-ad5e-23dfb5cae6d8",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "film cartridge top",
+      "from": [
+        2.3,
+        9.8,
+        6.8
+      ],
+      "to": [
+        4.9,
+        10.2,
+        9.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "11aeb5ed-dc49-591e-9742-8e6fa769e1a4",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "film cartridge base",
+      "from": [
+        2.3,
+        4.8,
+        6.8
+      ],
+      "to": [
+        4.9,
+        5.2,
+        9.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "0f6d16c6-c516-5af0-9806-47b37949c477",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "film leader",
+      "from": [
+        4.7,
+        5.8,
+        8.95
+      ],
+      "to": [
+        7,
+        9.2,
+        9.05
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            96,
+            0,
+            112,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "38635670-6310-5fcc-9dae-322e4848bc52",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper sprocket 0",
+      "from": [
+        5.0,
+        8.8,
+        9.05
+      ],
+      "to": [
+        5.35,
+        9,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "a27b98f7-fea6-5476-acb4-6b5577a5587a",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower sprocket 0",
+      "from": [
+        5.0,
+        6,
+        9.05
+      ],
+      "to": [
+        5.35,
+        6.2,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "3b6cd10b-39d2-50a9-98db-9e3e31e3b477",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper sprocket 1",
+      "from": [
+        5.85,
+        8.8,
+        9.05
+      ],
+      "to": [
+        6.199999999999999,
+        9,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "56ed3c5e-635c-5783-8cf5-6841ea001532",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower sprocket 1",
+      "from": [
+        5.85,
+        6,
+        9.05
+      ],
+      "to": [
+        6.199999999999999,
+        6.2,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "064e96bf-0d00-5ca2-a4ba-8131dfa31b75",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper sprocket 2",
+      "from": [
+        6.7,
+        8.8,
+        9.05
+      ],
+      "to": [
+        7.05,
+        9,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "010c669e-55aa-5082-a24f-0e63153125af",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower sprocket 2",
+      "from": [
+        6.7,
+        6,
+        9.05
+      ],
+      "to": [
+        7.05,
+        6.2,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "9ea9cbb6-8f42-542f-907e-0b03c3ba70e0",
+      "type": "cube",
+      "box_uv": false,
+      "uv_offset": [
+        0,
+        0
+      ],
+      "rescale": false,
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "outliner": [
+    "a01c3169-edb5-5f00-9d53-21f3b75726cb",
+    "7e17f8b1-838e-5385-846b-2093ca163ee1",
+    "62ad4de3-0576-5591-8b58-e4ed01775a9c",
+    "c0fc9b0d-a630-5358-850a-bdc05b906326",
+    "20553d10-6640-5cf6-98f7-31883ee07d85",
+    "32e71681-d471-5609-acd4-d06b8a309f03",
+    "a9dadc4d-16b2-548d-984d-aef5a9e73fe3",
+    "25ab0727-08bf-5eb8-a4dd-ddffdbc539bc",
+    "51ac584a-f13d-576a-bb20-1bfc899a8908",
+    "000a5583-eef4-5dc1-af73-eb516946d2f5",
+    "f998e319-5d87-536d-ba9b-58e278f29763",
+    "1abbbc40-4c3e-5863-a9f0-e5c892308ac2",
+    "3864971d-1d9e-57c8-8254-462d7e43381f",
+    "a4fc2f4b-8de2-5dfe-99a2-a4fc7a7de051",
+    "2b1ef529-c06b-5899-8926-fe66f63690ca",
+    "98cc5108-fb57-5e9c-87ea-dda113ac7c8f",
+    "47bbf792-6e5b-5731-acbd-cce541e691cd",
+    "7487c197-1044-508e-95c5-629046970948",
+    "3727eb1c-8c67-5640-a045-c2465cfa82b3",
+    "514c0362-0ca1-55d3-b9b5-a641e6ddeb6e",
+    "1da12d40-83a1-5b39-b99b-92e423664a95",
+    "e9dc7b45-ee44-5653-a63a-dff2077a982c",
+    "11a7a164-f092-51ee-b91e-881517fcad0c",
+    "75f42ab3-0a3b-5f33-aa84-3997c458539e",
+    "14997789-0c7d-5934-856f-3c6c9eceb34c",
+    "69da547e-f241-5270-8e65-6c4254055533",
+    "ef100c31-141b-59fd-b1ba-4808247ef5a3",
+    "93908a74-ee86-5da3-91f5-6665d0e3b158",
+    "a8f79595-d486-547c-8112-57901041f1d9",
+    "1266b87b-8027-5918-b9b5-8ca33a43b947",
+    "5e6a86b5-3e79-5b63-9921-894f694c3e8d",
+    "75f558b7-eaa5-5280-8d99-016f7057e31c",
+    "1ae533c5-c0af-5369-939e-9f6caf943ff9",
+    "a56e1f03-e8d3-5c82-abbf-16bc7dc2fba0",
+    "e7acccc8-d13b-53b6-94eb-93700052eb9c",
+    "5f1a24a5-1e68-5e50-b565-075943eb9e20",
+    "b5b22c8e-4749-5223-b86e-7c85946e1585",
+    "46700077-fc74-5dd4-810a-abe24765095f",
+    "409504fa-2a0c-57c9-b065-7e779c65b393",
+    "94784a3c-2950-55fd-9991-95c39881965d",
+    "0cdf2a32-bfd5-5ba5-9cf2-68268aac8ef7",
+    "dd67c4fa-dacc-5c68-8e3a-68c17aa1bfee",
+    "2ba247d4-c5f9-534b-b296-3d71bfc55064",
+    "a8f83ac0-2e7c-5724-9e9c-5593eebfc517",
+    "5d64d2a2-602e-528c-8e8f-747e938469bd",
+    "1ef6e1ec-ac3f-54d9-8fb5-bec929258d4d",
+    "3235183e-eedf-57b4-84bb-1c73d6d8a690",
+    "f33b5ed7-64c8-57df-a5f9-267db6140503",
+    "7bab9e7a-7871-5672-afc7-0d32bdeab395",
+    "5a3edca5-dad9-5433-9a0a-bb087b09950f",
+    "496e88af-ab3f-58ed-8385-b3233bf48210",
+    "a90b9b73-e6dc-5703-880a-5c774f57dd24",
+    "29ac3494-cc7b-53f3-bef6-07da412bd3f5",
+    "1206eda0-b73f-530a-a435-6fa45afcfd89",
+    "91fa09cb-f2a6-527e-9d41-05cdaa569010",
+    "c51e7b8f-f73d-542b-b607-9c9e009d938c",
+    "b30d419d-adcf-5426-ad5e-23dfb5cae6d8",
+    "11aeb5ed-dc49-591e-9742-8e6fa769e1a4",
+    "0f6d16c6-c516-5af0-9806-47b37949c477",
+    "38635670-6310-5fcc-9dae-322e4848bc52",
+    "a27b98f7-fea6-5476-acb4-6b5577a5587a",
+    "3b6cd10b-39d2-50a9-98db-9e3e31e3b477",
+    "56ed3c5e-635c-5783-8cf5-6841ea001532",
+    "064e96bf-0d00-5ca2-a4ba-8131dfa31b75",
+    "010c669e-55aa-5082-a24f-0e63153125af",
+    "9ea9cbb6-8f42-542f-907e-0b03c3ba70e0"
+  ],
+  "textures": [
+    {
+      "path": "atlas.png",
+      "name": "atlas.png",
+      "id": "0",
+      "width": 128,
+      "height": 128,
+      "uv_width": 128,
+      "uv_height": 128,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAALRElEQVR4nO1dS67kShUMMk/bckpeBwLEYw0MmbANJBgxYcpO2AcjBkweEnoTkBCLYGTJlt12w+AqsiKzCujX9yF0qk5IV9XXLqvPVabzRMb55Pd+9NVP/nldF67rwjRNOI4D13Uh5wwi54x1XTHPM/jdYRhwHAd+/8c/4G9/+Tu+FD/48feRjo9f/PwvfvnrL34WAP709dfvev6bv/4ZP/vVb7/4+d/99B/v+v9/+PPfvOt540Dv+47jOLDvO0opWNcVADDPM47jwDiOAIB1Xeu/ieu6mt8/ffqElNJnXXvv8x8/fvzs7/4vnvduvy3LAgAws3qDA863fd93jOOI4zjqd7ZtwzAMCPhGAt7ecuBtqZ/nuS7/OWdc14VSCgDUiZBzblxEwC+slAKuAuQAHPh93wGgLvlcJcgB+Fw/GR5Njv907T3Pf/jw4Vv9X9/184/uebLf+IbnnLFtW71BvzbPcx1o4G2SbNuGZVmaCaF4JR/q3X4jmweAYRiwriumaULOGcMwYNs2lFLqzuA4jrpScIUI+EUzJXLOKKVUN0Bw8DnTj+MIAvgkMA72uq6V7AG4e9u5/SMB1B1BcAC/9hsJHQeXWz8u8RSIgLddgJkh51x3BEBwAM/2J77NnCEUgLglPM+zvu2lFJzniWEYKi8I+IbRl/OtJ7PnpODvJISUg4HHy0rAF4zaP/A2oOd5VncAoIkLnOfZxAL+3UR4JR/66J4n+00HWgeVQhB3BZwYvK/aQHAAv/Yb33DqAdQCANQB5+ADNyI4z3MVjgJ+kfjWK+uf5/ku4rfve9UJzvPEtm3BAZ4Apn6cYWD1+8Mw1NVBl7rzPHGeZ31W8Uo+9NE9T/Yb/6HBH+r9jA+oCxiGoYkKAsEBPNufVOYdx7GJ+/Oe+n/gxg3CBfhHAtD4c04GBoS4OyD5I/GjLhDwDXu01ePSrzmCKhXTBVAiDg7g137T5Zw/6hb4o5KxmdXrQHAAz/Zb79f7P6ZXBOkS1nUNDvAESOM4NjmBwzDgPM87hj9NE4ZhqJNA7wX8wgDc6ftMEQPeJF/GAHifkULuFoID+LXfcn5LBjGz+qnikO73OeB9KlhwAL/223VdMDNM04RlWaob0GW+j/rlnCMf8EmQyPyP46hcoM8J5HcA1HhBKaVJIQv4RBML0IFfluVO8WOgSCuG+KzilXzoo3ue7Ld93yuh4yQAcBfu1dxAJotqNpHilXyod/vTOI7Ytq0u7QAqB9AB1u0fJ4pmBgd8opkS1ACu62rCwhzwdV3vVoWAbxhZP99mM6upYABqXIDf4zVFcAC/9pvq/QwIMfefvEB3AcCtMoh5gcEB/NqfyOa59GvKF4AmN4CfShYDvmFk9oT6eOYAaN4gBSMAoQM8AQxA8zaTCGqvAPYHAlDLwnUiBAfwa79paTiZPgcbuE0OrQim/+f3ggP4tT9xUBkHAN7cAP8oTQjdtq2qg1Eb+BwwbvEYDdQwL1XCR0IQOUHAN0z9mOoBDA3rIGv/oGEYIifwCeyv+QDaBkZLxDkpqAX02cFAcADP9ieN9PV/COMDqgaO41hTw/otZMAfErdyfb5fKaXJDtKiUeBtwkRdgH8YhR4lfhoH4A+bQwCPE0YUr+RDH93zZH9NCgVuyh9v9t3AesEoYgH+7U+67DMIpFu8ZVkaEkhoClnALxIbQJAD8I1nPwDtE8AyMdYKBgfwD6PSxxxAsv1HPQO5ChzH0SiBwQH82m8a7dM9Pxk/m0lrjgDQ8oXgAH7tN327NdtXAz0sDqE6yM4g/Az4hfUaP4DGJRDqFjRAFPAN03p/rQXQfgC9TsDvfG6O4H+75tmHPrrnyf6mLoAyL4kgXYJyAD0/gFJwcAC/9luf1qWDT1WQJFF7CSghDPhFesQBOODjODb6fymlToJeDg74RE0L190AW8OxjXx/VJy2kwOCA3i23/qlncogawOpBqpL6H1ecAC/9tdDozQfQBVBsn3OIF0xQgr2D5umqWn/ArTFIKoOsndQztEg4llwd16ADiz9P1cIzR3Q1jHBAfzab6z77xtCsjpYW8eyZIwScJwZ5N/+pHWAyur1DWfbWKKUElLwkyDpKWDaJUTJ3rIsGIahiQhGUchzoPYH2Pe92Q4q82d9AGsGl2WJfAA8h/3Wb/84EdS/K/HT8jAiOIBf+xO3gRoFBNBsCzU1XGdSSMH+kXhWkOYE9m8/w75sJsWBj2CQf9Ru4Qz59roAcwS4UvC69g8MDuDXfmNj6G3bqq/X/T6bRuk9rhqRE+jf/sR+f9M0YV3Xuzw/rf+jPkCSGDmB/lG3gVzqmRFEdRBAowZy8LViKOAXpts+jfNzQvREj7sFcgYgOIBn+03fep0E+parVqC+ny4gOIBf+xOAKvUCqC1hNBNYcwLmea6fEQ/wj9Tn/jEesCxLjQ9opnDfQDLgG6b9/qj+aQ4AK4XpQ5T8RSzAv/3GN5oDTs2fYBYQdwo8YJrNIoHgAJ7tT5R+NemDSh+AWiNIksgMYbqJgG/UrOC+2QOzg7VljEYJAUSDiCeAaXOonG8NIykRkxMAtxQwXo9ewf7tN2XzmhdAAsiGkNwqsp+wrgTBAfzaX69odE+bQisxZMCIqWGhA/hHogugqqfdvzghNFWc9/oOYgGfMLZ91ybRyvJLKU2ZGLeE2kksOIBf+41bQH5BXQE1fx3o4zjqZCCCA/i1P3F553ZQNQC+8cBNH+CBkUwSCfhGAm5Nobmv799uJXzbttVtYQhB/mEAas0fcNvjM0uIZI/NodkgKue2rbzilXzoo3ue7LdSyt25wVT8mPunroAThMWiQHAAz/Yn7RHIwVaJV0UhoO0OEjmB/pG0TzC3gsr6yQH6iiEgYgHPAOOAMgeQ+3zWB7AeQGMD5APfhQ987/P/bx/66J4n+42CD/05gOr7tUKI0UFtG0cEB/Brf+IWj8kddAfcGTBhhP6eq0A/CQI+YboD0ETQnG/VQoz+6f1+1Qj4hAE3iVf3/ADqqeIAmpSw/rSQ4AB+7be+EkiXfOb99f2DOGE0fqB4JR/q3f5ENq+ZwaoK6kmi/F3PEwz4Rj01TNO9mACqfQG49AO31LCoDfCPenYwE0P1oAjVBjRPUK8DwQE822/M+qUK2J8WTp+v7WH7AyOCA/i135gFrNs8HXj6/Wma6rYQuIWQA75R08I1MUSjfyR9AO56BsQE8A/TpZzgSsBScLoF+v4+KBQcwK/9Rr/O3H8VeDjwLA7RMwZJDIHgAJ7tT9oLgESQYpDmAbAWgPcYQwj4RiPmqztgBRAnRc65cRVKCAN+UaVgZfzATRHkQGvzaM0iAoIDeLbfVNJVkke3oCeGkAvwO3q8rOKVfKh3+5tm0VT61Ncr+q7icWaQfyQAtQ08kfPtfCDgliTCItFxHJtU8oBfGAtC6Pup+rFFrAaJuO1jIkjUBfi3vx4fz2Vd6wTo97U3IP2+agbBAfzan4BbPwBNAuUE0FxBM8O2bbWMLErD/MPUt+vBELoKaO6f5gX2B08H/KHmBKo/15NCmA7O1YAt4zVBJDiAX/uNAwrcInzq/3ldxSCg9XvBAfzan3hQtPYIVkl4XdeqCHI1AHAnDQd8wgA0UnAfHtZVAWgjhAH/MAC1/k+JH69rvYDGCnQCBAfwa7+RyXPwNeW7D/io/2eKGH9XvJIP9W6/9QEeoD0fUH09/1CuDCofB3yiTgldItZ1xXEcTU/AZVnqCgGgaRUb8IumVzCVQIaDKQOXUuqZgmZWXYSeNq54JR/66J4n+2s4mIEfToR+Z8C3XxXDR4QQeC0f6t3+eoXRP7aIB9oWsYwF8PqjGRXwB9NlTHUAfpIgUjHUs4VDCPKPfwEIRxVfQmiVYwAAAABJRU5ErkJggg=="
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        22,
+        -32,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.95,
+        0.95,
+        0.95
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -15,
+        0
+      ],
+      "translation": [
+        0,
+        3.5,
+        -2
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

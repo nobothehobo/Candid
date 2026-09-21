@@ -43,3 +43,7 @@ if __name__ == "__main__":
     export("enlarger", "block/enlarger")
     for mm in (28,35,50,90):
         export(f"lens_{mm}",f"item/lens_{mm}")
+
+    for phase in range(1,5):
+        export(f"camera_loading_{phase}",f"item/camera_loading_{phase}")
+    export("film_loading_cartridge","item/film_loading_cartridge")

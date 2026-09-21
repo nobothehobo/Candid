@@ -55,6 +55,8 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 catch(ReflectiveOperationException e){throw new AssertionError("Iris integration unavailable",e);}
             });
             context.setScreen(()->new FilmLoadScreen(FilmStock.WARM_200));
+            context.waitFor(c->c.screen instanceof FilmLoadScreen load&&load.animationAge()>=22,300);
+            context.takeScreenshot("candid-loading-hands");
             context.waitFor(c->CameraData.isWound(c.player.getMainHandItem()),400);
             context.setScreen(CameraControlScreen::new);context.waitTicks(3);context.takeScreenshot("candid-controls");
             context.setScreen(CameraScreen::new);context.waitTicks(5);context.takeScreenshot("candid-viewfinder");
