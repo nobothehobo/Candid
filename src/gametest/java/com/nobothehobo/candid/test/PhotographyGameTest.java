@@ -54,10 +54,14 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             context.waitFor(c->CameraData.isWound(c.player.getMainHandItem()),400);
             context.setScreen(CameraControlScreen::new);context.waitTicks(3);context.takeScreenshot("candid-controls");
             context.setScreen(CameraScreen::new);context.waitTicks(5);context.takeScreenshot("candid-viewfinder");
-            context.runOnClient(c->{c.options.keyJump.setDown(true);check(PhotoCapture.queue(c.player.getMainHandItem(),4,3,0),"Capture queue rejected");check(c.screen instanceof CaptureScreen,"Capture must keep an input-blocking screen open");check(!c.options.keyJump.isDown(),"Shutter leaked jump input");});
+            context.runOnClient(c->{c.options.keyJump.setDown(true);c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE,0,0));check(PhotoCapture.busy(),"Shutter did not start capture");check(c.screen instanceof CaptureScreen,"Capture must keep an input-blocking screen open");check(!c.options.keyJump.isDown(),"Shutter leaked jump input");});
             context.waitFor(c->CameraData.frames(c.player.getMainHandItem())==35,600);
-            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var camera=p.getMainHandItem();rollId[0]=UUID.fromString(CameraData.rollId(camera));
-                check(!CameraData.isWound(camera),"Must wind after exposure");RollManager.unload(p,camera);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();rollId[0]=UUID.fromString(CameraData.rollId(p.getMainHandItem()));});
+            context.setScreen(FilmUnloadScreen::new);
+            context.runOnClient(c->c.screen.onClose());
+            context.waitFor(c->CameraData.film(c.player.getMainHandItem())==null);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var camera=p.getMainHandItem();
+                check(!CameraData.isWound(camera),"Must wind after exposure");
                 var r=RollManager.store(p).get(rollId[0]);check(r.used()==1&&r.frames().size()==1,"Frame missing");
                 byte[] pixels=Base64.getDecoder().decode(r.frames().getFirst().colors());check(pixels.length==16384,"Wrong map dimensions");
                 check(java.util.stream.IntStream.range(0,pixels.length).map(i->pixels[i]&255).distinct().count()>3,"Capture was blank");
@@ -117,10 +121,35 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 c.player.setXRot(20);
             });
             context.waitTicks(20);context.takeScreenshot("candid-photo-print");
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getInventory().setSelectedSlot(0);p.getInventory().setItem(0,new ItemStack(CandidItems.CAMERA));
+                RollManager.sync(p,p.getMainHandItem());RollManager.give(p,new ItemStack(CandidItems.LENS_90));
+                RollManager.swapLens(p,p.getMainHandItem(),3);check(CameraData.lens(p.getMainHandItem())==90,"Telephoto lens did not attach");
+                check(RollManager.find(p,CandidItems.LENS_35)>=0,"Previous lens not returned");
+                RollManager.swapLens(p,p.getMainHandItem(),1);check(CameraData.lens(p.getMainHandItem())==35,"Standard lens did not reattach");
+                RollManager.give(p,new ItemStack(CandidItems.FILM_SUN_200));RollManager.load(p,p.getMainHandItem(),FilmStock.WARM_200.ordinal());CameraData.wind(p.getMainHandItem());
+                CameraData.setShutterIndex(p.getMainHandItem(),10);
+                var stand=p.blockPosition().offset(0,0,1);p.level().setBlockAndUpdate(stand,com.nobothehobo.candid.content.CandidBlocks.TRIPOD.defaultBlockState());CameraData.mount(p.getMainHandItem(),stand);
+            });
+            context.runOnClient(c->c.player.getInventory().setSelectedSlot(0));
+            context.waitFor(c->CameraData.tripod(c.player.getMainHandItem(),c.player)!=null&&CameraData.isWound(c.player.getMainHandItem()));
+            context.setScreen(CameraScreen::new);context.waitTicks(10);context.takeScreenshot("candid-tripod-viewfinder");
+            context.runOnClient(c->{check(c.gameRenderer.getMainCamera().getPosition().distanceTo(CameraOptics.anchor())<.05,"Tripod viewpoint did not move to head");});
+            double[] bright={0},dark={0};
+            world.getServer().runCommand("time set noon");context.waitTicks(30);context.runOnClient(c->bright[0]=new SceneMeter().read(c));
+            world.getServer().runCommand("time set midnight");context.waitTicks(30);context.runOnClient(c->dark[0]=new SceneMeter().read(c));
+            check(bright[0]-dark[0]>7,"Live meter did not respond to day/night sunlight");
+            long start=System.currentTimeMillis();
+            context.runOnClient(c->check(PhotoCapture.queue(c.player.getMainHandItem(),4,10,0),"Tripod long exposure rejected"));
+            context.waitFor(c->CameraData.frames(c.player.getMainHandItem())==35,1000);
+            check(System.currentTimeMillis()-start>=1000,"Long exposure did not wait for actual scene samples");
+            context.runOnClient(c->c.player.closeContainer());
+
         }
         try(var reopened=save.open()){
             reopened.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var r=RollManager.store(p).get(rollId[0]);
                 check(r.stage()==RollState.Stage.DEVELOPED&&r.used()==1,"Roll did not survive restart");check(r.frames().getFirst().mapId()==mapId[0],"Map ID not preserved");
+                check(r.frames().getFirst().highColors()!=null&&r.frames().getFirst().tiles().size()==4,"Large negative or tile IDs not saved");
+                for(int tile:r.frames().getFirst().tiles())check(p.level().getMapData(new MapId(tile))!=null,"Large print tile missing after reopen");
                 var map=p.level().getMapData(new MapId(mapId[0]));check(map!=null&&map.locked,"Print not saved");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Saved map colors changed");
             });
         }
