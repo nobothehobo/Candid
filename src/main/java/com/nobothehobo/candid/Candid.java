@@ -31,6 +31,12 @@ public class Candid implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(CapturePhotoPayload.ID, CapturePhotoPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(CameraActionPayload.ID, CameraActionPayload.CODEC);
 
+        PayloadTypeRegistry.playS2C().register(com.nobothehobo.candid.network.PreviewPayload.ID,com.nobothehobo.candid.network.PreviewPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(com.nobothehobo.candid.network.ScanChunkPayload.ID,com.nobothehobo.candid.network.ScanChunkPayload.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.ScanChunkPayload.ID,(payload,context)->{
+            if(!cameraInHands(context.player()).isEmpty())com.nobothehobo.candid.photo.ScanUploads.accept(context.player(),payload);
+        });
+        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.DISCONNECT.register((handler,server)->com.nobothehobo.candid.photo.ScanUploads.clear(handler.player.getUUID()));
         com.nobothehobo.candid.photo.RollManager.initialize();
         ServerPlayNetworking.registerGlobalReceiver(CameraActionPayload.ID, (payload, context) -> {
             ServerPlayer player=context.player(); ItemStack camera=cameraInHands(player); if(camera.isEmpty())return;

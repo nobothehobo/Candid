@@ -27,30 +27,14 @@ public class DarkroomBasinBlock extends Block {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if(CandidItems.stockFor(stack.getItem())!=null){
-            if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.RollManager.safely(p,()->com.nobothehobo.candid.photo.RollManager.develop(p,stack));
-            return InteractionResult.SUCCESS;
-        }
-        if (!PhotoMaps.isExposed(stack)) return InteractionResult.PASS;
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;
-
-        if (!player.getAbilities().instabuild && !consumeDeveloper(player)) {
-            player.displayClientMessage(Component.literal("You need Developer Chemistry in your inventory."), true);
-            return InteractionResult.FAIL;
-        }
-        if (PhotoMaps.develop(stack, serverLevel)) {
-            player.displayClientMessage(Component.literal("Negative developed into a positive print."), true);
-            return InteractionResult.SUCCESS;
-        }
-        return InteractionResult.FAIL;
+        return open(player,pos);
     }
-
-    private boolean consumeDeveloper(Player player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack s = player.getInventory().getItem(i);
-            if (s.is(CandidItems.DEVELOPER)) { s.shrink(1); return true; }
-        }
-        return false;
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return open(player,pos);
+    }
+    private InteractionResult open(Player player,BlockPos pos) {
+        if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.DarkroomMenu.open(p,pos,false);
+        return InteractionResult.SUCCESS;
     }
 }

@@ -23,7 +23,7 @@ public final class RollManager {
     public static void initialize(){
         ServerLifecycleEvents.SERVER_STARTED.register(s->{try{STORES.put(s,new RollRepository(s.getWorldPath(LevelResource.ROOT).resolve("candid/rolls")));}catch(Exception e){LOG.error("Cannot load Candid rolls; photography disabled to protect data",e);}});
         ServerTickEvents.END_SERVER_TICK.register(s->{if(s.getTickCount()%20==0){var r=STORES.get(s);if(r!=null)try{r.flush();}catch(Exception e){LOG.error("Candid storage failed",e);}}});
-        ServerLifecycleEvents.SERVER_STOPPING.register(s->{var r=STORES.remove(s);if(r!=null)try{r.close();}catch(Exception e){LOG.error("Candid final save failed",e);}LAST_SHOT.clear();});
+        ServerLifecycleEvents.SERVER_STOPPING.register(s->{var r=STORES.remove(s);if(r!=null)try{r.close();}catch(Exception e){LOG.error("Candid final save failed",e);}LAST_SHOT.clear();ScanUploads.clear();});
     }
     public static RollRepository store(ServerPlayer p){var r=STORES.get(p.level().getServer());if(r==null)throw new IllegalStateException("Photography storage unavailable");return r;}
     public interface Action {void run()throws Exception;}
@@ -61,6 +61,7 @@ public final class RollManager {
         for(byte b:shot.colors())if((b&255)<4||(b&255)>247)throw new IllegalArgumentException("Invalid photo palette");
         var r=store(p).get(UUID.fromString(shot.rollId()));var stock=FilmStock.byName(r.stock());
         var frame=new RollState.Frame(UUID.fromString(shot.shotId()),r.used()+1,Base64.getEncoder().encodeToString(shot.colors()),p.getName().getString(),now,CameraData.APERTURES[shot.apertureIndex()],CameraData.SHUTTERS[shot.shutterIndex()],stock.iso(),shot.offset(),-1);
+        frame=frame.withScan(ScanUploads.take(p,shot.shotId()));
         r=r.expose(CameraData.cameraId(camera),frame);store(p).put(r);CameraData.consumeFrame(camera);CameraData.bind(camera,r);LAST_SHOT.put(p.getUUID(),now);
         p.displayClientMessage(Component.literal("Frame "+r.used()+" recorded • "+(36-r.used())+" remaining • wind for next frame"),true);
     }

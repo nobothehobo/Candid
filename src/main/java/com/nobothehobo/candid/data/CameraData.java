@@ -17,6 +17,7 @@ public final class CameraData {
     private static final String SHUTTER = "candid_shutter";
     private static final String WOUND = "candid_wound";
 
+    public static String shutterLabel(int value){return value>0?"1/"+value:Math.abs(value)+" s";}
     private CameraData() { }
 
     private static CompoundTag tag(ItemStack stack) {

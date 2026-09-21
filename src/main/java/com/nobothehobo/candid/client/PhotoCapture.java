@@ -24,17 +24,20 @@ public final class PhotoCapture {
     private static long started, generation;
     private static Object level;
     private PhotoCapture(){}
+    public static void cancel(){generation++;pending=null;reading=false;processing=false;}
     public static boolean hiding(){return pending!=null||reading;}
     public static boolean busy(){return pending!=null||reading||processing;}
     public static boolean queue(ItemStack camera,int aperture,int shutter,float offset){
         Minecraft mc=Minecraft.getInstance();FilmStock stock=CameraData.film(camera);
         if(busy()||stock==null||CameraData.frames(camera)<=0||!CameraData.isWound(camera)||CameraData.cameraId(camera).isEmpty()||CameraData.rollId(camera).isEmpty())return false;
         pending=new Pending(stock,aperture,shutter,offset,CameraData.cameraId(camera),CameraData.rollId(camera),UUID.randomUUID().toString());
+        net.minecraft.client.KeyMapping.releaseAll();
+        mc.setScreen(new CaptureScreen());
         generation++;waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
     }
     public static void tick(Minecraft client){
         if(!busy())return;
-        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>10000){generation++;pending=null;reading=false;processing=false;return;}
+        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>45000){generation++;pending=null;reading=false;processing=false;return;}
         if(pending==null||waitTicks-->0)return;
         Pending shot=pending;long captureGeneration=generation;Object capturedLevel=level;pending=null;reading=true;
         try{Screenshot.takeScreenshot(client.getMainRenderTarget(),image->{
@@ -46,8 +49,11 @@ public final class PhotoCapture {
                         if(captureGeneration!=generation)return;
                         processing=false;
                         if(client.level!=capturedLevel||client.player==null)return;
-                        if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID))ClientPlayNetworking.send(new CapturePhotoPayload(result,shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
-                        if(client.screen==null)client.setScreen(new CameraScreen());
+                        if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID)){
+                            for(int part=0;part<4;part++)ClientPlayNetworking.send(new com.nobothehobo.candid.network.ScanChunkPayload(shot.id,part,Arrays.copyOfRange(result,part*16384,(part+1)*16384)));
+                            ClientPlayNetworking.send(new CapturePhotoPayload(compact(result),shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
+                        }
+                        if(client.screen==null||client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());
                     });}catch(Exception e){client.execute(()->failure(client,e,captureGeneration));}
                 });
             }catch(Exception e){failure(client,e,captureGeneration);}finally{image.close();}
@@ -55,18 +61,35 @@ public final class PhotoCapture {
     }
     private static void failure(Minecraft client,Exception e,long captureGeneration){if(captureGeneration!=generation)return;pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);}
     private static int[] sample(NativeImage image){
-        FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[126*84];
+        FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[252*168];
         // Screenshot already returns top-left-oriented pixels. Do not flip a second time.
-        for(int y=0;y<84;y++)for(int x=0;x<126;x++){
+        for(int y=0;y<168;y++)for(int x=0;x<252;x++){
             int r=0,g=0,b=0;for(double dy:new double[]{.25,.75})for(double dx:new double[]{.25,.75}){
-                int sx=crop.x()+Math.min(crop.width()-1,(int)((x+dx)*crop.width()/126)),sy=crop.y()+Math.min(crop.height()-1,(int)((y+dy)*crop.height()/84));
+                int sx=crop.x()+Math.min(crop.width()-1,(int)((x+dx)*crop.width()/252)),sy=crop.y()+Math.min(crop.height()-1,(int)((y+dy)*crop.height()/168));
                 int c=image.getPixel(sx,sy);r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;
-            }out[y*126+x]=((r/4)<<16)|((g/4)<<8)|(b/4);
+            }out[y*252+x]=((r/4)<<16)|((g/4)<<8)|(b/4);
         }return out;
     }
     private static byte[] convert(int[] rgb,Pending shot){
-        byte[] out=new byte[16384];Arrays.fill(out,(byte)nearest(0xe5dfd1,false));Random noise=new Random(UUID.fromString(shot.id).getLeastSignificantBits());
-        for(int y=0;y<84;y++)for(int x=0;x<126;x++)out[(y+22)*128+x+1]=(byte)nearest(FilmSignal.process(rgb[y*126+x],shot.stock,shot.offset,noise),shot.stock.monochrome());
+        byte[] out=new byte[65536];Arrays.fill(out,(byte)nearest(0xe5dfd1,false));Random noise=new Random(UUID.fromString(shot.id).getLeastSignificantBits());
+        // Restrained ordered dither breaks map-palette bands without error diffusion's worms.
+        int[] bayer={0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5};
+        for(int y=0;y<168;y++)for(int x=0;x<252;x++){
+            int rgbOut=FilmSignal.process(rgb[y*252+x],shot.stock,shot.offset,noise);
+            int d=bayer[(y&3)*4+(x&3)]-8,c=0;
+            for(int shift:new int[]{16,8,0})c|=Math.max(0,Math.min(255,((rgbOut>>shift)&255)+d))<<shift;
+            out[(y+44)*256+x+2]=(byte)nearest(c,shot.stock.monochrome());
+        }
+        return out;
+    }
+    private static byte[] compact(byte[] high){
+        byte[] out=new byte[16384];
+        for(int y=0;y<128;y++)for(int x=0;x<128;x++){
+            int r=0,g=0,b=0;for(int dy=0;dy<2;dy++)for(int dx=0;dx<2;dx++){
+                int c=PALETTE[high[(2*y+dy)*256+2*x+dx]&255];r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;
+            }
+            out[y*128+x]=(byte)nearest((r/4<<16)|(g/4<<8)|b/4,false);
+        }
         return out;
     }
     private static int[] palette(){int[] p=new int[248];for(int i=4;i<p.length;i++)p[i]=MapColor.getColorFromPackedId(i);return p;}

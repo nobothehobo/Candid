@@ -158,7 +158,7 @@ public class CameraScreen extends Screen {
             return;
         }
         CandidClient.playLocal(CandidSounds.SHUTTER);
-        if(PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock))) minecraft.setScreen(null);
+        if(PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock))) minecraft.setScreen(new CaptureScreen());
     }
 
     private void openControls() {
