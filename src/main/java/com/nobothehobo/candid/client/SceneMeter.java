@@ -10,7 +10,8 @@ import java.util.*;
 
 /** Nine reflected-light samples and sun-occlusion tests at 4 Hz, on the client thread. */
 public final class SceneMeter {
-    private long last;private double reading=15;
+    private long last;private double reading=15;private double subject=1000;
+    public double subjectDistance(){return subject;}
     public double read(Minecraft client){
         long now=System.nanoTime();if(now-last<250_000_000)return reading;last=now;
         if(client.level==null||client.player==null)return reading;
@@ -24,6 +25,7 @@ public final class SceneMeter {
             Vec3 direction=forward.add(right.scale(x*spread*.9)).add(up.scale(y*spread*.6)).normalize();
             var hit=level.clip(new ClipContext(origin,origin.add(direction.scale(48)),ClipContext.Block.VISUAL,ClipContext.Fluid.NONE,p));
             double weight=x==0&&y==0?4:1;
+            if(x==0&&y==0)subject=hit.getType()==HitResult.Type.MISS?1000:origin.distanceTo(hit.getLocation());
             if(hit.getType()==HitResult.Type.MISS){samples.add(new LightMeter.Surface(15,0,weight,.18,1,true));continue;}
             var normal=Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i());
             Vec3 surface=hit.getLocation().add(normal.scale(.04));BlockPos air=BlockPos.containing(surface);

@@ -14,6 +14,9 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    if (System.getenv('CANDID_SHADER_TEST') == 'true') {
+        modLocalRuntime files('build/shader-test/dependencies/iris.jar', 'build/shader-test/dependencies/sodium.jar')
+    }
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

@@ -21,7 +21,7 @@ public abstract class LoadingHandsMixin {
     @Shadow public abstract void renderItem(LivingEntity entity,ItemStack item,ItemDisplayContext context,PoseStack pose,SubmitNodeCollector collector,int light);
     @Shadow private void renderPlayerArm(PoseStack pose,SubmitNodeCollector collector,int light,float equip,float swing,HumanoidArm arm){throw new AssertionError();}
 
-    @Inject(method="renderHandsWithItems",at=@At("HEAD"),cancellable=true)
+    @Inject(method="renderHandsWithItems",at=@At("HEAD"))
     private void candid$load(float partialTick,PoseStack pose,SubmitNodeCollector collector,LocalPlayer player,int light,CallbackInfo ci){
         if(!(Minecraft.getInstance().screen instanceof FilmLoadScreen loading))return;
         ItemStack held=CameraOptics.camera();if(held.isEmpty())return;
@@ -40,6 +40,12 @@ public abstract class LoadingHandsMixin {
             pose.pushPose();pose.translate(-.46+progress*.18,-.18-progress*.09,-.9-progress*.29);pose.scale(.24f,.24f,.24f);
             renderItem(player,cartridge,ItemDisplayContext.NONE,pose,collector,light);pose.popPose();
         }
-        ci.cancel();
+    }
+
+    // Keep renderHandsWithItems' tail: it flushes the deferred submit collector in 1.21.10.
+    // Cancelling that outer method silently discards every model/skin submitted above.
+    @Inject(method="renderArmWithItem",at=@At("HEAD"),cancellable=true)
+    private void candid$replaceVanillaArms(CallbackInfo ci){
+        if(Minecraft.getInstance().screen instanceof FilmLoadScreen&&!CameraOptics.camera().isEmpty())ci.cancel();
     }
 }

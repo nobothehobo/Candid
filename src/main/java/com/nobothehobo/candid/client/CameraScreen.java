@@ -72,7 +72,10 @@ public class CameraScreen extends Screen {
         graphics.fill(0,frame.y(),frame.x(),frame.y()+frame.height(),0xA9090B0D);
         graphics.fill(frame.x()+frame.width(),frame.y(),width,frame.y()+frame.height(),0xA9090B0D);
         graphics.submitOutline(frame.x(),frame.y(),frame.width(),frame.height(),0xF2F4EBD2);
-        graphics.submitOutline(cx-14,cy-10,28,20,0xAAADE9DE);
+        double target=sceneMeter.subjectDistance();
+        boolean inFocus=com.nobothehobo.candid.core.Optics.blurRadius(CameraData.lens(camera),CameraData.APERTURES[apertureIndex],CameraData.focus(camera),target,504)<.8;
+        graphics.submitOutline(cx-14,cy-10,28,20,inFocus?0xff97d9ab:0xffeed29c);
+        graphics.drawCenteredString(font,target>=1000?"Subject: infinity":"Subject: "+String.format(java.util.Locale.ROOT,"%.1f m",target),cx,frame.y()+frame.height()-12,0xffe6dfce);
         graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
         graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
         graphics.drawCenteredString(font,CameraData.lens(camera)+" mm • focus "+(CameraData.focus(camera)>=1000?"infinity":CameraData.focus(camera)+" m")+" • "+(CameraData.tripod(camera,minecraft.player)==null?"handheld":"tripod"),cx,23,0xFFB7B3A5);
@@ -161,6 +164,11 @@ public class CameraScreen extends Screen {
         if(PhotoCapture.queue(camera, apertureIndex, shutterIndex, meterStops(stock))) minecraft.setScreen(new CaptureScreen());
     }
 
+    private void focusSubject(){
+        double distance=sceneMeter.subjectDistance(),best=Double.MAX_VALUE;int chosen=0;
+        for(int i=0;i<com.nobothehobo.candid.core.Optics.FOCUS.length;i++){double error=Math.abs(1/distance-1/com.nobothehobo.candid.core.Optics.FOCUS[i]);if(error<best){best=error;chosen=i;}}
+        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.FOCUS,chosen));
+    }
     private void openControls() {
         if (minecraft != null) minecraft.setScreen(new CameraControlScreen());
     }
@@ -176,6 +184,7 @@ public class CameraScreen extends Screen {
             case GLFW.GLFW_KEY_R -> { wind(); yield true; }
             case GLFW.GLFW_KEY_LEFT_BRACKET -> {CameraOptics.focus(-1);yield true;}
             case GLFW.GLFW_KEY_RIGHT_BRACKET -> {CameraOptics.focus(1);yield true;}
+            case GLFW.GLFW_KEY_F -> {focusSubject();yield true;}
             case GLFW.GLFW_KEY_C -> { openControls(); yield true; }
             default -> super.keyPressed(input);
         };
@@ -198,6 +207,7 @@ public class CameraScreen extends Screen {
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> changeShutter(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, ()->CameraOptics.focus(-1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, ()->CameraOptics.focus(1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, this::focusSubject);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_A, this::shoot);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_X, this::wind);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_Y, this::openControls);

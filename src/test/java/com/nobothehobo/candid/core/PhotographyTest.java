@@ -72,4 +72,9 @@ class PhotographyTest {
         try(var repo=new RollRepository(directory.resolve("rolls"))){repo.saveScan(id,data);assertArrayEquals(data,repo.readScan(id).join());}
         try(var repo=new RollRepository(directory.resolve("rolls"))){assertArrayEquals(data,repo.readScan(id).join());}
     }
+    @Test void exportPathCannotEscape(){assertThrows(IllegalArgumentException.class,()->PhotoExport.write(directory,"../escape.png",new byte[24]));}
+    @Test void exportIsRepeatable()throws Exception{
+        byte[] bytes=new byte[24];java.nio.ByteBuffer.wrap(bytes).putLong(0x89504e470d0a1a0aL);String name=UUID.randomUUID()+".png";
+        Path first=PhotoExport.write(directory,name,bytes);assertEquals(first,PhotoExport.write(directory,name,bytes));assertArrayEquals(bytes,Files.readAllBytes(first));
+    }
 }

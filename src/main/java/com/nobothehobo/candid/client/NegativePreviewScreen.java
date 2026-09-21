@@ -19,6 +19,7 @@ public final class NegativePreviewScreen extends Screen {
     private boolean inverted,registered,mapProof;
     private int imageWidth,imageHeight;
     private String status="";
+    private boolean exporting;
     private int size;
     public NegativePreviewScreen(Screen parent,PreviewPayload photo){super(Component.literal(photo.title()));this.parent=parent;this.photo=photo;}
     @Override public boolean isPauseScreen(){return false;}
@@ -36,7 +37,10 @@ public final class NegativePreviewScreen extends Screen {
         try{
             if(photo.png().length>0&&!mapProof)image=NativeImage.read(photo.png());
             else{image=new NativeImage(size,size,false);for(int y=0;y<size;y++)for(int x=0;x<size;x++)image.setPixel(x,y,MapColor.getColorFromPackedId(photo.colors()[y*size+x]&255));}
-        }catch(java.io.IOException e){throw new IllegalArgumentException("Invalid scan image",e);}
+        }catch(java.io.IOException e){
+            status="Scan unreadable • displaying map proof";image=new NativeImage(size,size,false);
+            for(int y=0;y<size;y++)for(int x=0;x<size;x++)image.setPixel(x,y,MapColor.getColorFromPackedId(photo.colors()[y*size+x]&255));
+        }
         imageWidth=image.getWidth();imageHeight=image.getHeight();
         if(inverted)for(int y=0;y<imageHeight;y++)for(int x=0;x<imageWidth;x++)image.setPixel(x,y,0xff000000|(~image.getPixel(x,y)&0xffffff));
         if(registered)minecraft.getTextureManager().release(texture);
@@ -52,16 +56,29 @@ public final class NegativePreviewScreen extends Screen {
         g.drawCenteredString(font,font.plainSubstrByWidth(title.getString(),width-16),width/2,10,0xffeee5d5);
         super.render(g,x,y,delta);
     }
-    private void export(){
-        byte[] png=photo.png();if(png.length==0){status="This older negative has no full-color scan.";return;}
-        String name=photo.filename();if(!name.matches("[a-fA-F0-9-]{36}\\.png")){status="Invalid photo filename";return;}
-        java.nio.file.Path destination=minecraft.gameDirectory.toPath().resolve("candid-exports").resolve(name);
-        status="Saving PNG…";var client=minecraft;
-        java.util.concurrent.CompletableFuture.runAsync(()->{
-            try{java.nio.file.Files.createDirectories(destination.getParent());java.nio.file.Files.write(destination,png);
-                client.execute(()->{status="Saved in candid-exports • ready to share";net.minecraft.Util.getPlatform().openPath(destination.getParent());});
-            }catch(Exception e){client.execute(()->status="Could not export — see game log");org.slf4j.LoggerFactory.getLogger("Candid").error("PNG export failed",e);}
+    private void export(){exportScan(true);}
+    public java.util.concurrent.CompletableFuture<java.nio.file.Path> exportScan(boolean openFolder){
+        if(exporting)return java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("Export already running"));
+        exporting=true;status="Saving PNG…";var client=minecraft;
+        var destination=minecraft.gameDirectory.toPath().resolve("candid-exports");
+        var result=java.util.concurrent.CompletableFuture.supplyAsync(()->{
+            try{
+                byte[] png=photo.png();
+                if(png.length==0){
+                    int side=photo.colors().length==65536?256:128;
+                    var image=new java.awt.image.BufferedImage(side,side,java.awt.image.BufferedImage.TYPE_INT_RGB);
+                    for(int y=0;y<side;y++)for(int x=0;x<side;x++)image.setRGB(x,y,MapColor.getColorFromPackedId(photo.colors()[y*side+x]&255));
+                    var bytes=new java.io.ByteArrayOutputStream();javax.imageio.ImageIO.write(image,"png",bytes);png=bytes.toByteArray();
+                }
+                return com.nobothehobo.candid.core.PhotoExport.write(destination,photo.filename(),png);
+            }catch(Exception e){throw new java.util.concurrent.CompletionException(e);}
         });
+        result.whenComplete((path,error)->client.execute(()->{
+            exporting=false;
+            if(error!=null){status="Could not export — see game log";org.slf4j.LoggerFactory.getLogger("Candid").error("PNG export failed",error);}
+            else{status="Saved in candid-exports • ready to share";if(openFolder)net.minecraft.Util.getPlatform().openPath(path.getParent());}
+        }));
+        return result;
     }
     @Override public void onClose(){minecraft.setScreen(parent);}
     @Override public void removed(){if(registered){minecraft.getTextureManager().release(texture);registered=false;}}

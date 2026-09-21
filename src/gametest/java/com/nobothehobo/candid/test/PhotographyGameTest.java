@@ -105,6 +105,9 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(p.getInventory().getItem(3).getCount()==8,"Preview consumed paper");
             });
             context.waitFor(c->c.screen instanceof NegativePreviewScreen);context.takeScreenshot("candid-free-preview");
+            java.util.concurrent.atomic.AtomicReference<java.util.concurrent.CompletableFuture<java.nio.file.Path>> exported=new java.util.concurrent.atomic.AtomicReference<>();
+            context.runOnClient(c->exported.set(((NegativePreviewScreen)c.screen).exportScan(false)));
+            try{check(Arrays.equals(png,java.nio.file.Files.readAllBytes(exported.get().join())),"PNG sharing export changed the scan");}catch(java.io.IOException e){throw new AssertionError(e);}
             context.runOnClient(c->c.screen.onClose());
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();
                 p.containerMenu.clicked(0,0,ClickType.PICKUP,p);p.containerMenu.clicked(0,0,ClickType.PICKUP,p);

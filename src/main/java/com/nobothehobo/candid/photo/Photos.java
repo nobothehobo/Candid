@@ -39,7 +39,10 @@ public final class Photos {
             s.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Candid Photograph • "+f.photographer()+" • Frame "+f.number()));prints.add(s);
         }
         RollManager.store(p).put(roll.withFrame(index,f));paper.shrink(1);
-        for(var s:prints){PhotoMaps.markDeveloped(s);RollManager.give(p,s);}
+        for(var s:prints){PhotoMaps.markDeveloped(s);
+            net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA,s,t->{t.putString("candid_negative",roll.id().toString());t.putInt("candid_frame",index);});
+            RollManager.give(p,s);
+        }
     }
     private static ItemStack map(ServerPlayer p,byte[] colors,int id){
         if(id>=0&&p.level().getMapData(new MapId(id))!=null){var s=new ItemStack(Items.FILLED_MAP);s.set(DataComponents.MAP_ID,new MapId(id));return s;}
