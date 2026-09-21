@@ -50,6 +50,10 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             world.getServer().runCommand("execute at @p run fill ~-5 ~5 ~8 ~5 ~5 ~8 minecraft:stone_bricks");
             context.runOnClient(c->{c.player.setYRot(0);c.player.setXRot(0);});
             context.waitTicks(20);context.takeScreenshot("candid-camera-held");
+            if("true".equals(System.getenv("CANDID_SHADER_TEST")))context.runOnClient(c->{
+                try{Class<?> api=Class.forName("net.irisshaders.iris.api.v0.IrisApi");Object instance=api.getMethod("getInstance").invoke(null);check((boolean)api.getMethod("isShaderPackInUse").invoke(instance),"Iris shader pack is not active");}
+                catch(ReflectiveOperationException e){throw new AssertionError("Iris integration unavailable",e);}
+            });
             context.setScreen(()->new FilmLoadScreen(FilmStock.WARM_200));
             context.waitFor(c->CameraData.isWound(c.player.getMainHandItem()),400);
             context.setScreen(CameraControlScreen::new);context.waitTicks(3);context.takeScreenshot("candid-controls");
@@ -83,6 +87,11 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.closeContainer();
                 check(rollItem(p,rollId[0])!=null,"Closing tank lost film");
             });
+            var scanFuture=world.getServer().computeOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();return RollManager.store(p).readScan(RollManager.store(p).get(rollId[0]).frames().getFirst().id());});
+            byte[] png=scanFuture.join();check(png.length>0,"Full-color scan not saved");
+            try{var image=javax.imageio.ImageIO.read(new java.io.ByteArrayInputStream(png));check(image.getWidth()==504&&image.getHeight()==336,"Wrong full-color scan resolution");
+                if("true".equals(System.getenv("CANDID_SHADER_TEST"))){long r=0,g=0,b=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++){int c=image.getRGB(x,y);r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;}check(r>3*g&&r>3*b,"Shader result was not preserved in the scan");}
+            }catch(java.io.IOException e){throw new AssertionError("Unreadable exported scan",e);}
             long ready=world.getServer().computeOnServer(s->RollManager.store(s.getPlayerList().getPlayers().getFirst()).get(rollId[0]).readyAt());
             context.setScreen(GuideScreen::new);
             context.takeScreenshot("candid-guide");

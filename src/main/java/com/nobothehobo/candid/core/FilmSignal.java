@@ -7,7 +7,7 @@ import java.util.Random;
 public final class FilmSignal {
     private FilmSignal(){}
     public static int process(int rgb, FilmStock stock, double stops, Random noise){
-        stops=Math.max(-8,Math.min(8,stops));double gain=Math.pow(2,stops*(stops<0?stock.underResponse():stock.overResponse()));
+        stops=Math.max(-8,Math.min(8,stops));double gain=Math.pow(2,stops*(stops<0?Math.max(.9,stock.underResponse()):Math.max(.82,stock.overResponse())));
         double[] c={linear((rgb>>16)&255),linear((rgb>>8)&255),linear(rgb&255)};
         for(int i=0;i<3;i++){
             double v=c[i]*gain;

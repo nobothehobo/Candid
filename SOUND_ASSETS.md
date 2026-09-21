@@ -1,18 +1,15 @@
-# Candid Camera Sound Assets
+# Candid camera audio
 
-The audio shipped in Candid 0.2 is original Candid mechanical foley generated specifically for the mod and may be distributed under the repository MIT license.
+Candid 0.5 uses a real recorded film-camera shutter from **drewtait**, “Film Camera Click Shutter” (Minolta XG-1), released under **CC0**.
 
-The design target is a compact mechanical 35 mm rangefinder: a short two-stage shutter snap, ratcheting thumb advance, film leader friction, and metal back latch.
+- Source: https://freesound.org/people/drewtait/sounds/676375/
+- License: https://creativecommons.org/publicdomain/zero/1.0/
+- Public preview source used: https://cdn.freesound.org/previews/676/676375_14682229-hq.mp3
+- Retrieved September 21, 2026. No account-only download was accessed.
+- Retained source: `assets/audio/drewtait-676375-preview.mp3`.
+- Edit: extract 2.16–2.64 seconds, mono; high-pass 70 Hz, low-pass 10.5 kHz, 3 ms fade-in, 80 ms tail fade, peak limiter at 0.89; encode Vorbis quality 6.
+- Shipped result: `assets/candid/sounds/camera/shutter.ogg`.
 
-## Vetted CC0 real-camera references for a later recording swap
+This is a real SLR recording, not a recording of a particular rangefinder. It supplies the requested mechanical film-shutter click without suggesting model-exact acoustics. Advance, leader friction and back-latch sounds remain the original Candid synthesized foley under MIT. Audible balance on physical Steam Deck speakers remains a manual check.
 
-These are not redistributed in the repository because Freesound currently requires an authenticated download for the source files.
-
-- drewtait — “Film Camera Click Shutter” — Minolta XG-1, shutter + film advance — CC0:
-  https://freesound.org/people/drewtait/sounds/676375/
-- khenshom — “Old SLR film camera film advance lever and shutter button click” — manual SLR — CC0:
-  https://freesound.org/people/khenshom/sounds/516486/
-- roachpowder — “Camera Shutter” — Canon T2i — CC0:
-  https://freesound.org/people/roachpowder/sounds/170229/
-
-If a future release imports any external recording, preserve its source URL and license here.
+The CC0 sample is independently licensed; the MIT repository license does not change its CC0 provenance.

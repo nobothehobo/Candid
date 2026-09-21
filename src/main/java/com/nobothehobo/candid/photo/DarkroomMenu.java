@@ -42,7 +42,7 @@ public final class DarkroomMenu extends AbstractContainerMenu {
     }
     public static void open(ServerPlayer player, BlockPos pos, boolean enlarger) {
         player.openMenu(new SimpleMenuProvider((id,inventory,p)->new DarkroomMenu(id,player,pos,enlarger),
-            Component.literal(enlarger?"Enlarger • Film / Paper":"Developing Tank • Film / Chemistry")));
+            Component.literal(enlarger?"Photo Enlarger":"Developing Tank")));
     }
     @Override public boolean stillValid(Player p) {
         return p==owner && p.isAlive() && p.distanceToSqr(position.getX()+.5,position.getY()+.5,position.getZ()+.5)<64

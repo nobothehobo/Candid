@@ -14,8 +14,11 @@ public final class Photos {
     private Photos(){}
     public static void preview(ServerPlayer p,RollState roll,int index){
         roll.canPrint(index,1);var f=roll.frames().get(index);
-        ServerPlayNetworking.send(p,new PreviewPayload(Base64.getDecoder().decode(f.highColors()==null?f.colors():f.highColors()),
-            "Frame "+f.number()+" • "+f.photographer()+" • preview (no paper)"));
+        var menu=p.containerMenu;var server=p.level().getServer();
+        RollManager.store(p).readScan(f.id()).thenAccept(png->server.execute(()->{
+            if(p.isAlive()&&p.containerMenu==menu)ServerPlayNetworking.send(p,new PreviewPayload(Base64.getDecoder().decode(f.highColors()==null?f.colors():f.highColors()),
+                "Frame "+f.number()+" • "+f.photographer()+" • free preview",png,f.id()+".png"));
+        }));
     }
     public static void print(ServerPlayer p,RollState roll,int index,ItemStack paper,boolean large){
         roll.canPrint(index,paper.is(CandidItems.PHOTO_PAPER)?paper.getCount():0);

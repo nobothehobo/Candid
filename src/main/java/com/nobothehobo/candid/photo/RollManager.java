@@ -70,7 +70,8 @@ public final class RollManager {
         for(byte b:shot.colors())if((b&255)<4||(b&255)>247)throw new IllegalArgumentException("Invalid photo palette");
         var r=store(p).get(UUID.fromString(shot.rollId()));var stock=FilmStock.byName(r.stock());
         var frame=new RollState.Frame(UUID.fromString(shot.shotId()),r.used()+1,Base64.getEncoder().encodeToString(shot.colors()),p.getName().getString(),now,CameraData.APERTURES[shot.apertureIndex()],CameraData.SHUTTERS[shot.shutterIndex()],stock.iso(),shot.offset(),-1);
-        frame=frame.withScan(ScanUploads.take(p,shot.shotId()));
+        var upload=ScanUploads.take(p,shot.shotId());frame=frame.withScan(upload.colors());
+        if(upload.png().length>0)store(p).saveScan(frame.id(),upload.png());
         r=r.expose(CameraData.cameraId(camera),frame);store(p).put(r);CameraData.consumeFrame(camera);CameraData.bind(camera,r);LAST_SHOT.put(p.getUUID(),now);
         p.displayClientMessage(Component.literal("Frame "+r.used()+" recorded • "+(36-r.used())+" remaining • wind for next frame"),true);
     }
