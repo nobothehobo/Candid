@@ -16,6 +16,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     if (System.getenv('CANDID_SHADER_TEST') == 'true') {
         modLocalRuntime files('build/shader-test/dependencies/iris.jar', 'build/shader-test/dependencies/sodium.jar')
+        runtimeOnly fileTree(dir: 'build/shader-test/dependencies/libraries', include: ['*.jar'])
     }
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

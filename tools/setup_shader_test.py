@@ -8,3 +8,11 @@ artifacts=[
 for url,name,digest in artifacts:
  p=mods/name;subprocess.run(['curl','--fail','--location','--silent',url,'--output',str(p)],check=True)
  assert hashlib.sha512(p.read_bytes()).hexdigest()==digest,'Dependency checksum mismatch'
+# Loom file dependencies do not automatically expose Iris' nested Java libraries.
+# Fabric API is already supplied by this project's pinned dependency.
+import zipfile
+with zipfile.ZipFile(mods/'iris.jar') as archive:
+    libs=mods/'libraries';libs.mkdir(exist_ok=True)
+    for entry in archive.namelist():
+        if entry.startswith('META-INF/jars/') and entry.endswith('.jar') and not Path(entry).name.startswith('fabric-'):
+            (libs/Path(entry).name).write_bytes(archive.read(entry))
