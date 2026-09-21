@@ -16,10 +16,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class DarkroomBasinBlock extends Block {
+    private static final net.minecraft.world.phys.shapes.VoxelShape SHAPE = Block.box(2, 1, 2, 14, 14.5, 14);
     public DarkroomBasinBlock(BlockBehaviour.Properties properties) { super(properties); }
 
     @Override
+    protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level,
+            BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if(CandidItems.stockFor(stack.getItem())!=null){
+            if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.RollManager.safely(p,()->com.nobothehobo.candid.photo.RollManager.develop(p,stack));
+            return InteractionResult.SUCCESS;
+        }
         if (!PhotoMaps.isExposed(stack)) return InteractionResult.PASS;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;

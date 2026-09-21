@@ -28,7 +28,7 @@ public final class CameraData {
     }
 
     public static int frames(ItemStack stack) {
-        return tag(stack).getIntOr(FRAMES, 0);
+        return Math.max(0, Math.min(FRAME_COUNT, tag(stack).getIntOr(FRAMES, 0)));
     }
 
     public static int apertureIndex(ItemStack stack) {
@@ -59,9 +59,19 @@ public final class CameraData {
     public static void clearFilm(ItemStack stack) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(FILM);
+            tag.remove("candid_roll_id");
             tag.putInt(FRAMES, 0);
             tag.putBoolean(WOUND, false);
         });
+    }
+
+    public static String cameraId(ItemStack stack) { return tag(stack).getStringOr("candid_camera_id", ""); }
+    public static String rollId(ItemStack stack) { return tag(stack).getStringOr("candid_roll_id", ""); }
+    public static void identify(ItemStack stack) {
+        if(cameraId(stack).isEmpty()) CustomData.update(DataComponents.CUSTOM_DATA,stack,t->t.putString("candid_camera_id",java.util.UUID.randomUUID().toString()));
+    }
+    public static void bind(ItemStack camera, com.nobothehobo.candid.core.RollState roll) {
+        CustomData.update(DataComponents.CUSTOM_DATA,camera,t->{t.putString("candid_roll_id",roll.id().toString());t.putString(FILM,roll.stock());t.putInt(FRAMES,36-roll.used());});
     }
 
     public static boolean wind(ItemStack stack) {

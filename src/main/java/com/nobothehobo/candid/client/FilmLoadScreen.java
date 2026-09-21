@@ -14,9 +14,12 @@ import org.lwjgl.glfw.GLFWGamepadState;
 
 public class FilmLoadScreen extends Screen {
     private final FilmStock stock;
-    private int age;
+    private int age, waitingTicks;
+    private boolean acknowledged;
     private boolean woundSent;
+    private boolean loadSent;
     private final boolean[] pad = new boolean[15];
+    private boolean padPrimed;
 
     public FilmLoadScreen(FilmStock stock) {
         super(Component.literal("Loading Film"));
@@ -25,7 +28,7 @@ public class FilmLoadScreen extends Screen {
 
     @Override
     protected void init() {
-        ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.LOAD_FILM, stock.ordinal()));
+        if(!loadSent){loadSent=true;ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.LOAD_FILM, stock.ordinal()));}
     }
 
     @Override
@@ -33,6 +36,12 @@ public class FilmLoadScreen extends Screen {
 
     @Override
     public void tick() {
+        if(minecraft==null||minecraft.player==null)return;
+        ItemStack held=minecraft.player.getMainHandItem().is(CandidItems.CAMERA)?minecraft.player.getMainHandItem():minecraft.player.getOffhandItem();
+        if(com.nobothehobo.candid.data.CameraData.film(held)!=stock){
+            if(++waitingTicks>100)minecraft.setScreen(new CameraControlScreen());return;
+        }
+        if(!acknowledged){acknowledged=true;age=0;}
         age++;
         if (age == 2) CandidClient.playLocal(CandidSounds.BACK_OPEN);
         if (age == 20) CandidClient.playLocal(CandidSounds.FILM_LOAD);
@@ -103,6 +112,7 @@ public class FilmLoadScreen extends Screen {
         if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
         try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
             if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
+            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==GLFW.GLFW_PRESS;padPrimed=true;return;}
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
         }
     }

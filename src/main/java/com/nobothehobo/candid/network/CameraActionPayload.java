@@ -11,6 +11,8 @@ public record CameraActionPayload(int action, int value) implements CustomPacket
     public static final int SET_SHUTTER = 1;
     public static final int WIND = 2;
     public static final int LOAD_FILM = 3;
+    public static final int UNLOAD_FILM = 4;
+    public static final int SYNC = 5;
 
     public static final Type<CameraActionPayload> ID = new Type<>(Candid.id("camera_action"));
     public static final StreamCodec<RegistryFriendlyByteBuf, CameraActionPayload> CODEC = StreamCodec.composite(

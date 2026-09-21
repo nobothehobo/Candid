@@ -19,6 +19,10 @@ public class EnlargerBlock extends Block {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if(CandidItems.stockFor(stack.getItem())!=null){
+            if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.RollManager.safely(p,()->com.nobothehobo.candid.photo.RollManager.open(p,stack));
+            return InteractionResult.SUCCESS;
+        }
         if (!PhotoMaps.isDeveloped(stack)) return InteractionResult.PASS;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!player.getAbilities().instabuild && !consumePaper(player)) {

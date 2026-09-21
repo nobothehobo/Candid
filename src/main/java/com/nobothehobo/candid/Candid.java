@@ -31,42 +31,24 @@ public class Candid implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(CapturePhotoPayload.ID, CapturePhotoPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(CameraActionPayload.ID, CameraActionPayload.CODEC);
 
+        com.nobothehobo.candid.photo.RollManager.initialize();
         ServerPlayNetworking.registerGlobalReceiver(CameraActionPayload.ID, (payload, context) -> {
-            ServerPlayer player = context.player();
-            ItemStack camera = cameraInHands(player);
-            if (camera.isEmpty()) return;
-
-            switch (payload.action()) {
-                case CameraActionPayload.SET_APERTURE ->
-                        CameraData.setApertureIndex(camera, payload.value());
-                case CameraActionPayload.SET_SHUTTER ->
-                        CameraData.setShutterIndex(camera, payload.value());
-                case CameraActionPayload.WIND ->
-                        CameraData.wind(camera);
-                case CameraActionPayload.LOAD_FILM ->
-                        loadFilm(player, camera, payload.value());
-                default -> { }
-            }
+            ServerPlayer player=context.player(); ItemStack camera=cameraInHands(player); if(camera.isEmpty())return;
+            com.nobothehobo.candid.photo.RollManager.safely(player,()->{
+                com.nobothehobo.candid.photo.RollManager.sync(player,camera);
+                switch(payload.action()) {
+                    case CameraActionPayload.SET_APERTURE -> CameraData.setApertureIndex(camera,payload.value());
+                    case CameraActionPayload.SET_SHUTTER -> CameraData.setShutterIndex(camera,payload.value());
+                    case CameraActionPayload.WIND -> CameraData.wind(camera);
+                    case CameraActionPayload.LOAD_FILM -> com.nobothehobo.candid.photo.RollManager.load(player,camera,payload.value());
+                    case CameraActionPayload.UNLOAD_FILM -> com.nobothehobo.candid.photo.RollManager.unload(player,camera);
+                    default -> { }
+                }
+            });
         });
-
-        ServerPlayNetworking.registerGlobalReceiver(CapturePhotoPayload.ID, (payload, context) -> {
-            ServerPlayer player = context.player();
-            ItemStack camera = cameraInHands(player);
-            if (camera.isEmpty()) return;
-
-            FilmStock stock = CameraData.film(camera);
-            if (stock == null || CameraData.frames(camera) <= 0 || !CameraData.isWound(camera)
-                    || payload.colors().length != 16384) return;
-
-            int apertureIndex = Math.floorMod(payload.apertureIndex(), CameraData.APERTURES.length);
-            int shutterIndex = Math.floorMod(payload.shutterIndex(), CameraData.SHUTTERS.length);
-            CameraData.setApertureIndex(camera, apertureIndex);
-            CameraData.setShutterIndex(camera, shutterIndex);
-            if (!CameraData.consumeFrame(camera)) return;
-
-            ItemStack negative = PhotoMaps.createNegative(player, payload.colors(), stock,
-                    CameraData.APERTURES[apertureIndex], CameraData.SHUTTERS[shutterIndex]);
-            if (!player.getInventory().add(negative)) player.drop(negative, false);
+        ServerPlayNetworking.registerGlobalReceiver(CapturePhotoPayload.ID,(payload,context)->{
+            ServerPlayer player=context.player();ItemStack camera=cameraInHands(player);if(camera.isEmpty())return;
+            com.nobothehobo.candid.photo.RollManager.safely(player,()->com.nobothehobo.candid.photo.RollManager.capture(player,camera,payload));
         });
     }
 
@@ -76,26 +58,4 @@ public class Candid implements ModInitializer {
         return ItemStack.EMPTY;
     }
 
-    private static void loadFilm(ServerPlayer player, ItemStack camera, int ordinal) {
-        FilmStock current = CameraData.film(camera);
-        if (current != null && CameraData.frames(camera) > 0) return;
-
-        FilmStock[] stocks = FilmStock.values();
-        if (ordinal < 0 || ordinal >= stocks.length) return;
-        FilmStock wanted = stocks[ordinal];
-
-        if (player.getAbilities().instabuild) {
-            CameraData.load(camera, wanted);
-            return;
-        }
-
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack candidate = player.getInventory().getItem(slot);
-            if (CandidItems.stockFor(candidate.getItem()) == wanted && !candidate.isEmpty()) {
-                candidate.shrink(1);
-                CameraData.load(camera, wanted);
-                return;
-            }
-        }
-    }
 }

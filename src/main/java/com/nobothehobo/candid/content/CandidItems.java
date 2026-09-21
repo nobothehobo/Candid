@@ -20,13 +20,13 @@ public final class CandidItems {
     public static final Item CAMERA = register("camera", CameraItem::new, new Item.Properties().stacksTo(1));
 
     // Keep existing registry IDs for save compatibility while improving their real-world-inspired profiles.
-    public static final Item FILM_DAYLIGHT_100 = register("film_daylight_100", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_SUN_200 = register("film_sun_200", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_EVERYDAY_400 = register("film_everyday_400", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_PORTRAIT_400 = register("film_portrait_400", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_NIGHT_800 = register("film_night_800", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_MONO_400 = register("film_mono_400", Item::new, new Item.Properties().stacksTo(16));
-    public static final Item FILM_FINE_MONO_400 = register("film_fine_mono_400", Item::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_DAYLIGHT_100 = register("film_daylight_100", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_SUN_200 = register("film_sun_200", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_EVERYDAY_400 = register("film_everyday_400", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_PORTRAIT_400 = register("film_portrait_400", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_NIGHT_800 = register("film_night_800", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_MONO_400 = register("film_mono_400", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
+    public static final Item FILM_FINE_MONO_400 = register("film_fine_mono_400", com.nobothehobo.candid.item.FilmRollItem::new, new Item.Properties().stacksTo(16));
 
     public static final Item DEVELOPER = register("developer", Item::new, new Item.Properties().stacksTo(16));
     public static final Item PHOTO_PAPER = register("photo_paper", Item::new, new Item.Properties().stacksTo(64));

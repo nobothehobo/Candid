@@ -1,0 +1,1 @@
+{"schemaVersion":1,"id":"candid-test","version":"1.0.0","name":"Candid integration tests","environment":"client","entrypoints":{"fabric-client-gametest":["com.nobothehobo.candid.test.PhotographyGameTest"]},"depends":{"candid":"*","fabric-client-gametest-api-v1":"*"}}
