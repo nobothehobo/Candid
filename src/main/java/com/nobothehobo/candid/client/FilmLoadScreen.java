@@ -54,53 +54,15 @@ public class FilmLoadScreen extends Screen {
         if (age > 86 && minecraft != null) minecraft.setScreen(new CameraControlScreen());
     }
 
-    @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float delta) {
-        pollGamepad();
-        g.fill(0, 0, width, height, 0xEF080808);
-        int cx = width / 2;
-        int cy = height / 2;
-        int left = cx - 104;
-        int top = cy - 55;
-
-        g.drawCenteredString(font, "LOADING " + stock.displayName().toUpperCase(), cx, top - 28, 0xFFF0F0F0);
-        g.fill(left, top, left + 208, top + 110, 0xFF252525);
-        g.submitOutline(left, top, 208, 110, 0xFFAFAFAF);
-
-        // Film chamber and take-up spool
-        g.fill(left + 18, top + 22, left + 60, top + 88, 0xFF111111);
-        g.submitOutline(left + 18, top + 22, 42, 66, 0xFF777777);
-        g.fill(left + 151, top + 23, left + 183, top + 88, 0xFF111111);
-        g.submitOutline(left + 151, top + 23, 32, 65, 0xFF777777);
-
-        int phase = phase();
-        if (phase >= 1) {
-            int filmX = phase == 1 ? left + 72 - Math.min(36, Math.max(0, age - 15) * 2) : left + 35;
-            g.renderItem(new ItemStack(CandidItems.itemFor(stock)), filmX, top + 46);
-        }
-        if (phase >= 2) {
-            int leader = Math.min(92, Math.max(0, age - 34) * 6);
-            g.fill(left + 54, top + 54, left + 54 + leader, top + 60, 0xFFB5823B);
-        }
-
-        // Rear door swings visually over the chamber during open/close phases.
-        int doorWidth;
-        if (age < 15) doorWidth = Math.max(12, 200 - age * 12);
-        else if (age < 50) doorWidth = 18;
-        else doorWidth = Math.min(200, 18 + (age - 50) * 13);
-        g.fill(left + 4, top + 5, left + 4 + doorWidth, top + 105, 0xDD383838);
-        g.submitOutline(left + 4, top + 5, doorWidth, 100, 0xFF787878);
-
-        String step = switch (phase) {
-            case 0 -> "Opening camera back…";
-            case 1 -> "Dropping cartridge into the film chamber…";
-            case 2 -> "Pulling leader onto the take-up spool…";
-            case 3 -> "Closing and latching the back…";
-            default -> "Advancing to frame 1…";
-        };
-        g.drawCenteredString(font, step, cx, top + 121, 0xFFFFD070);
-        g.drawCenteredString(font, "B / Esc skips the animation; use X to wind if needed.", cx, top + 136, 0xFFAAAAAA);
-        super.render(g, mouseX, mouseY, delta);
+    public int animationAge(){return acknowledged?age:0;}
+    public FilmStock stock(){return stock;}
+    @Override public void renderBackground(GuiGraphics g,int x,int y,float delta){}
+    @Override public void render(GuiGraphics g,int x,int y,float delta){
+        pollGamepad();String step=!acknowledged?"Waiting for film…":age<16?"Opening back":age<34?"Insert cartridge":age<50?"Pull leader onto spool":age<67?"Latch back":"Wind first frame";
+        g.fill(0,height-46,width,height,0xc8111518);
+        g.drawCenteredString(font,stock.displayName()+" • "+step,width/2,height-35,0xffeedcb9);
+        g.drawCenteredString(font,"B / Esc: skip animation • film remains safe",width/2,height-18,0xffc2c5c7);
+        super.render(g,x,y,delta);
     }
 
     @Override

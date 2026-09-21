@@ -6,13 +6,18 @@ import java.util.*;
 public record RollState(UUID id, String stock, int used, String camera, Stage stage, long readyAt, List<Frame> frames) {
     public enum Stage { EXPOSED, DEVELOPING, DEVELOPED }
     public record Frame(UUID id, int number, String colors, String photographer, long timestamp,
-                        float aperture, int shutter, int iso, double offset, int mapId) {
+                        float aperture, int shutter, int iso, double offset, int mapId, String highColors, List<Integer> tiles) {
         public Frame {
             Objects.requireNonNull(id); Objects.requireNonNull(photographer);
+            if(highColors!=null&&Base64.getDecoder().decode(highColors).length!=65536)throw new IllegalArgumentException("Invalid high-resolution negative");
+            if(tiles!=null){tiles=List.copyOf(tiles);if(tiles.size()!=4||tiles.stream().anyMatch(i->i<0))throw new IllegalArgumentException("Invalid print tiles");}
             if(number<1||number>36||Base64.getDecoder().decode(colors).length!=16384||!Double.isFinite(offset))
                 throw new IllegalArgumentException("Invalid negative");
         }
-        public Frame withMap(int map) { return new Frame(id,number,colors,photographer,timestamp,aperture,shutter,iso,offset,map); }
+        public Frame(UUID id,int number,String colors,String photographer,long timestamp,float aperture,int shutter,int iso,double offset,int mapId){this(id,number,colors,photographer,timestamp,aperture,shutter,iso,offset,mapId,null,null);}
+        public Frame withMap(int map) { return new Frame(id,number,colors,photographer,timestamp,aperture,shutter,iso,offset,map,highColors,tiles); }
+        public Frame withScan(String scan) { return new Frame(id,number,colors,photographer,timestamp,aperture,shutter,iso,offset,mapId,scan,tiles); }
+        public Frame withTiles(List<Integer> ids) { return new Frame(id,number,colors,photographer,timestamp,aperture,shutter,iso,offset,mapId,highColors,ids); }
     }
     public RollState {
         Objects.requireNonNull(id); Objects.requireNonNull(stock); Objects.requireNonNull(stage);

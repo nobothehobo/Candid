@@ -29,6 +29,9 @@ public class CandidClient implements ClientModInitializer {
             return InteractionResult.PASS;
         });
 
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.PreviewPayload.ID,(photo,context)->{
+            var mc=context.client();mc.setScreen(new NegativePreviewScreen(mc.screen,photo));
+        });
         ClientTickEvents.END_CLIENT_TICK.register(PhotoCapture::tick);
     }
 
