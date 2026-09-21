@@ -32,6 +32,21 @@ public final class PhotographyGameTest implements FabricClientGameTest {
         }
     }
     @Override public void runTest(ClientGameTestContext context){
+        if("true".equals(System.getenv("CANDID_SHADER_TEST")))context.runOnClient(c->{
+            try{
+                // Fabric's harness isolates config paths. Install at Iris' actual runtime directory.
+                Class<?> iris=Class.forName("net.irisshaders.iris.Iris");
+                java.nio.file.Path shader=((java.nio.file.Path)iris.getMethod("getShaderpacksDirectory").invoke(null)).resolve("Candid-Test/shaders");
+                java.nio.file.Files.createDirectories(shader);
+                java.nio.file.Files.writeString(shader.resolve("final.vsh"),"#version 120\nvarying vec2 uv;\nvoid main(){gl_Position=ftransform();uv=gl_MultiTexCoord0.xy;}\n");
+                java.nio.file.Files.writeString(shader.resolve("final.fsh"),"#version 120\nuniform sampler2D colortex0;\nvarying vec2 uv;\nvoid main(){vec3 c=texture2D(colortex0,uv).rgb;gl_FragColor=vec4(c*vec3(1.0,0.15,0.15),1.0);}\n");
+                Object config=iris.getMethod("getIrisConfig").invoke(null);
+                config.getClass().getMethod("setShaderPackName",String.class).invoke(config,"Candid-Test");
+                config.getClass().getMethod("setShadersEnabled",boolean.class).invoke(config,true);
+                config.getClass().getMethod("save").invoke(config);
+                iris.getMethod("reload").invoke(null);
+            }catch(Exception e){throw new AssertionError("Cannot enable shader fixture",e);}
+        });
         UUID[] rollId={null};int[] mapId={-1};
         var world=createWorld(context);var save=world.getWorldSave();
         try(world){
@@ -160,6 +175,8 @@ public final class PhotographyGameTest implements FabricClientGameTest {
 
         }
         try(var reopened=save.open()){
+            var persistedScan=reopened.getServer().computeOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();return RollManager.store(p).readScan(RollManager.store(p).get(rollId[0]).frames().getFirst().id());});
+            check(persistedScan.join().length>0,"Full-color scan not restored after world reopen");
             reopened.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var r=RollManager.store(p).get(rollId[0]);
                 check(r.stage()==RollState.Stage.DEVELOPED&&r.used()==1,"Roll did not survive restart");check(r.frames().getFirst().mapId()==mapId[0],"Map ID not preserved");
                 check(r.frames().getFirst().highColors()!=null&&r.frames().getFirst().tiles().size()==4,"Large negative or tile IDs not saved");

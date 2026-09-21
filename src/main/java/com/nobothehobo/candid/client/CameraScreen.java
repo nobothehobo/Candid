@@ -88,7 +88,7 @@ public class CameraScreen extends Screen {
         String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     " + CameraData.shutterLabel(CameraData.SHUTTERS[shutterIndex]) + String.format(java.util.Locale.ROOT,"    %+.1f EV",meter);
         graphics.drawCenteredString(font, exposure, cx, height - 48, 0xFFFFFFFF);
         drawMeter(graphics, cx, height - 31, meter);
-        if(Math.abs(meter)>=1)graphics.drawCenteredString(font,meter>0?"Overexposed • brighter, softer highlights":"Underexposed • darker shadows, more grain",cx,frame.y()+frame.height()+8,0xffebcf94);
+        if(Math.abs(meter)>=1)graphics.drawCenteredString(font,meter>0?"Overexposed • brighter, softer highlights":"Underexposed • darker shadows, more grain",cx,frame.y()+8,0xffebcf94);
         drawWindLever(graphics, width - 45, height - 38, wound);
 
         graphics.drawCenteredString(font, GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)

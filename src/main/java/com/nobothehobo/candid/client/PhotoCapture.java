@@ -94,7 +94,7 @@ public final class PhotoCapture {
         FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[504*336];
         // Screenshot already returns top-left-oriented pixels. Do not flip a second time.
         for(int y=0;y<336;y++)for(int x=0;x<504;x++){
-            int r=0,g=0,b=0;for(double dy:new double[]{.25,.75})for(double dx:new double[]{.25,.75}){
+            int r=0,g=0,b=0;for(double dy=.25;dy<1;dy+=.5)for(double dx=.25;dx<1;dx+=.5){
                 int sx=crop.x()+Math.min(crop.width()-1,(int)((x+dx)*crop.width()/504)),sy=crop.y()+Math.min(crop.height()-1,(int)((y+dy)*crop.height()/336));
                 int c=image.getPixel(sx,sy);r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;
             }out[y*504+x]=((r/4)<<16)|((g/4)<<8)|(b/4);
@@ -113,7 +113,7 @@ public final class PhotoCapture {
         int[] bayer={0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5};
         for(int y=0;y<168;y++)for(int x=0;x<252;x++){
             int r=0,g=0,b=0;for(int dy=0;dy<2;dy++)for(int dx=0;dx<2;dx++){int c=rgb[(y*2+dy)*504+x*2+dx];r+=(c>>16)&255;g+=(c>>8)&255;b+=c&255;}
-            int rgbOut=(r/4<<16)|(g/4<<8)|b/4,d=bayer[(y&3)*4+(x&3)]-8,c=0;
+            int rgbOut=(r/4<<16)|(g/4<<8)|b/4,d=(bayer[(y&3)*4+(x&3)]-8)/2,c=0;
             for(int shift:new int[]{16,8,0})c|=Math.max(0,Math.min(255,((rgbOut>>shift)&255)+d))<<shift;
             out[(y+44)*256+x+2]=(byte)nearest(c,shot.stock.monochrome());
         }
