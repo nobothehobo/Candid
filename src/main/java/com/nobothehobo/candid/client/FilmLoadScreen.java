@@ -98,6 +98,7 @@ public class FilmLoadScreen extends Screen {
             case 3 -> "Closing and latching the back…";
             default -> "Advancing to frame 1…";
         };
+        if(!acknowledged)step="Waiting for selected film — it must be in your inventory";
         g.drawCenteredString(font, step, cx, top + 121, 0xFFFFD070);
         g.drawCenteredString(font, "B / Esc skips the animation; use X to wind if needed.", cx, top + 136, 0xFFAAAAAA);
         super.render(g, mouseX, mouseY, delta);

@@ -39,3 +39,7 @@ def export(name, destination):
 if __name__ == "__main__":
     export("camera", "item/camera")
     export("tank", "block/darkroom_basin")
+    export("tripod", "block/tripod")
+    export("enlarger", "block/enlarger")
+    for mm in (28,35,50,90):
+        export(f"lens_{mm}",f"item/lens_{mm}")

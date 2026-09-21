@@ -1,1 +1,14 @@
-{"required":true,"package":"com.nobothehobo.candid.client.mixin","compatibilityLevel":"JAVA_21","client":["PhotoHudMixin","PhotoHandMixin"],"injectors":{"defaultRequire":1}}
+{
+  "required": true,
+  "package": "com.nobothehobo.candid.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "PhotoHudMixin",
+    "PhotoHandMixin",
+    "CameraFovMixin",
+    "TripodCameraMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

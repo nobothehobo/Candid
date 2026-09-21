@@ -39,6 +39,14 @@ public final class RollManager {
         }
         if(!CameraData.rollId(camera).isEmpty()){var r=store(p).get(UUID.fromString(CameraData.rollId(camera)));r.requireCamera(CameraData.cameraId(camera));CameraData.bind(camera,r);}
     }
+    public static void swapLens(ServerPlayer p,ItemStack camera,int index){
+        if(index<0||index>3)throw new IllegalArgumentException("Unknown lens");
+        int old=CameraData.lensIndex(camera);if(old==index)return;
+        int slot=find(p,CandidItems.lensItem(index));
+        if(slot<0&&!p.getAbilities().instabuild)throw new IllegalStateException("Craft this lens and carry it to attach it");
+        if(slot>=0)p.getInventory().getItem(slot).shrink(1);
+        CameraData.setLens(camera,index);give(p,new ItemStack(CandidItems.lensItem(old)));
+    }
     public static void load(ServerPlayer p,ItemStack camera,int ordinal){
         sync(p,camera);if(CameraData.film(camera)!=null)throw new IllegalStateException("Rewind and unload the current roll first");
         if(ordinal<0||ordinal>=FilmStock.values().length)throw new IllegalArgumentException("Invalid film stock");FilmStock wanted=FilmStock.values()[ordinal];
@@ -58,6 +66,7 @@ public final class RollManager {
         long now=System.currentTimeMillis();if(now-LAST_SHOT.getOrDefault(p.getUUID(),0L)<700)return;
         if(!CameraData.isWound(camera)||CameraData.frames(camera)<=0||shot.colors().length!=16384)return;
         if(shot.apertureIndex()<0||shot.apertureIndex()>=CameraData.APERTURES.length||shot.shutterIndex()<0||shot.shutterIndex()>=CameraData.SHUTTERS.length||!Double.isFinite(shot.offset())||Math.abs(shot.offset())>32)return;
+        if(CameraData.SHUTTERS[shot.shutterIndex()]<0&&CameraData.tripod(camera,p)==null)throw new IllegalStateException("Use a tripod for exposures of one second or longer");
         for(byte b:shot.colors())if((b&255)<4||(b&255)>247)throw new IllegalArgumentException("Invalid photo palette");
         var r=store(p).get(UUID.fromString(shot.rollId()));var stock=FilmStock.byName(r.stock());
         var frame=new RollState.Frame(UUID.fromString(shot.shotId()),r.used()+1,Base64.getEncoder().encodeToString(shot.colors()),p.getName().getString(),now,CameraData.APERTURES[shot.apertureIndex()],CameraData.SHUTTERS[shot.shutterIndex()],stock.iso(),shot.offset(),-1);

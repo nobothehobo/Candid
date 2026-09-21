@@ -23,43 +23,71 @@ public final class PhotoCapture {
     private static int waitTicks;
     private static long started, generation;
     private static Object level;
+    private static FocusSampler focusSampler;
+    private static long exposureStart,nextSample;
+    private static int samplesTaken,sampleCount;
+    private static double[] accumulated;
+    private static final double[] LINEAR=new double[256];
+    static {for(int i=0;i<256;i++){double c=i/255.0;LINEAR[i]=c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4);}}
     private PhotoCapture(){}
-    public static void cancel(){generation++;pending=null;reading=false;processing=false;}
+    public static void cancel(){generation++;pending=null;reading=false;processing=false;accumulated=null;focusSampler=null;}
     public static boolean hiding(){return pending!=null||reading;}
     public static boolean busy(){return pending!=null||reading||processing;}
     public static boolean queue(ItemStack camera,int aperture,int shutter,float offset){
         Minecraft mc=Minecraft.getInstance();FilmStock stock=CameraData.film(camera);
         if(busy()||stock==null||CameraData.frames(camera)<=0||!CameraData.isWound(camera)||CameraData.cameraId(camera).isEmpty()||CameraData.rollId(camera).isEmpty())return false;
-        pending=new Pending(stock,aperture,shutter,offset,CameraData.cameraId(camera),CameraData.rollId(camera),UUID.randomUUID().toString());
+        if(CameraData.SHUTTERS[shutter]<0&&CameraData.tripod(camera,mc.player)==null){mc.player.displayClientMessage(Component.literal("Attach the camera to a tripod for exposures of one second or longer."),true);return false;}
+        pending=new Pending(stock,aperture,shutter,offset,CameraData.cameraId(camera),CameraData.rollId(camera),UUID.randomUUID().toString(),CameraData.lens(camera),CameraData.focus(camera));
+        focusSampler=new FocusSampler(mc,pending.lens);samplesTaken=0;
+        sampleCount=CameraData.SHUTTERS[shutter]<0?Math.min(16,Math.max(2,Math.abs(CameraData.SHUTTERS[shutter])*2)):1;
+        accumulated=new double[252*168*3];exposureStart=0;nextSample=0;
         net.minecraft.client.KeyMapping.releaseAll();
         mc.setScreen(new CaptureScreen());
         generation++;waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
     }
     public static void tick(Minecraft client){
         if(!busy())return;
-        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>45000){generation++;pending=null;reading=false;processing=false;return;}
-        if(pending==null||waitTicks-->0)return;
-        Pending shot=pending;long captureGeneration=generation;Object capturedLevel=level;pending=null;reading=true;
+        if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>45000){cancel();if(client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());return;}
+        client.options.keyJump.setDown(false);
+        if(pending==null||reading||processing||waitTicks-->0)return;
+        if(!focusSampler.tick(client))return;
+        if(exposureStart==0){exposureStart=System.currentTimeMillis();nextSample=exposureStart;}
+        if(System.currentTimeMillis()<nextSample)return;
+        Pending shot=pending;long captureGeneration=generation;Object capturedLevel=level;reading=true;
         try{Screenshot.takeScreenshot(client.getMainRenderTarget(),image->{
             try {
                 if(captureGeneration!=generation)return;
-                int[] samples=sample(image);reading=false;processing=true;
+                int[] samples=sample(image);reading=false;
+                for(int i=0;i<samples.length;i++){
+                    accumulated[i*3]+=LINEAR[(samples[i]>>16)&255];accumulated[i*3+1]+=LINEAR[(samples[i]>>8)&255];accumulated[i*3+2]+=LINEAR[samples[i]&255];
+                }
+                samplesTaken++;
+                if(samplesTaken<sampleCount){nextSample=exposureStart+(long)(Optics.seconds(CameraData.SHUTTERS[shot.shutter])*1000*samplesTaken/(sampleCount-1));return;}
+                double[] sum=accumulated;float[] depths=focusSampler.depths();int count=samplesTaken;accumulated=null;pending=null;processing=true;
                 PROCESSOR.execute(()->{
-                    try {byte[] result=convert(samples,shot);client.execute(()->{
-                        if(captureGeneration!=generation)return;
-                        processing=false;
-                        if(client.level!=capturedLevel||client.player==null)return;
-                        if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID)){
-                            for(int part=0;part<4;part++)ClientPlayNetworking.send(new com.nobothehobo.candid.network.ScanChunkPayload(shot.id,part,Arrays.copyOfRange(result,part*16384,(part+1)*16384)));
-                            ClientPlayNetworking.send(new CapturePhotoPayload(compact(result),shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
-                        }
-                        if(client.screen==null||client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());
-                    });}catch(Exception e){client.execute(()->failure(client,e,captureGeneration));}
+                    try {
+                        int[] averaged=new int[252*168];
+                        for(int i=0;i<averaged.length;i++)averaged[i]=(encode(sum[i*3]/count)<<16)|(encode(sum[i*3+1]/count)<<8)|encode(sum[i*3+2]/count);
+                        int[] focused=DepthOfField.apply(averaged,depths,252,168,shot.lens,CameraData.APERTURES[shot.aperture],shot.focus);
+                        byte[] result=convert(focused,shot),small=compact(result);
+                        client.execute(()->{
+                            if(captureGeneration!=generation)return;
+                            processing=false;
+                            if(client.level!=capturedLevel||client.player==null)return;
+                            if(ClientPlayNetworking.canSend(CapturePhotoPayload.ID)){
+                                for(int part=0;part<4;part++)ClientPlayNetworking.send(new com.nobothehobo.candid.network.ScanChunkPayload(shot.id,part,Arrays.copyOfRange(result,part*16384,(part+1)*16384)));
+                                ClientPlayNetworking.send(new CapturePhotoPayload(small,shot.aperture,shot.shutter,shot.camera,shot.roll,shot.id,shot.offset));
+                            }
+                            net.minecraft.client.KeyMapping.releaseAll();
+                            if(client.screen==null||client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());
+                        });
+                    }catch(Exception e){client.execute(()->failure(client,e,captureGeneration));}
                 });
             }catch(Exception e){failure(client,e,captureGeneration);}finally{image.close();}
         });}catch(Exception e){failure(client,e,captureGeneration);}
     }
-    private static void failure(Minecraft client,Exception e,long captureGeneration){if(captureGeneration!=generation)return;pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);}
+    private static int encode(double linear){double c=linear<=.0031308?linear*12.92:1.055*Math.pow(linear,1/2.4)-.055;return (int)Math.round(Math.max(0,Math.min(1,c))*255);}
+    private static void failure(Minecraft client,Exception e,long captureGeneration){if(captureGeneration!=generation)return;pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);if(client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());}
     private static int[] sample(NativeImage image){
         FrameGeometry crop=FrameGeometry.of(image.getWidth(),image.getHeight());int[] out=new int[252*168];
         // Screenshot already returns top-left-oriented pixels. Do not flip a second time.
@@ -99,5 +127,5 @@ public final class PhotoCapture {
             long dr=((rgb>>16)&255)-r,dg=((rgb>>8)&255)-g,db=(rgb&255)-b,d=2*dr*dr+4*dg*dg+db*db;if(d<distance){distance=d;best=i;}}
         return best;
     }
-    private record Pending(FilmStock stock,int aperture,int shutter,float offset,String camera,String roll,String id){}
+    private record Pending(FilmStock stock,int aperture,int shutter,float offset,String camera,String roll,String id,int lens,double focus){}
 }

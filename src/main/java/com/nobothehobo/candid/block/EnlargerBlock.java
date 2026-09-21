@@ -17,6 +17,9 @@ import net.minecraft.world.phys.BlockHitResult;
 public class EnlargerBlock extends Block {
     public EnlargerBlock(BlockBehaviour.Properties properties) { super(properties); }
 
+    @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState s,net.minecraft.world.level.BlockGetter l,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext c){
+        return net.minecraft.world.phys.shapes.Shapes.or(Block.box(1,0,1,15,3,15),Block.box(11,3,10,15,28,14),Block.box(2,14,3,12,28,13));
+    }
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return open(player,pos);

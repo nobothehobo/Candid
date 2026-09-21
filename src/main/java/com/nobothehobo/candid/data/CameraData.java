@@ -9,7 +9,7 @@ import net.minecraft.world.item.component.CustomData;
 public final class CameraData {
     public static final int FRAME_COUNT = 36;
     public static final float[] APERTURES = {1.4f, 2.0f, 2.8f, 4.0f, 5.6f, 8.0f, 11.0f, 16.0f};
-    public static final int[] SHUTTERS = {15, 30, 60, 125, 250, 500, 1000};
+    public static final int[] SHUTTERS = {15, 30, 60, 125, 250, 500, 1000, 8, 4, 2, -1, -2, -4, -8, -15, -30};
 
     private static final String FILM = "candid_film";
     private static final String FRAMES = "candid_frames";
@@ -18,6 +18,19 @@ public final class CameraData {
     private static final String WOUND = "candid_wound";
 
     public static String shutterLabel(int value){return value>0?"1/"+value:Math.abs(value)+" s";}
+    public static int lensIndex(ItemStack s){return Math.floorMod(tag(s).getIntOr("candid_lens",1),4);}
+    public static int lens(ItemStack s){return com.nobothehobo.candid.core.Optics.LENSES[lensIndex(s)];}
+    public static int focusIndex(ItemStack s){return Math.floorMod(tag(s).getIntOr("candid_focus",11),12);}
+    public static double focus(ItemStack s){return com.nobothehobo.candid.core.Optics.FOCUS[focusIndex(s)];}
+    public static void setFocus(ItemStack s,int index){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putInt("candid_focus",Math.floorMod(index,12)));}
+    public static void setLens(ItemStack s,int index){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putInt("candid_lens",Math.floorMod(index,4)));}
+    public static void mount(ItemStack s,net.minecraft.core.BlockPos pos){CustomData.update(DataComponents.CUSTOM_DATA,s,t->{t.putInt("candid_tripod_x",pos.getX());t.putInt("candid_tripod_y",pos.getY());t.putInt("candid_tripod_z",pos.getZ());t.putBoolean("candid_mounted",true);});}
+    public static net.minecraft.core.BlockPos tripod(ItemStack s,net.minecraft.world.entity.player.Player p){
+        var t=tag(s);if(!t.getBooleanOr("candid_mounted",false))return null;
+        var pos=new net.minecraft.core.BlockPos(t.getIntOr("candid_tripod_x",0),t.getIntOr("candid_tripod_y",0),t.getIntOr("candid_tripod_z",0));
+        return p.distanceToSqr(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<16&&p.level().getBlockState(pos).is(com.nobothehobo.candid.content.CandidBlocks.TRIPOD)?pos:null;
+    }
+    public static void unmount(ItemStack s){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putBoolean("candid_mounted",false));}
     private CameraData() { }
 
     private static CompoundTag tag(ItemStack stack) {

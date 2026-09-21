@@ -23,8 +23,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: Candid-0.4.0-Mod
-          path: build/libs/candid-0.4.0.jar
+          name: Candid-0.5.0-Mod
+          path: build/libs/candid-0.5.0.jar
       - uses: actions/upload-artifact@v4
         if: always()
         with:

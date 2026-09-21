@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AssetTest {
     @Test void exportedAtlasUvsAreNormalized() throws Exception {
-        for(String model : new String[]{"item/camera", "block/darkroom_basin"}) {
+        for(String model : new String[]{"item/camera", "block/darkroom_basin", "block/enlarger", "block/tripod", "item/lens_28", "item/lens_35", "item/lens_50", "item/lens_90"}) {
             try(var input=getClass().getResourceAsStream("/assets/candid/models/"+model+".json")) {
                 assertNotNull(input);
                 var root=JsonParser.parseReader(new InputStreamReader(input,StandardCharsets.UTF_8)).getAsJsonObject();

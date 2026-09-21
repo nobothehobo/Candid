@@ -48,6 +48,9 @@ public class Candid implements ModInitializer {
                     case CameraActionPayload.WIND -> CameraData.wind(camera);
                     case CameraActionPayload.LOAD_FILM -> com.nobothehobo.candid.photo.RollManager.load(player,camera,payload.value());
                     case CameraActionPayload.UNLOAD_FILM -> com.nobothehobo.candid.photo.RollManager.unload(player,camera);
+                    case CameraActionPayload.FOCUS -> CameraData.setFocus(camera,payload.value());
+                    case CameraActionPayload.LENS -> com.nobothehobo.candid.photo.RollManager.swapLens(player,camera,payload.value());
+                    case CameraActionPayload.UNMOUNT -> CameraData.unmount(camera);
                     default -> { }
                 }
             });

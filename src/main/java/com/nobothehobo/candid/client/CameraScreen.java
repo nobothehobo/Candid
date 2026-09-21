@@ -75,14 +75,14 @@ public class CameraScreen extends Screen {
         graphics.submitOutline(cx-14,cy-10,28,20,0xAAADE9DE);
         graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
         graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
-        graphics.drawCenteredString(font,"3:2 frame • right stick / right-drag to aim",cx,23,0xFFB7B3A5);
+        graphics.drawCenteredString(font,CameraData.lens(camera)+" mm • focus "+(CameraData.focus(camera)>=1000?"infinity":CameraData.focus(camera)+" m")+" • "+(CameraData.tripod(camera,minecraft.player)==null?"handheld":"tripod"),cx,23,0xFFB7B3A5);
         String filmText = stock == null
                 ? "NO FILM • Crouch + Use for camera controls"
                 : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
         graphics.drawCenteredString(font, filmText, cx, 9,
                 stock == null ? 0xFFFF7070 : (wound ? 0xFFFFFFFF : 0xFFFFD060));
 
-        String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     1/" + CameraData.SHUTTERS[shutterIndex] + String.format(java.util.Locale.ROOT,"    %+.1f EV",meter);
+        String exposure = "f/" + trim(CameraData.APERTURES[apertureIndex]) + "     " + CameraData.shutterLabel(CameraData.SHUTTERS[shutterIndex]) + String.format(java.util.Locale.ROOT,"    %+.1f EV",meter);
         graphics.drawCenteredString(font, exposure, cx, height - 48, 0xFFFFFFFF);
         drawMeter(graphics, cx, height - 31, meter);
         drawWindLever(graphics, width - 45, height - 38, wound);
@@ -174,6 +174,8 @@ public class CameraScreen extends Screen {
             case GLFW.GLFW_KEY_RIGHT -> { changeShutter(1); yield true; }
             case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE -> { shoot(); yield true; }
             case GLFW.GLFW_KEY_R -> { wind(); yield true; }
+            case GLFW.GLFW_KEY_LEFT_BRACKET -> {CameraOptics.focus(-1);yield true;}
+            case GLFW.GLFW_KEY_RIGHT_BRACKET -> {CameraOptics.focus(1);yield true;}
             case GLFW.GLFW_KEY_C -> { openControls(); yield true; }
             default -> super.keyPressed(input);
         };
@@ -194,6 +196,8 @@ public class CameraScreen extends Screen {
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> changeAperture(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> changeShutter(-1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> changeShutter(1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, ()->CameraOptics.focus(-1));
+            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, ()->CameraOptics.focus(1));
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_A, this::shoot);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_X, this::wind);
             edge(state, GLFW.GLFW_GAMEPAD_BUTTON_Y, this::openControls);
@@ -201,6 +205,7 @@ public class CameraScreen extends Screen {
         }
     }
 
+    @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){if(vertical!=0)CameraOptics.focus(vertical>0?-1:1);return true;}
     private double lastMouseX,lastMouseY;
     @Override public void mouseMoved(double x,double y){
         if(minecraft!=null&&minecraft.player!=null&&GLFW.glfwGetMouseButton(minecraft.getWindow().handle(),GLFW.GLFW_MOUSE_BUTTON_RIGHT)==GLFW.GLFW_PRESS){
