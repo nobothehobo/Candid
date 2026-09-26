@@ -1,98 +1,98 @@
-# Candid 0.4 — Lumen35 integration
+# Candid 0.5 integration and upgrade notes
 
-This is the existing Candid Fabric mod, upgraded in place for Minecraft Java
-1.21.10, Java 21, Fabric Loader 0.19.5+, and Fabric API 0.138.4+1.21.10.
-Do not install the Paper Lumen35 plugin in a Fabric instance. Keep one Candid
-JAR in `mods`; remove the older Candid JAR when updating. Back up existing worlds.
+Baseline: Minecraft Java 1.21.10, Java 21, Fabric Loader 0.19.5+,
+Fabric API 0.138.4+1.21.10, Loom 1.17.21, Gradle 9.5.1.
+The Fabric JAR is not a Paper/Nexo plugin and cannot run on Bedrock.
+Back up worlds; replace the older Candid JAR rather than installing both.
 
-## What was reused
+## Architecture and persistence
 
-The platform-independent Lumen35 `Exposure` and `LightMeter` calculations were
-imported into `com.nobothehobo.candid.core`. Their source provenance is the local
-Lumen35 commit `e7bc1d64c26baf198232b30f1641bbdcfb0319ae`. Candid retains its own
-registry IDs, sound assets, controller screens and client framebuffer capture.
-The original Lumen camera, developing tank, pixel atlas and editable Blockbench
-sources are also included. The basin registry ID is retained for world compatibility.
-There is no Paper, Nexo, SQLite or server plugin dependency.
+The imported platform-independent Lumen35 exposure/meter logic remains under
+`com.nobothehobo.candid.core`; the original source provenance is Lumen35 commit
+`e7bc1d64c26baf198232b30f1641bbdcfb0319ae`. Roll state, optics, depth-of-field
+processing and export validation are independently testable. Fabric registries,
+networking, screens, world sampling and lifecycle hooks surround that core.
 
-## Gameplay
+- Roll records: `<world>/candid/rolls/<uuid>.json`, with previous-checkpoint `.bak`.
+- Full-color scans: `<world>/candid/scans/<frame-uuid>.png` (504 × 336).
+- Vanilla maps: world `data/map_*.dat`. Preserve the whole world when moving saves.
+- Player exports: `<Minecraft instance>/candid-exports/<frame-uuid>.png`.
+- Items carry compact identifiers and settings, not embedded scans.
+- Reprints reuse frame map IDs, including the four large-print tiles.
+- Old JSON records remain readable: missing high-resolution/scans/tiles fields
+  fall back to the available map proof. Older loaded camera counts are preserved.
+- Legacy loose negatives retain the earlier compatibility path. New prints add
+  roll/frame references so Use can open their full-color preview.
+- Development records its finish time once. Restart/closing the station does not
+  consume chemistry again. Development ends further exposure of the roll.
 
-1. Craft camera and film. All seven stocks provide one complete 36-shot roll.
-2. Crouch + Use the camera. Select FILM and operate the control to load.
-3. Use to enter the viewfinder. The bright 3:2 boundary is the captured region.
-4. Set aperture/shutter; aim near zero EV. ISO comes from the loaded film.
-5. Shoot, then manually wind for the next frame.
-6. Camera controls: **Y / U / Rewind button** returns full or partial film.
-7. Use that roll on the Darkroom Basin with one Developer Chemistry.
-8. After 20 seconds, use the roll to open its contact sheet.
-9. Click a frame to consume one Photo Paper and receive a locked map print.
-10. Repeat printing from the same negative or use the Enlarger for duplicates.
+The authoritative ledger checks camera custody, duplicate frame IDs, roll capacity,
+development state, frame validity and paper before printing. Station slots validate
+inputs and return items on close. Inventory saves and external files are not a single
+atomic transaction: hard crashes can require backup recovery. This is not yet certified
+for a public-server economy. A modified multiplayer client can submit image pixels;
+image moderation, archive quotas and stronger transaction recovery are future work.
 
-The Field Guide includes instructions and all thirteen recipes, with recipe
-diagrams read from the same JSON files that register the shipped recipes.
-Data packs that override these recipes may differ from the shipped guide.
+## Rendering and limits
 
-## Persistence and compatibility
+The same 3:2 crop defines finder and capture. Lens field of view uses a 36 × 24 mm
+film reference. Full-color scans avoid the map palette; ordinary prints are 128 × 128
+maps, and large displays use four 128 maps from a 256 × 256 matted proof. Existing
+low-resolution negatives cannot regain missing detail.
 
-- New roll records live in `<world>/candid/rolls/<uuid>.json`, with a `.bak` of
-  the previous checkpoint. Preserve the entire world, including `data/map_*.dat`.
-- Items contain compact UUIDs. Frame palette bytes and metadata live in world
-  storage, not huge item tags. Repeated prints share a map ID.
-- Legacy loaded cameras keep their remaining exposure count on first use.
-  Their old loose negatives/prints remain on the legacy basin/enlarger path.
-- Existing negatives already inverted through the old map palette cannot be
-  reconstructed exactly. New rolls retain the original positive palette bytes.
-- Partial rolls may be rewound and reloaded with the leader retained as a
-  gameplay convenience. Development ends further exposure of that roll.
-- Client and server must both use the same Candid version for multiplayer.
+Depth of field uses a bounded 32 × 21 scene-depth grid and thin-lens approximation.
+It affects the finished photograph, not a continuously blurred optical viewfinder.
+Thin objects, water, glass, reflections and shader geometry can disagree with depth
+samples. The focus-distance indicator meters the center block surface. Long exposures
+average 2–16 actual samples in linear color over the selected duration; trails are
+approximate, not a continuous simulation. A mounted camera remains in hand.
 
-## Accuracy and limits
+The meter uses reflected material brightness, directional sun/shade, ambient skylight,
+block light, time and weather. It is deliberately calibrated for playable Sunny-16-like
+behavior, not laboratory photometry. Shader auto-exposure and the game's brightness
+settings change the rendered pixels independently of this world-based meter.
 
-The viewfinder and capture share a centered 3:2 crop; the map adds a paper border
-instead of stretching a widescreen image into a square. The center patch is a
-metering aid, not a simulated optical focusing mechanism. Aperture and shutter
-affect exposure; depth of field and motion blur are not simulated. Capture uses
-the game's rendered image, so shaders, brightness settings and resource packs
-can affect its appearance. It is not a physical scene-radiance measurement.
+The real shutter sample is CC0; see SOUND_ASSETS.md. Loading models animate in world
+with the player's skin while the server alone performs inventory changes. These are
+staged poses rather than physically simulated finger/film contact.
 
-Golden, Everyday, Portrait and Mono stocks are original profiles inspired by
-published film characteristics; they are not measured Kodak LUTs. See
-`FILM_REFERENCE.md` for primary references.
+## Performance protections
 
-The persistent roll ledger rejects duplicate exposure IDs, wrong-camera custody,
-over-capacity exposure, repeated development and printing without paper.
-However, Minecraft inventory saves and external roll checkpoints are not one
-atomic transaction. Hard crashes can require restoring a world backup. This
-prototype is not certified for a public-server economy. A modded client can
-submit arbitrary image pixels; multiplayer image moderation is separate work.
+- One active capture per client, one background film processor, 45-second timeout.
+- Nine metering rays, with up to nine sun-visibility rays, at four updates per second.
+- Depth sampling: at most 64 rays per tick, 32 × 21 total, 96-block distance bound;
+  nearby entity depth uses a capped list. No per-frame world raycast for each image pixel.
+- Framebuffer readback/downsampling stays on the render thread; film, DOF, PNG encoding
+  and palette work run off-thread. There is no network upload per video frame.
+- At most 16 temporal samples for long exposures, regardless of shutter duration.
+- One bounded incoming scan assembly per player, 10-second expiry; map proof 64 KiB,
+  PNG at most 512 KiB in 16 KiB chunks, validated header/dimensions and frame UUID.
+- Ordered asynchronous roll/image writes, coalesced checkpoints and shutdown flush.
+- No new per-photo display entities: display uses ordinary Minecraft item frames.
 
-## Performance
+The archive currently stays in memory while a world is open. Large public collections
+need eviction and quotas. CI's software-rendered timings are regression evidence,
+not a Steam Deck FPS benchmark. Test long-session frame pacing on target hardware.
 
-One pending capture per client, a bounded 16,384-byte image payload, 700 ms
-server capture spacing, and one background film processor. The meter samples
-nine bounded 32-block rays at four updates per second. Pixel processing and
-ordered roll-file writes run off-thread. Checkpoints coalesce changes once per
-second; orderly shutdown flushes and waits for writes. No per-photo entities.
-Archives remain in memory while the world is open; huge collections need cache
-eviction and storage quotas before large-server use.
+## Tests
 
-## Build and test
+`bash gradlew build compileGametestJava`
 
-`bash gradlew build compileGametestJava` runs unit tests and builds the remapped
-mod. `xvfb-run -a bash gradlew runClientGameTest` runs the real client/integrated
-server workflow on Linux with a virtual display. These tests are in the separate
-`gametest` source set, not the release mod.
+`xvfb-run -a bash gradlew runClientGameTest`
 
-The client test uses Fabric's supported asynchronous-network mode because the
-legacy synchronized packet queue stalled during 1.21.10 login in CI. Assertions
-wait for actual client/server state instead of assuming packets arrive in a tick.
+For the optional shader fixture:
 
-This Work host's Loom socket-capability probe is restricted. Local validation
-uses a build-only adapter that reports optional Unix sockets as unavailable;
-the restriction itself is unchanged. GitHub Actions uses unmodified Loom
-1.17.21 and the checked-in Gradle wrapper. No build adapter ships in the mod.
+```
+python3 tools/setup_shader_test.py
+CANDID_SHADER_TEST=true xvfb-run -a bash gradlew runClientGameTest
+```
 
-Manual acceptance still includes Steam Deck controls/Steam Input mappings,
-different GUI scales, shader compatibility, photographs of moving entities,
-and subjective film/model appearance. Automated screenshots and assertions do
-not replace testing on the user's device.
+The fixture downloads checksum-pinned Iris 1.9.7 and Sodium 0.7.3 for 1.21.10,
+installs a small original test shader in the isolated game test, and verifies
+shader-colored pixels in the persisted scan. These dependencies and test classes
+are excluded from the release mod. The async-network test setting handles 1.21.10
+login correctly; assertions await real state changes.
+
+The in-game guide reads diagrams from the same 18 JSON recipe definitions as the
+mod. A data pack overriding recipes may differ from the shipped guide.
+Dodging/burning and an expanded darkroom remain deliberately deferred.

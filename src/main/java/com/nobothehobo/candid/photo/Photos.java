@@ -12,6 +12,18 @@ import java.util.*;
 
 public final class Photos {
     private Photos(){}
+    public static String stockName(RollState roll){
+        var stock=com.nobothehobo.candid.film.FilmStock.byName(roll.stock());
+        return stock==null?roll.stock():stock.displayName();
+    }
+    public static String date(RollState.Frame frame){
+        return java.time.format.DateTimeFormatter.ofPattern("MMM d, uuuu • HH:mm 'UTC'",Locale.ENGLISH)
+            .withZone(java.time.ZoneOffset.UTC).format(java.time.Instant.ofEpochMilli(frame.timestamp()));
+    }
+    public static String exposure(RollState.Frame frame){
+        return "f/"+frame.aperture()+" • "+com.nobothehobo.candid.data.CameraData.shutterLabel(frame.shutter())
+            +String.format(Locale.ROOT," • %+.1f EV",frame.offset());
+    }
     public static void preview(ServerPlayer p,RollState roll,int index){
         roll.canPrint(index,1);var f=roll.frames().get(index);
         var menu=p.containerMenu;var server=p.level().getServer();
@@ -41,6 +53,11 @@ public final class Photos {
         RollManager.store(p).put(roll.withFrame(index,f));paper.shrink(1);
         for(var s:prints){PhotoMaps.markDeveloped(s);
             net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA,s,t->{t.putString("candid_negative",roll.id().toString());t.putInt("candid_frame",index);});
+            s.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(
+                net.minecraft.network.chat.Component.literal(stockName(roll)+" • ISO "+f.iso()),
+                net.minecraft.network.chat.Component.literal(date(f)),
+                net.minecraft.network.chat.Component.literal(exposure(f)),
+                net.minecraft.network.chat.Component.literal("Use: full-color scan / Export PNG"))));
             RollManager.give(p,s);
         }
     }

@@ -110,8 +110,8 @@ public final class DarkroomMenu extends AbstractContainerMenu {
                 for(int i=0;i<r.frames().size();i++){
                     var f=r.frames().get(i);
                     tray.setItem(9+i,label(Items.PAPER,(i==selected?"Selected • ":"")+"Frame "+f.number()+" • "+f.photographer(),
-                        java.time.Instant.ofEpochMilli(f.timestamp()).toString(),r.stock()+" • ISO "+f.iso(),
-                        "f/"+f.aperture()+" • "+com.nobothehobo.candid.data.CameraData.shutterLabel(f.shutter()),"Click: free preview"));
+                        Photos.date(f),Photos.stockName(r)+" • ISO "+f.iso(),
+                        Photos.exposure(f),"Click: free preview"));
                 }
                 tray.setItem(49,label(CandidItems.PHOTO_PAPER,"Print selected • 1 sheet","One map, cream mat, fits an item frame"));
                 tray.setItem(50,label(Items.ITEM_FRAME,"Large matted print • 1 sheet","Four labeled maps: arrange in a 2 × 2 square","New negatives contain twice the image resolution"));

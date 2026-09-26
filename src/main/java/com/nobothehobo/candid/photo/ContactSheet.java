@@ -35,7 +35,7 @@ public final class ContactSheet extends ChestMenu {
     private void refresh(){
         var r=RollManager.store(owner).get(rollId);
         for(int i=0;i<r.frames().size();i++){var f=r.frames().get(i);var s=new ItemStack(Items.PAPER);s.set(DataComponents.CUSTOM_NAME,Component.literal("Frame "+f.number()+" • "+f.photographer()));
-            s.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(Component.literal(java.time.Instant.ofEpochMilli(f.timestamp()).toString()),Component.literal(r.stock()+" • ISO "+f.iso()),Component.literal("f/"+f.aperture()+" • 1/"+f.shutter()+String.format(Locale.ROOT," • %+.1f EV",f.offset())),Component.literal("Left: print (1 paper) • Right: free preview"))));icons.setItem(i,s);}
+            s.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(Component.literal(Photos.date(f)),Component.literal(Photos.stockName(r)+" • ISO "+f.iso()),Component.literal(Photos.exposure(f)),Component.literal("Left: print (1 paper) • Right: free preview"))));icons.setItem(i,s);}
         var help=new ItemStack(CandidItems.PHOTO_PAPER);help.set(DataComponents.CUSTOM_NAME,Component.literal("Each print costs 1 Photo Paper. Negatives are reusable."));icons.setItem(49,help);
     }
 }

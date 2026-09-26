@@ -28,7 +28,7 @@ public final class NegativePreviewScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal("Positive / negative"),b->{inverted=!inverted;upload();}).bounds(width/2-154,height-26,150,20).build());
         addRenderableWidget(Button.builder(Component.literal("Export PNG"),b->export()).bounds(width/2-154,height-50,150,20).build());
         addRenderableWidget(Button.builder(Component.literal("Scan / map proof"),b->{mapProof=!mapProof;upload();}).bounds(width/2+4,height-50,150,20).build());
-        addRenderableWidget(Button.builder(Component.literal("Back to darkroom"),b->onClose()).bounds(width/2+4,height-26,150,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Back"),b->onClose()).bounds(width/2+4,height-26,150,20).build());
     }
     private void upload(){
         size=photo.colors().length==65536?256:128;
