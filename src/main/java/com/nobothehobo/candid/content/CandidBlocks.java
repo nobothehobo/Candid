@@ -20,8 +20,10 @@ public final class CandidBlocks {
     public static final Block DARKROOM_BASIN = register("darkroom_basin", DarkroomBasinBlock::new,
             BlockBehaviour.Properties.of().strength(2.5f).sound(SoundType.METAL).noOcclusion());
     public static final Block ENLARGER = register("enlarger", EnlargerBlock::new,
-            BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.METAL).lightLevel(state -> 4));
+            BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.METAL).noOcclusion().lightLevel(state -> 4));
 
+    public static final Block TRIPOD = register("tripod",com.nobothehobo.candid.block.TripodBlock::new,
+        BlockBehaviour.Properties.of().strength(1.5f).sound(SoundType.METAL).noOcclusion());
     private CandidBlocks() { }
 
     private static Block register(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties props) {
@@ -37,7 +39,7 @@ public final class CandidBlocks {
     public static void initialize() {
         ItemGroupEvents.modifyEntriesEvent(CandidItems.GROUP_KEY).register(entries -> {
             entries.accept(DARKROOM_BASIN.asItem());
-            entries.accept(ENLARGER.asItem());
+            entries.accept(ENLARGER.asItem());entries.accept(TRIPOD.asItem());
         });
     }
 }

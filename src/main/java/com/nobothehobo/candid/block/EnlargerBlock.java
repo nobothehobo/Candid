@@ -17,29 +17,19 @@ import net.minecraft.world.phys.BlockHitResult;
 public class EnlargerBlock extends Block {
     public EnlargerBlock(BlockBehaviour.Properties properties) { super(properties); }
 
+    @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState s,net.minecraft.world.level.BlockGetter l,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext c){
+        return net.minecraft.world.phys.shapes.Shapes.or(Block.box(1,0,1,15,3,15),Block.box(11,3,10,15,28,14),Block.box(2,14,3,12,28,13));
+    }
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if(CandidItems.stockFor(stack.getItem())!=null){
-            if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.RollManager.safely(p,()->com.nobothehobo.candid.photo.RollManager.open(p,stack));
-            return InteractionResult.SUCCESS;
-        }
-        if (!PhotoMaps.isDeveloped(stack)) return InteractionResult.PASS;
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!player.getAbilities().instabuild && !consumePaper(player)) {
-            player.displayClientMessage(Component.literal("You need Candid Photo Paper to make another print."), true);
-            return InteractionResult.FAIL;
-        }
-        ItemStack copy = PhotoMaps.duplicatePrint(stack);
-        if (!player.getInventory().add(copy)) player.drop(copy, false);
-        player.displayClientMessage(Component.literal("Made a duplicate print."), true);
-        return InteractionResult.SUCCESS;
+        return open(player,pos);
     }
-
-    private boolean consumePaper(Player player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack s = player.getInventory().getItem(i);
-            if (s.is(CandidItems.PHOTO_PAPER)) { s.shrink(1); return true; }
-        }
-        return false;
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return open(player,pos);
+    }
+    private InteractionResult open(Player player,BlockPos pos) {
+        if(player instanceof net.minecraft.server.level.ServerPlayer p)com.nobothehobo.candid.photo.DarkroomMenu.open(p,pos,true);
+        return InteractionResult.SUCCESS;
     }
 }

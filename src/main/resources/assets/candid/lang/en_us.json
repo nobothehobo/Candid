@@ -12,5 +12,10 @@
   "item.candid.photo_paper": "Candid Photo Paper",
   "item.candid.guide": "Candid 35mm Field Guide",
   "block.candid.darkroom_basin": "Darkroom Basin",
-  "block.candid.enlarger": "Photo Enlarger"
+  "block.candid.enlarger": "Photo Enlarger",
+  "block.candid.tripod": "Candid Pan & Tilt Tripod",
+  "item.candid.lens_28": "Lumen 28 mm Lens",
+  "item.candid.lens_35": "Lumen 35 mm Lens",
+  "item.candid.lens_50": "Lumen 50 mm Lens",
+  "item.candid.lens_90": "Lumen 90 mm Lens"
 }

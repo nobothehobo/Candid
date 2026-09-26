@@ -1,67 +1,102 @@
-# Candid 0.4 integration validation
+# Candid 0.5 validation
 
-## Automated checks
+## Tested
 
-On September 20, 2026, GitHub Actions successfully built the release JAR,
-ran all **20 unit tests**, and ran the actual Minecraft 1.21.10 client with
-an integrated single-player server. Initial passing evidence:
-[workflow 35522075060](https://github.com/nobothehobo/Candid/actions/runs/35522075060).
-Every subsequent PR push reruns these checks; use the final green PR run for
-the downloadable release JAR and screenshots.
-The final suite adds a 21st regression test for normalized model UV coordinates.
+GitHub Actions builds the installable Fabric JAR and runs **39 JUnit tests**,
+plus the real Minecraft 1.21.10 client with an integrated single-player world.
+The vanilla workflow passed on September 21, 2026 in
+[run 35596868431](https://github.com/nobothehobo/Candid/actions/runs/35596868431).
+Use the final green PR run for the release artifact; every source push reruns CI.
 
-The client test exercises:
+The integrated test covers:
 
-- Film loading through the real client/server payload, including initial winding.
-- Framebuffer capture and a nonblank 128 × 128 map-palette result.
-- Frame consumption and the requirement to wind again after exposure.
-- Unloading and reloading the same partially exposed roll without resetting it.
-- Consumption of developer and the real 20-second development delay.
-- Opening the contact sheet and printing twice for exactly two paper sheets.
-- A locked map whose palette bytes exactly match the captured frame.
-- Saving, leaving, reopening the world, and verifying the same roll, map ID and pixels.
+- Server-acknowledged loading and winding; screenshot of the camera back and skinned hands.
+- Firing through the actual Space-key handler, releasing jump input, keeping the
+  capture screen open until completion, and consuming exactly one exposure.
+- Early skipping of unloading, partial-roll reload, retained frame count and custody.
+- Nonblank map pixels and a decodable, persisted **504 × 336 full-color PNG**.
+- Tank slot transfer, exactly one chemistry consumption, repeated Start rejection,
+  safe return of the roll on close, and the actual 20-second processing delay.
+- Free previews that allocate no map IDs and consume no photographic paper.
+- PNG export with bytes exactly equal to the stored scan.
+- Two normal prints consuming exactly two sheets; locked map pixels match the negative.
+- Enlarger input slots, four-map matted prints, and reuse of map IDs for repeat copies.
+- Lens attachment and return of the previous lens.
+- Actual camera viewpoint at the tripod head and at least one second spent on a
+  one-second exposure before the frame is consumed.
+- Live scene meter changing by more than seven EV between noon and midnight.
+- Save/leave/reopen preserving rolls, normal maps, large-print tiles and scan files.
 
-Unit tests cover photographic stops, ISO, scene luminance, exposure response,
-film capacity and custody, development transitions, repeated printing,
-serialization, malformed storage, ordered writes, and frame geometry.
-JSON/model checks also validate the custom texture references and editable
-Blockbench source files. Test classes are excluded from the release mod.
+Unit coverage includes EV/ISO/aperture/shutter relationships, sun versus shade,
+weather, material reflectance, long shutter durations, focus-plane sharpness,
+off-plane detail blur, all-stock exposure monotonicity, visibly separated ±2 EV
+results, monochrome neutrality, film capacity, custody, duplicate frames,
+development transitions, print validation, serialization/corruption, ordered writes,
+legacy frame compatibility, scan persistence, safe/repeatable export paths and
+mirrored crafting-recipe collisions.
 
-## Fixes found during validation
+Asset validation parses **89 JSON/model files**, checks texture paths and model UVs,
+and confirms **18 recipe definitions**. Re-exporting the editable Blockbench models
+produces no unintended diff. Test classes and optional shader-test libraries are
+not shipped in the release JAR.
 
-- Fabric's synchronized test-network mode stalled during 1.21.10 login. Its
-  supported asynchronous mode passes; tests wait for state changes explicitly.
-- Screenshot review revealed unwanted vanilla menu blur in the viewfinder.
-  The finder now renders a sharp overlay without the menu background pass.
-- Film models lacked a particle texture reference; the common parent now supplies it.
-- The contact-sheet title and film-selector text exceeded their intended width.
-- Timed-out captures could interfere with later captures; generation tokens
-  now discard stale completion callbacks.
-- A real held-camera screenshot exposed pixel-space UVs in the imported Java
-  models. The reproducible exporter now normalizes them to Minecraft's 0–16
-  range; editable Blockbench sources retain their correct pixel-space UVs.
+## Shader test
 
-## Not yet manually validated
+The optional second CI job loads **Iris 1.9.7 + Sodium 0.7.3 for 1.21.10** and a
+small original test shader. It checks that Iris reports an active pack and that
+the shader's deliberate color change remains in the saved PNG. This tests the
+capture path rather than assuming that framebuffer capture retains shader effects.
+The shader workflow passed on September 26, 2026 in
+[run 36269958324](https://github.com/nobothehobo/Candid/actions/runs/36269958324).
+Screenshots confirm textured world geometry in the resulting scan. The deliberate
+red test tint belongs only to this fixture; it is not a shipped Candid film effect.
 
-- A physical Steam Deck, its Steam Input configuration, and third-party controller mods.
-- Shader packs, alternative renderers and every GUI scale/display aspect ratio.
-- Audible quality on real speakers/headphones; CI has no audio device.
-- Large multiplayer archives, long-session profiling and hard-crash recovery.
+## Fixes discovered during verification
 
-The CI runner reports unavailable narrator/audio devices and an X11 cursor
-warning. These are not successful audio/controller tests. Startup can also
-produce a server catch-up warning on the software-rendered runner; this is not
-a frame-time benchmark. See INTEGRATION.md for bounded-work design and storage limits.
+- Loading initially submitted models but cancelled the renderer's deferred draw
+  flush. The override now replaces the vanilla arm pass and preserves that flush.
+  Screenshot review confirms that the camera, open back, cartridge and arms render.
+- Iris' isolated development test needed its actual runtime shader directory and
+  bundled parser libraries, plus textured geometry passes in the test shader.
+  These changes affect only the optional test harness.
+- The 28 mm and 35 mm recipes were mirrored equivalents. The 35 mm arrangement
+  is now distinct; an automated check protects all shaped recipes against this.
+- Shutter key release and an input-blocking capture screen prevent jump leakage.
+- Load/unload is dispatched once on screen entry, independent of animation completion.
+- The tripod lens viewpoint is raised/offset forward to avoid photographing its head.
+- Exposure warning placement no longer overlaps the meter at the tested GUI size.
 
-## Manual acceptance checklist
+## Partially tested / limitations
 
-- [ ] In survival, craft the camera, all film stocks, developer, station, paper and guide.
-- [ ] Compare clear noon, sunset, night, rain, indoor shade and torchlight readings.
-- [ ] Photograph a recognizable subject at −2, −1, 0, +1 and +2 EV.
-- [ ] Check finder edges against the print at multiple GUI scales and FOV settings.
-- [ ] Fill all 36 frames; verify a 37th shot is rejected.
-- [ ] Unload a partial roll, transfer it, store it in a chest and reload it later.
-- [ ] Restart with partially exposed and developing rolls, then continue normally.
-- [ ] Print repeatedly, trade prints and display them in item frames.
-- [ ] Run the same loop using the Steam Deck controls and the in-game guide alone.
-- [ ] Back up an older Candid world, update it, and verify legacy loose negatives still work.
+- Film profiles are original approximations, not measured Kodak colorimetric models.
+- Vanilla maps still have a limited palette/resolution. Full-color scans and exports
+  preserve more detail; a normal item-frame print cannot display arbitrary RGB pixels.
+- DOF uses a coarse depth grid; it does not simulate optical bokeh, reflections or
+  live finder blur. Long exposures use at most 16 samples, not continuous integration.
+- Loading uses staged model poses and skinned arms, not articulated fingers or cloth/film physics.
+- No physical Steam Deck/Steam Input test, subjective audio listening test, or GPU
+  performance benchmark was possible here. CI's audio/narrator-device warnings are expected.
+- Individual third-party shader packs, their auto-exposure/DOF and resource-pack
+  combinations require manual testing. The Iris fixture is not coverage of every pack.
+- Large archives, malicious-client moderation and transactional hard-crash recovery
+  remain public-server hardening work. Keep world backups.
+- Export is a local PNG file for sharing through your own apps; no automatic social posting.
+- Dodging/burning and further darkroom machinery are deferred as requested.
+
+## Manual acceptance on Steam Deck
+
+- [ ] Back up a 0.4 world, install 0.5 alongside the matching Fabric API, and open it.
+- [ ] Craft the camera, film, developer, tank, enlarger, paper and guide in survival.
+- [ ] Use only the Field Guide to load, expose, develop, preview and print.
+- [ ] Fire repeatedly with A; verify no jump and no duplicate action from Steam Input.
+- [ ] Load/unload through the labeled button and Y; skip both animations early.
+- [ ] Check skin/arm alignment while loading at different FOVs and GUI scales.
+- [ ] Compare noon, sunset, night, rain, indoor shade and torch-lit scenes.
+- [ ] Photograph the same subject at −2, −1, 0, +1 and +2 EV; compare free scans.
+- [ ] Compare 28/35/50/90 mm framing and near/far focus at f/2 and f/16.
+- [ ] Aim a tripod, take 1/8/30-second night shots, and cancel one without spending film.
+- [ ] Close the tank mid-development, reopen/restart, and finish the same roll.
+- [ ] Preview without paper, print repeated copies, and assemble a matted four-map display.
+- [ ] Use a held print, Export PNG, and share the saved file from Desktop Mode.
+- [ ] Repeat with your preferred shader pack; compare the finder composition and scan.
+- [ ] Listen to shutter/wind/latch balance on the Deck's speakers and headphones.

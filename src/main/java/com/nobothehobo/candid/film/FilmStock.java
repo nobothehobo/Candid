@@ -8,8 +8,8 @@ public enum FilmStock {
 
     // Gold-like consumer 200: warm, saturated, fine grain, forgiving highlights.
     WARM_200("Golden 200", 200,
-            1.05f, 1.10f, 1.05f, 1.01f, 0.94f,
-            0.018f, 0.28f, 1.00f, 0.62f, 1.08f, false),
+            1.025f, 1.035f, 1.035f, 1.0f, 0.975f,
+            0.012f, 0.16f, 1.00f, 0.62f, 1.08f, false),
 
     // UltraMax-like general-purpose 400: punchier than portrait film with useful shadow latitude.
     EVERYDAY_400("Everyday 400", 400,

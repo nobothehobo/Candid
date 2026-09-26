@@ -11,12 +11,12 @@ public final class Exposure {
       if (!Double.isFinite(aperture)
           || aperture < 1
           || aperture > 64
-          || denominator < 1
+          || denominator == 0 || denominator < -30
           || denominator > 16000) throw new IllegalArgumentException("Invalid exposure settings");
     }
 
     public String label() {
-      return "f/" + format(aperture) + " • 1/" + denominator;
+      return "f/" + format(aperture) + " • " + Optics.label(denominator);
     }
   }
 
@@ -25,7 +25,7 @@ public final class Exposure {
   }
 
   public static double ev(Settings s) {
-    return log2(s.aperture * s.aperture * s.denominator);
+    return log2(s.aperture * s.aperture / Optics.seconds(s.denominator));
   }
 
   /** Positive means MORE exposure than metered, not a recommendation to add exposure. */

@@ -27,3 +27,11 @@ Audit Geyser/Bedrock controls, custom models, maps, crafting and development on
 the real server. Add transactional inventory/storage handling, quotas and cache
 eviction before treating this prototype as a public-server economy system.
 No StateCraft repository or production branch was accessed by this integration.
+
+Version 0.5 also separates reusable optics/DOF and PNG export validation from
+Fabric screens and item controls. Full-color PNG sidecars can be retained behind
+StateCraft's storage adapter. The physical loading hands, client FOV changes and
+Iris framebuffer path require a modded client and cannot be promised to Bedrock
+or a server-only deployment. Server-side photography needs its own renderer and
+resource-pack-compatible feedback. PNG sharing could be exposed by a separately
+reviewed server download mechanism; this version deliberately exports locally.

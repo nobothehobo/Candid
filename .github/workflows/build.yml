@@ -23,14 +23,42 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: Candid-0.4.0-Mod
-          path: build/libs/candid-0.4.0.jar
+          name: Candid-0.5.0-Mod
+          path: build/libs/candid-0.5.0.jar
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Candid-test-evidence
           path: |
             build/reports/tests/
+            build/run/clientGameTest/screenshots/
+            build/run/clientGameTest/logs/
+            build/run/clientGameTest/crash-reports/
+
+  shaders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.1'
+      - name: Install verified shader test dependencies
+        run: python3 tools/setup_shader_test.py
+      - name: Shader capture regression
+        run: xvfb-run -a bash gradlew runClientGameTest --stacktrace
+        env:
+          LIBGL_ALWAYS_SOFTWARE: 'true'
+          CANDID_SHADER_TEST: 'true'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Candid-shader-evidence
+          path: |
             build/run/clientGameTest/screenshots/
             build/run/clientGameTest/logs/
             build/run/clientGameTest/crash-reports/

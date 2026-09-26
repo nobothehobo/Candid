@@ -8,11 +8,13 @@ import net.minecraft.network.chat.Component;
 public final class FilmUnloadScreen extends Screen {
     private int ticks;private boolean sent;
     public FilmUnloadScreen(){super(Component.literal("Rewinding film"));}
+    @Override protected void init(){if(!sent){sent=true;ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.UNLOAD_FILM,0));}}
     @Override public boolean isPauseScreen(){return false;}
     @Override public void tick(){
         ticks++;if(ticks%10==1&&ticks<35)CandidClient.playLocal(CandidSounds.WIND);
-        if(ticks>=40&&!sent){sent=true;ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.UNLOAD_FILM,0));CandidClient.playLocal(CandidSounds.BACK_OPEN);}
-        if(ticks>58)minecraft.setScreen(new CameraControlScreen());
+        if(ticks==40)CandidClient.playLocal(CandidSounds.BACK_OPEN);
+        if(ticks>58&&com.nobothehobo.candid.data.CameraData.film(CameraOptics.camera())==null)minecraft.setScreen(new CameraControlScreen());
+        if(ticks>160)minecraft.setScreen(new CameraControlScreen());
     }
     @Override public void render(GuiGraphics g,int x,int y,float delta){
         g.fill(0,0,width,height,0xEF111416);int cx=width/2,cy=height/2;

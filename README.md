@@ -1,103 +1,126 @@
-# Candid
+# Candid 0.5 — film photography for Minecraft
 
-## Candid 0.4 — Lumen35 integration
+Craft a mechanical camera, load a 36-shot roll, meter and photograph your world,
+then develop, preview, print and share your pictures. This is the Candid **Fabric
+mod for single player and Fabric multiplayer**, not a Paper plugin.
 
-The Lumen35 exposure/meter core is now integrated into Candid. This version adds
-scene-weighted metering, matching 3:2 viewfinder/capture framing, HUD-free capture,
-partial-roll rewind/unload/reload, persistent negatives, 20-second whole-roll
-development, contact sheets, and repeat printing for one Photo Paper. New prints
-are locked maps, preserving their image when held or displayed.
+## Install in Prism / Steam Deck
 
-Install `candid-0.4.0.jar` in a **Minecraft 1.21.10 Fabric** instance alongside
-Fabric API **0.138.4+1.21.10**. Remove the older Candid JAR. The artwork is bundled;
-single player needs no separate server. For a first test, create a creative world
-and use the Candid Photography creative tab. The in-game Field Guide explains
-every step and the actual recipes.
+1. Use **Minecraft Java 1.21.10**, **Java 21**, **Fabric Loader 0.19.5+** and
+   **Fabric API 0.138.4+1.21.10**.
+2. Back up your world. Remove the older Candid JAR from this instance's `mods` folder.
+3. Put **`candid-0.5.0.jar`** in `mods` and launch. All models, textures and audio
+   are included. Single player needs no separate server.
+4. Open the **Candid Photography** creative tab for a quick test, or craft normally.
+   The **Candid Field Guide** has instructions and diagrams for all 18 shipped recipes.
 
-**Updated workflow:** load → wind → expose → rewind/unload → use roll on basin
-with developer → wait 20 seconds → use developed roll → click frame with paper.
-In camera-body controls, **Y / U / Rewind button** unloads. Partial rolls retain
-their frames. Right stick or right-mouse drag aims inside the finder.
+For multiplayer, both client and server need the same Candid version. Optional
+Iris/Sodium and shader packs are client-side; they are not bundled or required.
 
-See [integration, upgrade and testing notes](docs/INTEGRATION.md).
+## What changed in 0.5
 
-Candid is a Fabric film-photography mod for Minecraft Java Edition. It turns photography into a compact survival gameplay loop: craft a rangefinder, load a 36-exposure roll, meter the scene, choose aperture and shutter speed, manually advance the film, expose a roll, develop it, and hang the finished photograph in an item frame.
-
-## Target
-- Minecraft Java **1.21.10**
-- Fabric Loader **0.19.5+**
-- Fabric API **0.138.4+1.21.10**
-- Java **21**
-- Single-player / integrated server and Fabric multiplayer
-- Steam Deck-first camera controls
-
-## Features
-- Candid 35 mechanical rangefinder with a rebuilt detailed 3D model: stepped lens barrel, finder/rangefinder windows, top plate, shutter dial/button, rewind knob, advance lever, strap lugs, leatherette body, and back-door seam
-- 36-exposure film rolls
-- Seven 36-exposure stocks: Vivid 100, Golden 200, Everyday 400, Portrait 400, Portrait 800, Classic Mono 400, and Fine Mono 400
-- Apertures f/1.4, 2, 2.8, 4, 5.6, 8, 11, 16
-- Shutters 1/15 through 1/1000
-- Live reflected light meter in the viewfinder
-- Manual film advance: after every exposure the camera must be wound before it can fire again
-- Camera-body control screen with physical-style aperture/shutter dials, film selector, and advance lever
-- Animated film loading: camera back opens, cartridge enters the chamber, leader stretches to the take-up spool, back closes, and the camera advances to frame 1
-- Mechanical Candid shutter, advance, film-loading, and back-latch foley
-- Film-response simulation with stock-specific highlight shoulder, shadow toe, under/overexposure tolerance, contrast, saturation, color response, luminance/chroma grain, and extra shadow grain when underexposed
-- Actual framebuffer photograph capture, downsampled into the Minecraft map palette
-- Persistent negatives on uniquely identified film rolls, with 36 frame slots
-- Darkroom Basin + Developer Chemistry whole-roll processing in 20 seconds
-- Contact sheets and reusable negatives; locked map prints display in ordinary item frames
-- Photo Enlarger + Photo Paper for duplicate prints
-- In-game Candid Field Guide with visual crafting-grid diagrams and controller help
-
-The film profiles use original Candid names and art, with behavior informed by published Kodak characteristics such as GOLD 200, ULTRA MAX 400, PORTRA 400/800, TRI-X 400, and T-MAX 400. They are not claimed as exact colorimetric emulations. See `FILM_REFERENCE.md` for the reference methodology. No third-party film logos, packaging, or textures are copied.
-
-The audio included in the repository is original Candid mechanical foley. See `SOUND_ASSETS.md` for provenance and vetted CC0 real-camera reference recordings that can be substituted in a future audio pass.
-
-## Steam Deck / Prism Launcher
-1. Create or edit a Prism instance for Minecraft 1.21.10.
-2. Install Fabric Loader for that instance.
-3. Add Fabric API for 1.21.10.
-4. Put `candid-0.4.0.jar` in the instance's `mods` folder.
-5. Launch Minecraft. No Paper server is required for single player.
-
-### Camera controls
-
-**In the world**
-- **Use** — raise the camera / open the viewfinder.
-- **Crouch + Use** — open the physical camera-body controls.
-
-**Viewfinder**
-- **D-pad Up/Down** — aperture.
-- **D-pad Left/Right** — shutter speed.
-- **A** — fire the shutter.
-- **X** — manually wind/advance the film.
-- **Y** — open camera-body controls.
-- **B** — lower the camera.
-
-**Camera-body controls**
-- **D-pad Left/Right** — select aperture dial, shutter dial, film, or advance lever.
-- **D-pad Up/Down** — turn the selected dial / change the selected film stock.
-- **A** — operate the selected control. On FILM this begins the visible loading sequence.
-- **X** — wind the advance lever from anywhere on the body screen.
-- **Y / U / Rewind button** — rewind and unload the current roll.
-- **B** — close.
-
-The film-loading animation may be skipped with **B**; if you skip before the initial wind finishes, press **X** once to ready frame 1.
-
-Keyboard equivalents are arrows for dials, Enter/Space for shutter/operate, **R** for wind, and **C** for body controls.
+- **Clickable darkroom stations:** film and chemistry/paper input slots, development
+  progress, safe supply return when closing, free frame previews, repeat printing.
+- **Full-color 504 × 336 scans** with PNG export. New held prints reopen their scans.
+  Ordinary maps remain palette-limited; an enlarger can make a matted 2 × 2 map display.
+- **Lighting-aware metering:** scene reflectance, sunlight direction and shade,
+  time, rain and local light. Exposure errors visibly affect tone and shadow grain.
+- **Optics:** interchangeable 28/35/50/90 mm lenses, matching finder/capture framing,
+  focus distance, focus confirmation and depth-of-field approximation in the final scan.
+- **Tripod exposures:** aim from a fixed tripod head and combine samples over
+  1/2/4/8/15/30 seconds. Long exposures require a tripod.
+- **Physical loading:** camera back, cartridge, leader and the player's skinned
+  hands animate in the world. Skipping the animation does not undo loading.
+- **Real recorded film shutter**, with documented CC0 provenance; original wind/latch foley.
+- **Input fixes:** shutter input stays captured so it does not trigger jumping;
+  load/unload requests no longer depend on reaching the end of an animation.
 
 ## Quick play loop
-1. Craft a Candid 35 and a film roll.
-2. Crouch + Use the camera, select **FILM**, choose a roll, and press **A**.
-3. Watch the camera back open, load the cartridge and leader, close, and advance.
-4. Use the camera normally to enter the viewfinder.
-5. Meter the scene and press **A** to expose a frame.
-6. Press **X** to wind before the next photograph.
-7. Rewind/unload from the controls with **Y / U**; partial rolls retain their frames.
-8. Use the roll on the Darkroom Basin with one Developer Chemistry, then wait 20 seconds.
-9. Use the roll to open the contact sheet; click a frame with Photo Paper in your inventory.
-10. Each print costs one sheet. Repeat from the same negative, trade it, or display it in an item frame.
 
-## Building
-GitHub Actions builds the mod automatically. The repository includes the Gradle wrapper, so a local developer with Java 21 can run `./gradlew build` (or `gradlew.bat build` on Windows).
+1. Craft a camera, a film roll, tank, developer, enlarger and Photo Paper.
+   Materials are common overworld supplies; every film craft makes a complete
+   36-exposure roll, and paper crafts in batches.
+2. **Crouch + Use** the camera. Choose the film stock, then **Load selected film**.
+   The corresponding roll must be in your inventory. Loading normally winds frame 1.
+3. **Use** the camera to enter the finder. Aim, adjust aperture/shutter and focus.
+   Aim near **0 EV** for a balanced exposure. ISO belongs to the loaded film.
+4. Fire, then **wind** before the next frame. Rewind/unload full or partial rolls
+   from the controls; a partial roll keeps its original frames when reloaded.
+5. Click the **Darkroom Basin / Developing Tank**. Put exposed film in the first
+   input slot and one **Developer Chemistry** in the second. Click **Start**.
+   Processing takes 20 seconds. Closing returns your roll and supplies safely;
+   development continues on the roll.
+6. Click the **Photo Enlarger**. Insert the developed roll and Photo Paper.
+   Select a frame for a **free preview**. Print only when happy: one sheet per
+   print, including a complete four-map large print. Negatives are reusable.
+7. Use a developed roll for its contact sheet: **right-click a frame to preview**,
+   **left-click to print** using paper from your inventory.
+8. Display ordinary prints in item frames. For a large print, arrange its four
+   labeled maps in a 2 × 2 square, all in the same rotation.
+
+## Sharing outside Minecraft
+
+Open a negative preview, or **Use a newly printed photo**, then choose **Export PNG**.
+The mod saves the positive scan in **`.minecraft/candid-exports`** inside that
+Prism instance and opens the folder. Share the PNG through Discord, messages,
+a photo library or any app you normally use. There is no automatic posting,
+account setup, upload service or embedded player location in the exported image.
+Old negatives can export their existing map proof; updating cannot recreate
+full-color detail that was never stored.
+
+**Scan / map proof** compares the full-color image with the actual map rendering.
+**Positive / negative** is a viewing aid; export always saves the positive scan.
+
+## Controls
+
+| Action in viewfinder | Keyboard / mouse | Gamepad |
+| --- | --- | --- |
+| Aim | Hold right mouse and drag | Right stick |
+| Aperture | Up / Down | D-pad Up / Down |
+| Shutter speed | Left / Right | D-pad Left / Right |
+| Fire | Enter / Space | A |
+| Wind film | R | X |
+| Camera controls | C | Y |
+| Focus nearer / farther | Mouse wheel or [ / ] | Left / right bumper |
+| Match center subject distance | F | Left-stick click |
+| Close / cancel exposure | Escape | B |
+
+Camera controls use real buttons: click, **Tab + Enter**, or **D-pad + A**.
+**U / Y** operates load/unload there. If you skip loading before winding,
+use **Wind / advance** once. The center focus patch turns green when the
+selected focus is near the metered subject. It is a focus aid, not autofocus tracking.
+
+Place a tripod and **Use it while holding the camera**, then open the finder.
+Aim normally; the viewpoint stays at the tripod head. Choose a seconds-long
+shutter. Stay near the tripod. **Detach tripod** in controls returns to handheld.
+The camera remains in your hand; this version has no unattended timed shutter.
+
+Steam Input can expose either a gamepad or keyboard/mouse controls. Avoid
+assigning the same physical button through both paths. Physical Deck/controller
+validation remains part of the manual checklist.
+
+## Film and image character
+
+Seven original stocks: **Vivid 100, Golden 200, Everyday 400, Portrait 400,
+Portrait 800, Classic Mono 400, Fine Mono 400**. Golden is warmer and restrained;
+Portrait has softer contrast; monochrome stocks differ in grain and tone.
+See [film references](FILM_REFERENCE.md). These are inspired profiles, **not
+measured or licensed Kodak emulations**. No film trademarks or packaging are copied.
+
+Capture uses the actual rendered Minecraft view, so active shaders and resource
+packs can appear in photographs. The meter estimates world illumination separately;
+a shader's own exposure, tone curve, depth of field or motion blur can affect the result.
+There is no access to physical HDR scene radiance or recovery of already-clipped highlights.
+See [test report](docs/TEST_REPORT.md) for the tested Iris setup and remaining limits.
+
+## Build, assets and technical notes
+
+With Java 21: `bash gradlew build`. The installable artifact is
+`build/libs/candid-0.5.0.jar`. Run the real client/integrated-world regression on
+Linux with `xvfb-run -a bash gradlew runClientGameTest`.
+GitHub Actions also builds and tests each push/PR; download its `Candid-0.5.0-Mod` artifact.
+
+Editable models are in `assets/blockbench`; run `python3 tools/export_models.py`
+to export them. See [assets](assets/README.md), [audio provenance](SOUND_ASSETS.md),
+[integration and performance](docs/INTEGRATION.md), [tests](docs/TEST_REPORT.md),
+and [future StateCraft adapter work](docs/STATECRAFT_IMPORT.md).
