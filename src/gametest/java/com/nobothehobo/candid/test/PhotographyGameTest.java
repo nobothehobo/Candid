@@ -38,8 +38,15 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 Class<?> iris=Class.forName("net.irisshaders.iris.Iris");
                 java.nio.file.Path shader=((java.nio.file.Path)iris.getMethod("getShaderpacksDirectory").invoke(null)).resolve("Candid-Test/shaders");
                 java.nio.file.Files.createDirectories(shader);
-                java.nio.file.Files.writeString(shader.resolve("final.vsh"),"#version 120\nvarying vec2 uv;\nvoid main(){gl_Position=ftransform();uv=gl_MultiTexCoord0.xy;}\n");
-                java.nio.file.Files.writeString(shader.resolve("final.fsh"),"#version 120\nuniform sampler2D colortex0;\nvarying vec2 uv;\nvoid main(){vec3 c=texture2D(colortex0,uv).rgb;gl_FragColor=vec4(c*vec3(1.0,0.15,0.15),1.0);}\n");
+                for(String name:List.of("gbuffers_basic","gbuffers_textured","gbuffers_textured_lit","final")){
+                    for(String extension:List.of("vsh","fsh")){
+                        String file=name+"."+extension;
+                        try(var source=PhotographyGameTest.class.getResourceAsStream("/candid-test-shaders/"+file)){
+                            if(source==null)throw new java.io.IOException("Missing shader fixture: "+file);
+                            java.nio.file.Files.copy(source,shader.resolve(file),java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }
+                }
                 Object config=iris.getMethod("getIrisConfig").invoke(null);
                 config.getClass().getMethod("setShaderPackName",String.class).invoke(config,"Candid-Test");
                 config.getClass().getMethod("setShadersEnabled",boolean.class).invoke(config,true);

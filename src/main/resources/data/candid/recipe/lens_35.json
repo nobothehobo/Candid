@@ -3,8 +3,8 @@
   "category": "equipment",
   "pattern": [
     " G ",
-    "ICN",
-    "   "
+    "NC ",
+    " I "
   ],
   "key": {
     "G": "minecraft:glass_pane",
