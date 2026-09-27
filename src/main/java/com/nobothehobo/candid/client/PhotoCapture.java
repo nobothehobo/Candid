@@ -43,15 +43,20 @@ public final class PhotoCapture {
         accumulated=new double[504*336*3];exposureStart=0;nextSample=0;
         net.minecraft.client.KeyMapping.releaseAll();
         mc.setScreen(new CaptureScreen());
-        generation++;waitTicks=2;started=System.currentTimeMillis();level=mc.level;return true;
+        generation++;waitTicks=2;started=System.currentTimeMillis();level=mc.level;
+        CandidClient.playLocal(com.nobothehobo.candid.content.CandidSounds.SHUTTER);
+        return true;
     }
     public static void tick(Minecraft client){
         if(!busy())return;
         if(client.level==null||client.player==null||client.level!=level||System.currentTimeMillis()-started>45000){cancel();if(client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());return;}
         client.options.keyJump.setDown(false);
         if(pending==null||reading||processing||waitTicks-->0)return;
-        if(!focusSampler.tick(client))return;
-        if(exposureStart==0){exposureStart=System.currentTimeMillis();nextSample=exposureStart;CandidClient.playLocal(sampleCount>1?com.nobothehobo.candid.content.CandidSounds.BACK_OPEN:com.nobothehobo.candid.content.CandidSounds.SHUTTER);}
+        boolean focused=focusSampler.tick(client);
+        // Capture the light immediately. The bounded depth scan may finish later;
+        // it must not add half a second of shutter lag to every photograph.
+        if(samplesTaken==sampleCount){if(focused)process(client,pending,generation,level);return;}
+        if(exposureStart==0){exposureStart=System.currentTimeMillis();nextSample=exposureStart;}
         if(System.currentTimeMillis()<nextSample)return;
         Pending shot=pending;long captureGeneration=generation;Object capturedLevel=level;reading=true;
         try{Screenshot.takeScreenshot(client.getMainRenderTarget(),image->{
@@ -64,6 +69,11 @@ public final class PhotoCapture {
                 samplesTaken++;
                 if(samplesTaken<sampleCount){nextSample=exposureStart+(long)(Optics.seconds(CameraData.SHUTTERS[shot.shutter])*1000*samplesTaken/(sampleCount-1));return;}
                 if(sampleCount>1)CandidClient.playLocal(com.nobothehobo.candid.content.CandidSounds.SHUTTER);
+                if(focused)process(client,shot,captureGeneration,capturedLevel);
+            }catch(Exception e){failure(client,e,captureGeneration);}finally{image.close();}
+        });}catch(Exception e){failure(client,e,captureGeneration);}
+    }
+    private static void process(Minecraft client,Pending shot,long captureGeneration,Object capturedLevel){
                 double[] sum=accumulated;float[] depths=focusSampler.depths();int count=samplesTaken;accumulated=null;pending=null;processing=true;
                 PROCESSOR.execute(()->{
                     try {
@@ -85,8 +95,6 @@ public final class PhotoCapture {
                         });
                     }catch(Exception e){client.execute(()->failure(client,e,captureGeneration));}
                 });
-            }catch(Exception e){failure(client,e,captureGeneration);}finally{image.close();}
-        });}catch(Exception e){failure(client,e,captureGeneration);}
     }
     private static int encode(double linear){double c=linear<=.0031308?linear*12.92:1.055*Math.pow(linear,1/2.4)-.055;return (int)Math.round(Math.max(0,Math.min(1,c))*255);}
     private static void failure(Minecraft client,Exception e,long captureGeneration){if(captureGeneration!=generation)return;pending=null;reading=false;processing=false;org.slf4j.LoggerFactory.getLogger("Candid").error("Capture failed",e);if(client.player!=null)client.player.displayClientMessage(Component.literal("Capture failed. No frame used."),true);if(client.screen instanceof CaptureScreen)client.setScreen(new CameraScreen());}

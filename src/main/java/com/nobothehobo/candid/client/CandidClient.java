@@ -12,13 +12,20 @@ import net.minecraft.world.InteractionResult;
 public class CandidClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(com.nobothehobo.candid.content.CandidBlocks.TRIPOD_ENTITY,TripodRenderer::new);
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.TripodViewPayload.ID,(payload,context)->{
+            CameraOptics.mount(payload.pos());context.client().setScreen(new CameraScreen());
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(CameraOptics::tick);
         UseItemCallback.EVENT.register((player, level, hand) -> {
             if (!level.isClientSide()) return InteractionResult.PASS;
 
             if (player.getItemInHand(hand).is(CandidItems.CAMERA)) {
+                CameraOptics.clearMount();
+                net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new com.nobothehobo.candid.network.CameraActionPayload(com.nobothehobo.candid.network.CameraActionPayload.CLOSE_TRIPOD,0));
                 Minecraft.getInstance().setScreen(player.isShiftKeyDown()
                         ? new CameraControlScreen()
-                        : new CameraScreen());
+                        : new CameraRaiseScreen());
                 return InteractionResult.SUCCESS;
             }
 

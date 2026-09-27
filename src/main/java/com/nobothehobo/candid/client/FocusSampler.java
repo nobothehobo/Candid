@@ -12,7 +12,7 @@ final class FocusSampler {
     private final float[] depth=new float[32*21];
     private int next;
     FocusSampler(Minecraft mc,int lens){
-        origin=CameraOptics.anchor();forward=mc.player.getLookAngle();double yaw=Math.toRadians(mc.player.getYRot());
+        origin=CameraOptics.anchor();forward=CameraOptics.direction();double yaw=Math.toRadians(CameraOptics.yaw());
         right=new Vec3(-Math.cos(yaw),0,-Math.sin(yaw));up=right.cross(forward);tangent=Math.tan(Math.toRadians(Optics.verticalFov(lens))/2);
     }
     boolean tick(Minecraft mc){

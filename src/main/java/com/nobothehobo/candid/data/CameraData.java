@@ -23,12 +23,13 @@ public final class CameraData {
     public static int focusIndex(ItemStack s){return Math.floorMod(tag(s).getIntOr("candid_focus",11),12);}
     public static double focus(ItemStack s){return com.nobothehobo.candid.core.Optics.FOCUS[focusIndex(s)];}
     public static void setFocus(ItemStack s,int index){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putInt("candid_focus",Math.floorMod(index,12)));}
-    public static void setLens(ItemStack s,int index){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putInt("candid_lens",Math.floorMod(index,4)));}
+    public static void setLens(ItemStack s,int index){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putInt("candid_lens",Math.floorMod(index,4)));refreshModel(s);}
+    public static void refreshModel(ItemStack s){s.set(DataComponents.ITEM_MODEL,com.nobothehobo.candid.Candid.id("camera_"+lens(s)));}
     public static void mount(ItemStack s,net.minecraft.core.BlockPos pos){CustomData.update(DataComponents.CUSTOM_DATA,s,t->{t.putInt("candid_tripod_x",pos.getX());t.putInt("candid_tripod_y",pos.getY());t.putInt("candid_tripod_z",pos.getZ());t.putBoolean("candid_mounted",true);});}
     public static net.minecraft.core.BlockPos tripod(ItemStack s,net.minecraft.world.entity.player.Player p){
         var t=tag(s);if(!t.getBooleanOr("candid_mounted",false))return null;
         var pos=new net.minecraft.core.BlockPos(t.getIntOr("candid_tripod_x",0),t.getIntOr("candid_tripod_y",0),t.getIntOr("candid_tripod_z",0));
-        return p.distanceToSqr(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<16&&p.level().getBlockState(pos).is(com.nobothehobo.candid.content.CandidBlocks.TRIPOD)?pos:null;
+        return p.distanceToSqr(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<=1024&&p.level().getBlockEntity(pos) instanceof com.nobothehobo.candid.block.TripodBlockEntity b&&!b.camera().isEmpty()&&cameraId(b.camera()).equals(cameraId(s))?pos:null;
     }
     public static void unmount(ItemStack s){CustomData.update(DataComponents.CUSTOM_DATA,s,t->t.putBoolean("candid_mounted",false));}
     private CameraData() { }

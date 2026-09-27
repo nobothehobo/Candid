@@ -31,7 +31,7 @@ public final class CameraControlScreen extends Screen {
         film=button("Film stock",left,top+25,146,()->stockIndex=(stockIndex+1)%FilmStock.values().length);
         load=button("Load film",left+154,top+25,146,this::loadOrUnload);
         button("Wind / advance",left,top+50,146,()->{send(CameraActionPayload.WIND,0);CandidClient.playLocal(CandidSounds.WIND);});
-        button("Open viewfinder",left+154,top+50,146,()->minecraft.setScreen(new CameraScreen()));
+        button("Open viewfinder",left+154,top+50,146,()->minecraft.setScreen(CameraOptics.mountedPosition()==null?new CameraRaiseScreen():new CameraScreen()));
         lens=button("Lens",left,top+75,146,()->lensChoice=(lensChoice+1)%4);
         button("Attach selected lens",left+154,top+75,146,()->send(CameraActionPayload.LENS,lensChoice));
         focus=button("Focus",left,top+100,146,()->CameraOptics.focus(1));

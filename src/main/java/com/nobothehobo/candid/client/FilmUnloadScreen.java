@@ -7,6 +7,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 public final class FilmUnloadScreen extends Screen {
     private int ticks;private boolean sent;
+    private final com.nobothehobo.candid.film.FilmStock stock=com.nobothehobo.candid.data.CameraData.film(CameraOptics.camera());
+    public int animationAge(){return ticks;}
+    public com.nobothehobo.candid.film.FilmStock stock(){return stock==null?com.nobothehobo.candid.film.FilmStock.WARM_200:stock;}
     public FilmUnloadScreen(){super(Component.literal("Rewinding film"));}
     @Override protected void init(){if(!sent){sent=true;ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.UNLOAD_FILM,0));}}
     @Override public boolean isPauseScreen(){return false;}
@@ -16,12 +19,12 @@ public final class FilmUnloadScreen extends Screen {
         if(ticks>58&&com.nobothehobo.candid.data.CameraData.film(CameraOptics.camera())==null)minecraft.setScreen(new CameraControlScreen());
         if(ticks>160)minecraft.setScreen(new CameraControlScreen());
     }
+    @Override public void renderBackground(GuiGraphics g,int x,int y,float delta){}
     @Override public void render(GuiGraphics g,int x,int y,float delta){
-        g.fill(0,0,width,height,0xEF111416);int cx=width/2,cy=height/2;
-        g.drawCenteredString(font,ticks<40?"REWINDING • negatives remain protected":"OPEN BACK • return cartridge",cx,cy-36,0xFFF4E6C8);
-        g.submitOutline(cx-80,cy-16,160,32,0xFF91999E);
-        int length=(int)(150*Math.max(0,1-ticks/40.0));g.fill(cx-75,cy-8,cx-75+length,cy+8,0xFFB8904D);
-        g.drawCenteredString(font,"Partial rolls keep their exposed frames and remaining capacity.",cx,cy+30,0xFFBBBDBA);
+        String step=ticks<10?"Press rewind release":ticks<40?"Rewind film into cartridge":ticks<50?"Open back • lift cartridge":"Close camera back";
+        g.fill(0,height-46,width,height,0xc8111518);
+        g.drawCenteredString(font,step,width/2,height-35,0xffeedcb9);
+        g.drawCenteredString(font,"Esc: skip • exposed frames and remaining capacity stay safe",width/2,height-18,0xffc2c5c7);
         super.render(g,x,y,delta);
     }
     @Override public void onClose(){if(minecraft!=null)minecraft.setScreen(new CameraControlScreen());}

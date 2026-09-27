@@ -26,10 +26,7 @@ public class CameraScreen extends Screen {
     }
 
     private ItemStack camera() {
-        if (minecraft == null || minecraft.player == null) return ItemStack.EMPTY;
-        if (minecraft.player.getMainHandItem().is(CandidItems.CAMERA)) return minecraft.player.getMainHandItem();
-        if (minecraft.player.getOffhandItem().is(CandidItems.CAMERA)) return minecraft.player.getOffhandItem();
-        return ItemStack.EMPTY;
+        return CameraOptics.camera();
     }
 
     @Override
@@ -196,8 +193,8 @@ public class CameraScreen extends Screen {
             long now=System.nanoTime();double dt=Math.min(.05,(now-lastAim)/1e9);lastAim=now;
             if(minecraft!=null&&minecraft.player!=null){
                 float ax=state.axes(GamepadInput.RIGHT_X),ay=state.axes(GamepadInput.RIGHT_Y);
-                if(Math.abs(ax)>.18)minecraft.player.setYRot(minecraft.player.getYRot()+(float)(ax*70*dt));
-                if(Math.abs(ay)>.18)minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)(ay*55*dt))));
+                if(Math.abs(ax)>.18)CameraOptics.aim((float)(ax*70*dt),0);
+                if(Math.abs(ay)>.18)CameraOptics.aim(0,(float)(ay*55*dt));
             }
             edge(state, GamepadInput.DPAD_UP, () -> changeAperture(-1));
             edge(state, GamepadInput.DPAD_DOWN, () -> changeAperture(1));
@@ -217,8 +214,8 @@ public class CameraScreen extends Screen {
     private double lastMouseX,lastMouseY;
     @Override public void mouseMoved(double x,double y){
         if(minecraft!=null&&minecraft.player!=null&&minecraft.mouseHandler.isRightPressed()){
-            minecraft.player.setYRot(minecraft.player.getYRot()+(float)((x-lastMouseX)*.22));
-            minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)((y-lastMouseY)*.22))));
+            CameraOptics.aim((float)((x-lastMouseX)*.22),(float)((y-lastMouseY)*.22));
+
         }
         lastMouseX=x;lastMouseY=y;super.mouseMoved(x,y);
     }

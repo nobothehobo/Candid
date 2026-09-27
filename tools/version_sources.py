@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def transform(source, target):
     if target != "1.21.10":
+        source = source.replace(".location()", ".identifier()")
         source = source.replace("ResourceLocation", "Identifier").replace("net.minecraft.Util", "net.minecraft.util.Util")
     if target == "1.21.11":
         source = source.replace(".submitOutline(", ".renderOutline(")
@@ -55,15 +56,21 @@ def transform(source, target):
         source = re.sub(r"\.screen\b(?!\()", ".gui.screen()", source)
         source = source.replace(".getMainRenderTarget()", ".gameRenderer.mainRenderTarget()")
         source = source.replace(".getMainCamera()", ".mainCamera()")
+        source = source.replace('method="renderHandsWithItems"', 'method="submitHandsWithItems"')
+        source = source.replace('method="renderArmWithItem"', 'method="submitArmWithItem"')
         for color in ("LIME", "GRAY"):
             source = source.replace(f"Items.{color}_DYE", f"Items.DYE.{color.lower()}()")
     if target == "26.3":
+        source = source.replace("pose.mulPose(", "pose.rotate(")
         source = source.replace("net.minecraft.util.Util.getPlatform().openPath(", "com.mojang.blaze3d.Blaze3D.openPath(")
         source = source.replace("p.drop(s,false)", "p.drop(s,false,net.minecraft.util.Prediction.SERVER_ONLY)")
     return source
 
 def generate(target, output):
     definition = json.loads((ROOT / "gradle/targets.json").read_text())[target]
+    output = output.resolve()
+    if not output.is_relative_to(ROOT / "build") or output == ROOT / "build":
+        raise ValueError("Generated sources must be inside a build subdirectory")
     if output.exists():
         shutil.rmtree(output)
     for source_set in ("main", "test", "gametest"):
@@ -76,7 +83,7 @@ def generate(target, output):
         for relative, path in files.items():
             dest = output / source_set / relative
             dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_text(transform(path.read_text(), target))
+            dest.write_text(transform(path.read_text(encoding="utf-8"), target), encoding="utf-8")
 
 if __name__ == "__main__":
     generate(sys.argv[1], Path(sys.argv[2]))

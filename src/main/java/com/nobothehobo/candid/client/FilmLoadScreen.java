@@ -35,7 +35,7 @@ public class FilmLoadScreen extends Screen {
     @Override
     public void tick() {
         if(minecraft==null||minecraft.player==null)return;
-        ItemStack held=minecraft.player.getMainHandItem().is(CandidItems.CAMERA)?minecraft.player.getMainHandItem():minecraft.player.getOffhandItem();
+        ItemStack held=CameraOptics.camera();
         if(com.nobothehobo.candid.data.CameraData.film(held)!=stock){
             if(++waitingTicks>100)minecraft.setScreen(new CameraControlScreen());return;
         }

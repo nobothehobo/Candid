@@ -24,6 +24,9 @@ public final class CandidBlocks {
 
     public static final Block TRIPOD = register("tripod",com.nobothehobo.candid.block.TripodBlock::new,
         BlockBehaviour.Properties.of().strength(1.5f).sound(SoundType.METAL).noOcclusion());
+    public static final net.minecraft.world.level.block.entity.BlockEntityType<com.nobothehobo.candid.block.TripodBlockEntity> TRIPOD_ENTITY = Registry.register(
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,Candid.id("tripod"),
+        net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(com.nobothehobo.candid.block.TripodBlockEntity::new,TRIPOD).build());
     private CandidBlocks() { }
 
     private static Block register(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties props) {

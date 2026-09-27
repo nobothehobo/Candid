@@ -22,15 +22,32 @@ public final class RollManager {
     private static final Map<UUID,Long> LAST_SHOT=new HashMap<>();
     public static void initialize(){
         ServerLifecycleEvents.SERVER_STARTED.register(s->{try{STORES.put(s,new RollRepository(s.getWorldPath(LevelResource.ROOT).resolve("candid/rolls")));}catch(Exception e){LOG.error("Cannot load Candid rolls; photography disabled to protect data",e);}});
-        ServerTickEvents.END_SERVER_TICK.register(s->{if(s.getTickCount()%20==0){var r=STORES.get(s);if(r!=null)try{r.flush();}catch(Exception e){LOG.error("Candid storage failed",e);}}});
-        ServerLifecycleEvents.SERVER_STOPPING.register(s->{var r=STORES.remove(s);if(r!=null)try{r.close();}catch(Exception e){LOG.error("Candid final save failed",e);}LAST_SHOT.clear();ScanUploads.clear();});
+        ServerTickEvents.END_SERVER_TICK.register(s->{if(s.getTickCount()%20==0){var r=STORES.get(s);if(r!=null)try{for(var p:s.getPlayerList().getPlayers())refreshCarriedFilm(p);r.flush();}catch(Exception e){LOG.error("Candid storage failed",e);}}});
+        ServerLifecycleEvents.SERVER_STOPPING.register(s->{var r=STORES.remove(s);if(r!=null)try{r.close();}catch(Exception e){LOG.error("Candid final save failed",e);}LAST_SHOT.clear();ScanUploads.clear();TripodSessions.clear();});
+    }
+    private static void refreshCarriedFilm(ServerPlayer p){
+        for(int slot=0;slot<p.getInventory().getContainerSize();slot++){
+            var stack=p.getInventory().getItem(slot);
+            if(CandidItems.stockFor(stack.getItem())==null)continue;
+            try {
+                UUID id=token(stack);if(id==null)continue;
+                var roll=store(p).get(id);
+                if(roll.camera()!=null)continue;
+                if(roll.stage()==RollState.Stage.DEVELOPING&&System.currentTimeMillis()>=roll.readyAt())
+                    roll=finish(p,roll,stack);
+                // A stale item can outlive a completed tray or a server restart.
+                if(roll.stage()==RollState.Stage.DEVELOPED)update(stack,roll);
+            }catch(IllegalArgumentException|IllegalStateException ignored){
+                // Malformed items stay untouched; an explicit use explains the error.
+            }
+        }
     }
     public static RollRepository store(ServerPlayer p){var r=STORES.get(p.level().getServer());if(r==null)throw new IllegalStateException("Photography storage unavailable");return r;}
     public interface Action {void run()throws Exception;}
     public static void safely(ServerPlayer p,Action action){try{action.run();}catch(IllegalArgumentException|IllegalStateException e){p.displayClientMessage(Component.literal(e.getMessage()==null?"Invalid camera or roll data":e.getMessage()),true);}catch(Exception e){LOG.error("Photography failed",e);p.displayClientMessage(Component.literal("Photography failed; see game log."),true);}}
     public static UUID token(ItemStack s){String id=s.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag().getStringOr("candid_roll_id","");return id.isEmpty()?null:UUID.fromString(id);}
     public static void sync(ServerPlayer p,ItemStack camera){
-        boolean first=CameraData.cameraId(camera).isEmpty();CameraData.identify(camera);
+        boolean first=CameraData.cameraId(camera).isEmpty();CameraData.identify(camera);CameraData.refreshModel(camera);
         if(first&&!p.getInventory().contains(new ItemStack(CandidItems.GUIDE)))give(p,new ItemStack(CandidItems.GUIDE));
         FilmStock stock=CameraData.film(camera);
         if(stock!=null&&CameraData.rollId(camera).isEmpty()){
@@ -72,7 +89,7 @@ public final class RollManager {
         var frame=new RollState.Frame(UUID.fromString(shot.shotId()),r.used()+1,Base64.getEncoder().encodeToString(shot.colors()),p.getName().getString(),now,CameraData.APERTURES[shot.apertureIndex()],CameraData.SHUTTERS[shot.shutterIndex()],stock.iso(),shot.offset(),-1);
         var upload=ScanUploads.take(p,shot.shotId());frame=frame.withScan(upload.colors());
         if(upload.png().length>0)store(p).saveScan(frame.id(),upload.png());
-        r=r.expose(CameraData.cameraId(camera),frame);store(p).put(r);CameraData.consumeFrame(camera);CameraData.bind(camera,r);LAST_SHOT.put(p.getUUID(),now);
+        r=r.expose(CameraData.cameraId(camera),frame);store(p).put(r);CameraData.consumeFrame(camera);CameraData.bind(camera,r);LAST_SHOT.put(p.getUUID(),now);var stand=TripodSessions.active(p);if(stand!=null)stand.changed();
         p.displayClientMessage(Component.literal("Frame "+r.used()+" recorded • "+(36-r.used())+" remaining • wind for next frame"),true);
     }
     public static ItemStack item(RollState r){

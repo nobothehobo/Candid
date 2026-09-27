@@ -52,6 +52,7 @@ sourceSets.gametest.java.setSrcDirs([generated.map { it.dir('gametest') }])
 tasks.withType(JavaCompile).configureEach {
     dependsOn prepareSources
     options.release = definition.java
+    options.encoding = "UTF-8"
 }
 loom.runs.named('clientGameTest') {
     vmArg '-Dfabric.client.gametest.disableNetworkSynchronizer=true'

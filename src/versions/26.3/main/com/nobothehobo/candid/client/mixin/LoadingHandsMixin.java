@@ -27,22 +27,28 @@ public abstract class LoadingHandsMixin {
 
     @Inject(method="submitHandsWithItems",at=@At("HEAD"))
     private void candid$load(float partialTick,PoseStack pose,SubmitNodeCollector collector,net.minecraft.client.renderer.state.level.PlayerRenderState playerState,net.minecraft.client.renderer.state.level.FirstPersonHandsAndItemsRenderState hands,CallbackInfo ci){
-        if(!(Minecraft.getInstance().screen instanceof FilmLoadScreen loading))return;
+        var screen=Minecraft.getInstance().screen;
+        FilmLoadScreen loading=screen instanceof FilmLoadScreen f?f:null;
+        FilmUnloadScreen unloading=screen instanceof FilmUnloadScreen f?f:null;
+        CameraRaiseScreen raising=screen instanceof CameraRaiseScreen f?f:null;
+        if(loading==null&&unloading==null&&raising==null)return;
         var player=Minecraft.getInstance().player;if(player==null||playerState.avatarRenderState==null)return;
         int light=playerState.avatarRenderState.lightCoords;
         ItemStack held=CameraOptics.camera();if(held.isEmpty())return;
-        float age=loading.animationAge()+partialTick;int phase=age<8?0:age<16?1:age<32?2:age<40?3:age<53?4:age<61?1:0;
+        float age=(loading!=null?loading.animationAge():unloading!=null?unloading.animationAge():raising.animationAge())+partialTick;
+        int phase=loading!=null?(age<8?0:age<16?1:age<32?2:age<40?3:age<53?4:age<61?1:0):unloading!=null?(age<40?0:age<50?2:age<56?1:0):0;
         ItemStack camera=held.copy();
-        if(phase>0)camera.set(DataComponents.ITEM_MODEL,Candid.id("camera_loading_"+phase));
-        pose.pushPose();pose.translate(0,-.30,-1.25);pose.rotate(Axis.XP.rotationDegrees(18));pose.scale(1.15f,1.15f,1.15f);
+        if(phase>0)camera.set(DataComponents.ITEM_MODEL,Candid.id("camera_loading_"+phase+"_"+com.nobothehobo.candid.data.CameraData.lens(held)));
+        pose.pushPose();pose.translate(0,raising==null?-.30:-.45+.50*Math.min(1,age/12),raising==null?-1.25:-1.25+.55*Math.min(1,age/12));pose.rotate(Axis.XP.rotationDegrees(18));pose.scale(1.15f,1.15f,1.15f);
         renderItem(player,camera,ItemDisplayContext.NONE,pose,collector,light);pose.popPose();
         // Minecraft renders the player's actual skin, including the chosen arm width.
         pose.pushPose();pose.translate(-.34,-.02,-.28);renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT,playerState);pose.popPose();
-        float reach=age>=16&&age<50?(float)Math.sin(Math.PI*Math.min(1,(age-16)/34))*.25f:0;
-        pose.pushPose();pose.translate(.22+reach,.02,-.23-reach);renderPlayerArm(pose,collector,light,0,0,HumanoidArm.LEFT,playerState);pose.popPose();
-        if(age>=16&&age<32){
-            float progress=Math.min(1,(age-16)/16);
-            var cartridge=new ItemStack(CandidItems.itemFor(loading.stock()));cartridge.set(DataComponents.ITEM_MODEL,Candid.id("film_loading_cartridge"));
+        float reach=raising==null&&age>=16&&age<50?(float)Math.sin(Math.PI*Math.min(1,(age-16)/34))*.25f:0;
+        pose.pushPose();pose.translate(.22+reach,unloading!=null&&age<10?-.35:.02,-.23-reach);
+        if(unloading!=null&&age>=10&&age<40)pose.mulPose(Axis.ZP.rotationDegrees((float)Math.sin(age*.7)*24));renderPlayerArm(pose,collector,light,0,0,HumanoidArm.LEFT,playerState);pose.popPose();
+        if(loading!=null&&age>=16&&age<32||unloading!=null&&age>=40&&age<54){
+            float progress=loading!=null?Math.min(1,(age-16)/16):1-Math.min(1,(age-40)/14);
+            var cartridge=new ItemStack(CandidItems.itemFor(loading!=null?loading.stock():unloading.stock()));cartridge.set(DataComponents.ITEM_MODEL,Candid.id("film_loading_cartridge"));
             pose.pushPose();pose.translate(-.46+progress*.18,-.18-progress*.09,-.9-progress*.29);pose.scale(.24f,.24f,.24f);
             renderItem(player,cartridge,ItemDisplayContext.NONE,pose,collector,light);pose.popPose();
         }
@@ -52,6 +58,6 @@ public abstract class LoadingHandsMixin {
     // Cancelling that outer method silently discards every model/skin submitted above.
     @Inject(method="submitArmWithItem",at=@At("HEAD"),cancellable=true)
     private void candid$replaceVanillaArms(CallbackInfo ci){
-        if(Minecraft.getInstance().screen instanceof FilmLoadScreen&&!CameraOptics.camera().isEmpty())ci.cancel();
+        if((Minecraft.getInstance().screen instanceof FilmLoadScreen||Minecraft.getInstance().screen instanceof FilmUnloadScreen||Minecraft.getInstance().screen instanceof CameraRaiseScreen)&&!CameraOptics.camera().isEmpty())ci.cancel();
     }
 }

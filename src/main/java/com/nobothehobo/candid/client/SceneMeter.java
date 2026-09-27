@@ -15,8 +15,8 @@ public final class SceneMeter {
     public double read(Minecraft client){
         long now=System.nanoTime();if(now-last<250_000_000)return reading;last=now;
         if(client.level==null||client.player==null)return reading;
-        var level=client.level;var p=client.player;Vec3 origin=CameraOptics.anchor(),forward=p.getLookAngle();
-        double yaw=Math.toRadians(p.getYRot());Vec3 right=new Vec3(-Math.cos(yaw),0,-Math.sin(yaw)),up=right.cross(forward);
+        var level=client.level;var p=client.player;Vec3 origin=CameraOptics.anchor(),forward=CameraOptics.direction();
+        double yaw=Math.toRadians(CameraOptics.yaw());Vec3 right=new Vec3(-Math.cos(yaw),0,-Math.sin(yaw)),up=right.cross(forward);
         double spread=Math.tan(Math.toRadians(Optics.verticalFov(CameraData.lens(CameraOptics.camera())))/2);
         double angle=Math.floorMod(level.getDayTime(),24000)/12000.0*Math.PI;
         Vec3 sun=new Vec3(-Math.cos(angle),Math.sin(angle),0);

@@ -40,9 +40,9 @@ jobs:
           name: Candid-mc${{ matrix.minecraft }}-test-evidence
           path: |
             build/${{ matrix.minecraft }}/reports/tests/
-            build/${{ matrix.minecraft }}/run/clientGameTest/screenshots/
-            build/${{ matrix.minecraft }}/run/clientGameTest/logs/
-            build/${{ matrix.minecraft }}/run/clientGameTest/crash-reports/
+            build/run/clientGameTest/screenshots/
+            build/run/clientGameTest/logs/
+            build/run/clientGameTest/crash-reports/
 
   shaders:
     runs-on: ubuntu-latest
@@ -68,6 +68,6 @@ jobs:
         with:
           name: Candid-shader-evidence
           path: |
-            build/1.21.10/run/clientGameTest/screenshots/
-            build/1.21.10/run/clientGameTest/logs/
-            build/1.21.10/run/clientGameTest/crash-reports/
+            build/run/clientGameTest/screenshots/
+            build/run/clientGameTest/logs/
+            build/run/clientGameTest/crash-reports/
