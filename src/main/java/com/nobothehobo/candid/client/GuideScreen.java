@@ -9,8 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -65,10 +63,10 @@ public final class GuideScreen extends Screen {
     }
     private static ItemStack stack(String id){return new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id)));}
     private void move(int direction){page=Math.floorMod(page+direction,TITLES.length+RECIPES.length);}
-    @Override public boolean keyPressed(KeyEvent e){if(e.key()==GLFW.GLFW_KEY_LEFT){move(-1);return true;}if(e.key()==GLFW.GLFW_KEY_RIGHT){move(1);return true;}return super.keyPressed(e);}
-    private void poll(){if(!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1))return;try(var s=GLFWGamepadState.calloc()){if(!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1,s))return;
-        if(!primed){for(int i=0;i<pad.length;i++)pad[i]=s.buttons(i)==GLFW.GLFW_PRESS;primed=true;return;}
-        edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT,()->move(-1));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,()->move(1));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_B,this::onClose);
+    @Override public boolean keyPressed(KeyEvent e){if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_LEFT){move(-1);return true;}if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT){move(1);return true;}return super.keyPressed(e);}
+    private void poll(){if(!GamepadInput.present())return;try(var s=GamepadInput.read()){if(!s.connected())return;
+        if(!primed){for(int i=0;i<pad.length;i++)pad[i]=s.buttons(i)==1;primed=true;return;}
+        edge(s,GamepadInput.DPAD_LEFT,()->move(-1));edge(s,GamepadInput.DPAD_RIGHT,()->move(1));edge(s,GamepadInput.B,this::onClose);
     }}
-    private void edge(GLFWGamepadState s,int b,Runnable action){boolean now=s.buttons(b)==GLFW.GLFW_PRESS;if(now&&!pad[b])action.run();pad[b]=now;}
+    private void edge(GamepadInput.State s,int b,Runnable action){boolean now=s.buttons(b)==1;if(now&&!pad[b])action.run();pad[b]=now;}
 }

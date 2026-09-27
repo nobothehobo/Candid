@@ -11,8 +11,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
 
 public class CameraScreen extends Screen {
     private int apertureIndex = 4;
@@ -91,7 +89,7 @@ public class CameraScreen extends Screen {
         if(Math.abs(meter)>=1)graphics.drawCenteredString(font,meter>0?"Overexposed • brighter, softer highlights":"Underexposed • darker shadows, more grain",cx,frame.y()+8,0xffebcf94);
         drawWindLever(graphics, width - 45, height - 38, wound);
 
-        graphics.drawCenteredString(font, GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)
+        graphics.drawCenteredString(font, GamepadInput.present()
                 ? "D-pad: exposure • A: shoot • X: wind • Y: controls"
                 : "Arrows: exposure • Enter: shoot • R: wind • C: controls", cx, height-10, 0xFFCCCCCC);
 
@@ -176,56 +174,56 @@ public class CameraScreen extends Screen {
     @Override
     public boolean keyPressed(KeyEvent input) {
         return switch (input.key()) {
-            case GLFW.GLFW_KEY_UP -> { changeAperture(-1); yield true; }
-            case GLFW.GLFW_KEY_DOWN -> { changeAperture(1); yield true; }
-            case GLFW.GLFW_KEY_LEFT -> { changeShutter(-1); yield true; }
-            case GLFW.GLFW_KEY_RIGHT -> { changeShutter(1); yield true; }
-            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE -> { shoot(); yield true; }
-            case GLFW.GLFW_KEY_R -> { wind(); yield true; }
-            case GLFW.GLFW_KEY_LEFT_BRACKET -> {CameraOptics.focus(-1);yield true;}
-            case GLFW.GLFW_KEY_RIGHT_BRACKET -> {CameraOptics.focus(1);yield true;}
-            case GLFW.GLFW_KEY_F -> {focusSubject();yield true;}
-            case GLFW.GLFW_KEY_C -> { openControls(); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_UP -> { changeAperture(-1); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_DOWN -> { changeAperture(1); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_LEFT -> { changeShutter(-1); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT -> { changeShutter(1); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_RETURN, com.mojang.blaze3d.platform.InputConstants.KEY_SPACE -> { shoot(); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_R -> { wind(); yield true; }
+            case com.mojang.blaze3d.platform.InputConstants.KEY_LBRACKET -> {CameraOptics.focus(-1);yield true;}
+            case com.mojang.blaze3d.platform.InputConstants.KEY_RBRACKET -> {CameraOptics.focus(1);yield true;}
+            case com.mojang.blaze3d.platform.InputConstants.KEY_F -> {focusSubject();yield true;}
+            case com.mojang.blaze3d.platform.InputConstants.KEY_C -> { openControls(); yield true; }
             default -> super.keyPressed(input);
         };
     }
 
     private void pollGamepad() {
-        if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
-        try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
-            if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
-            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==GLFW.GLFW_PRESS;padPrimed=true;return;}
+        if (!GamepadInput.present()) return;
+        try (GamepadInput.State state = GamepadInput.read()) {
+            if (!state.connected()) return;
+            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==1;padPrimed=true;return;}
             long now=System.nanoTime();double dt=Math.min(.05,(now-lastAim)/1e9);lastAim=now;
             if(minecraft!=null&&minecraft.player!=null){
-                float ax=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X),ay=state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+                float ax=state.axes(GamepadInput.RIGHT_X),ay=state.axes(GamepadInput.RIGHT_Y);
                 if(Math.abs(ax)>.18)minecraft.player.setYRot(minecraft.player.getYRot()+(float)(ax*70*dt));
                 if(Math.abs(ay)>.18)minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)(ay*55*dt))));
             }
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, () -> changeAperture(-1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, () -> changeAperture(1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, () -> changeShutter(-1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, () -> changeShutter(1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, ()->CameraOptics.focus(-1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, ()->CameraOptics.focus(1));
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, this::focusSubject);
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_A, this::shoot);
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_X, this::wind);
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_Y, this::openControls);
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
+            edge(state, GamepadInput.DPAD_UP, () -> changeAperture(-1));
+            edge(state, GamepadInput.DPAD_DOWN, () -> changeAperture(1));
+            edge(state, GamepadInput.DPAD_LEFT, () -> changeShutter(-1));
+            edge(state, GamepadInput.DPAD_RIGHT, () -> changeShutter(1));
+            edge(state, GamepadInput.LEFT_BUMPER, ()->CameraOptics.focus(-1));
+            edge(state, GamepadInput.RIGHT_BUMPER, ()->CameraOptics.focus(1));
+            edge(state, GamepadInput.LEFT_THUMB, this::focusSubject);
+            edge(state, GamepadInput.A, this::shoot);
+            edge(state, GamepadInput.X, this::wind);
+            edge(state, GamepadInput.Y, this::openControls);
+            edge(state, GamepadInput.B, this::onClose);
         }
     }
 
     @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){if(vertical!=0)CameraOptics.focus(vertical>0?-1:1);return true;}
     private double lastMouseX,lastMouseY;
     @Override public void mouseMoved(double x,double y){
-        if(minecraft!=null&&minecraft.player!=null&&GLFW.glfwGetMouseButton(minecraft.getWindow().handle(),GLFW.GLFW_MOUSE_BUTTON_RIGHT)==GLFW.GLFW_PRESS){
+        if(minecraft!=null&&minecraft.player!=null&&minecraft.mouseHandler.isRightPressed()){
             minecraft.player.setYRot(minecraft.player.getYRot()+(float)((x-lastMouseX)*.22));
             minecraft.player.setXRot(Math.max(-89,Math.min(89,minecraft.player.getXRot()+(float)((y-lastMouseY)*.22))));
         }
         lastMouseX=x;lastMouseY=y;super.mouseMoved(x,y);
     }
-    private void edge(GLFWGamepadState state, int button, Runnable action) {
-        boolean now = state.buttons(button) == GLFW.GLFW_PRESS;
+    private void edge(GamepadInput.State state, int button, Runnable action) {
+        boolean now = state.buttons(button) == 1;
         if (now && !pad[button]) action.run();
         pad[button] = now;
     }

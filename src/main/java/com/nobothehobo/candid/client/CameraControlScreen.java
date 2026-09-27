@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.*;
 import java.util.*;
 
 public final class CameraControlScreen extends Screen {
@@ -68,21 +67,21 @@ public final class CameraControlScreen extends Screen {
         super.render(g,x,y,delta);
     }
     @Override public boolean keyPressed(KeyEvent e){
-        if(e.key()==GLFW.GLFW_KEY_U){loadOrUnload();return true;}
-        if(e.key()==GLFW.GLFW_KEY_R){send(CameraActionPayload.WIND,0);return true;}
+        if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_U){loadOrUnload();return true;}
+        if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_R){send(CameraActionPayload.WIND,0);return true;}
         return super.keyPressed(e);
     }
     private void poll(){
-        if(!GLFW.glfwJoystickIsGamepad(0))return;
-        try(var s=GLFWGamepadState.calloc()){
-            if(!GLFW.glfwGetGamepadState(0,s))return;
-            if(!primed){for(int i=0;i<15;i++)pad[i]=s.buttons(i)==GLFW.GLFW_PRESS;primed=true;return;}
-            edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN,()->select(2));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP,()->select(-2));
-            edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT,()->select(-1));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,()->select(1));
-            edge(s,GLFW.GLFW_GAMEPAD_BUTTON_A,()->actions.get(selected).run());
-            edge(s,GLFW.GLFW_GAMEPAD_BUTTON_Y,this::loadOrUnload);edge(s,GLFW.GLFW_GAMEPAD_BUTTON_B,this::onClose);
+        if(!GamepadInput.present())return;
+        try(var s=GamepadInput.read()){
+            if(!s.connected())return;
+            if(!primed){for(int i=0;i<15;i++)pad[i]=s.buttons(i)==1;primed=true;return;}
+            edge(s,GamepadInput.DPAD_DOWN,()->select(2));edge(s,GamepadInput.DPAD_UP,()->select(-2));
+            edge(s,GamepadInput.DPAD_LEFT,()->select(-1));edge(s,GamepadInput.DPAD_RIGHT,()->select(1));
+            edge(s,GamepadInput.A,()->actions.get(selected).run());
+            edge(s,GamepadInput.Y,this::loadOrUnload);edge(s,GamepadInput.B,this::onClose);
         }
     }
     private void select(int d){selected=Math.floorMod(selected+d,buttons.size());setFocused(buttons.get(selected));}
-    private void edge(GLFWGamepadState s,int i,Runnable r){boolean held=s.buttons(i)==GLFW.GLFW_PRESS;if(held&&!pad[i])r.run();pad[i]=held;}
+    private void edge(GamepadInput.State s,int i,Runnable r){boolean held=s.buttons(i)==1;if(held&&!pad[i])r.run();pad[i]=held;}
 }

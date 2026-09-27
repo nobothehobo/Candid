@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
 
 public class FilmLoadScreen extends Screen {
     private final FilmStock stock;
@@ -71,16 +69,16 @@ public class FilmLoadScreen extends Screen {
     }
 
     private void pollGamepad() {
-        if (!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1)) return;
-        try (GLFWGamepadState state = GLFWGamepadState.calloc()) {
-            if (!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1, state)) return;
-            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==GLFW.GLFW_PRESS;padPrimed=true;return;}
-            edge(state, GLFW.GLFW_GAMEPAD_BUTTON_B, this::onClose);
+        if (!GamepadInput.present()) return;
+        try (GamepadInput.State state = GamepadInput.read()) {
+            if (!state.connected()) return;
+            if(!padPrimed){for(int i=0;i<pad.length;i++)pad[i]=state.buttons(i)==1;padPrimed=true;return;}
+            edge(state, GamepadInput.B, this::onClose);
         }
     }
 
-    private void edge(GLFWGamepadState state, int button, Runnable action) {
-        boolean now = state.buttons(button) == GLFW.GLFW_PRESS;
+    private void edge(GamepadInput.State state, int button, Runnable action) {
+        boolean now = state.buttons(button) == 1;
         if (now && !pad[button]) action.run();
         pad[button] = now;
     }

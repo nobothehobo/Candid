@@ -33,6 +33,7 @@ public class CandidClient implements ClientModInitializer {
             var mc=context.client();mc.setScreen(new NegativePreviewScreen(mc.screen,photo));
         });
         ClientTickEvents.END_CLIENT_TICK.register(PhotoCapture::tick);
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING.register(client -> GamepadInput.shutdown());
     }
 
     public static void playLocal(SoundEvent sound) {
