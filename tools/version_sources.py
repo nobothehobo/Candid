@@ -17,6 +17,7 @@ def transform(source, target):
         source = source.replace(".getMainCamera().getPosition()", ".getMainCamera().position()")
     if target.startswith("26."):
         renames = {
+            "net.minecraft.client.renderer.state.CameraRenderState": "net.minecraft.client.renderer.state.level.CameraRenderState",
             "GuiGraphics": "GuiGraphicsExtractor",
             "void render(": "void extractRenderState(",
             "super.render(": "super.extractRenderState(",

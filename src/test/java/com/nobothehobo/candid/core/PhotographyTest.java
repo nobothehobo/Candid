@@ -77,4 +77,24 @@ class PhotographyTest {
         byte[] bytes=new byte[24];java.nio.ByteBuffer.wrap(bytes).putLong(0x89504e470d0a1a0aL);String name=UUID.randomUUID()+".png";
         Path first=PhotoExport.write(directory,name,bytes);assertEquals(first,PhotoExport.write(directory,name,bytes));assertArrayEquals(bytes,Files.readAllBytes(first));
     }
+
+    @Test void higherIsoRequiresThreeStopsLessLight(){
+        double slow=Exposure.offset(12,new Exposure.Settings(4,125),100);
+        double fast=Exposure.offset(12,new Exposure.Settings(4,1000),800);
+        assertEquals(slow,fast,1e-10);
+    }
+    @Test void everyStockRetainsHighlightSeparation(){
+        for(var stock:FilmStock.values()){
+            int a=FilmSignal.process(0xa0a0a0,stock,2,new Random(7));
+            int b=FilmSignal.process(0xe0e0e0,stock,2,new Random(7));
+            assertTrue(((b>>8)&255)>((a>>8)&255),stock.name());
+            assertTrue(((a>>8)&255)<250,stock.name());
+        }
+    }
+    @Test void halfStopErrorsKeepMiddleGreyUsable(){
+        for(var stock:FilmStock.values())for(double ev:new double[]{-.5,0,.5}){
+            int green=(FilmSignal.process(0x808080,stock,ev,new Random(9))>>8)&255;
+            assertTrue(green>75&&green<185,stock.name()+" at "+ev);
+        }
+    }
 }
