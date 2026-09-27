@@ -12,7 +12,10 @@ public final class CameraOptics {
     private static float yaw,pitch;
     private static boolean dirty;
     private CameraOptics(){}
-    public static void mount(net.minecraft.core.BlockPos pos){var mc=Minecraft.getInstance();mounted=pos;mountedLevel=mc.level;if(mc.level!=null&&mc.level.getBlockEntity(pos) instanceof com.nobothehobo.candid.block.TripodBlockEntity b){yaw=b.yaw();pitch=b.pitch();}}
+    public static void mount(net.minecraft.core.BlockPos pos,float initialYaw,float initialPitch){
+        var mc=Minecraft.getInstance();mounted=pos;mountedLevel=mc.level;
+        yaw=initialYaw;pitch=initialPitch;dirty=false;
+    }
     public static void clearMount(){mounted=null;mountedLevel=null;dirty=false;}
     public static net.minecraft.core.BlockPos mountedPosition(){return mounted;}
     public static float yaw(){var p=Minecraft.getInstance().player;return mounted!=null?yaw:p==null?0:p.getYRot();}

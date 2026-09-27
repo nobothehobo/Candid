@@ -180,7 +180,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             context.waitFor(c->CameraData.tripod(CameraOptics.camera(),c.player)!=null&&CameraData.isWound(CameraOptics.camera()));
             context.setScreen(CameraScreen::new);context.waitTicks(10);context.takeScreenshot("candid-tripod-viewfinder");
             context.runOnClient(c->CameraOptics.aim(10,4));context.waitTicks(5);
-            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var b=com.nobothehobo.candid.photo.TripodSessions.active(p);check(b!=null&&Math.abs(b.yaw()-42)<.1&&Math.abs(b.pitch()+8)<.1,"Tripod angle not saved on server");});
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var b=com.nobothehobo.candid.photo.TripodSessions.active(p);check(b!=null&&Math.abs(b.yaw()-42)<.1&&Math.abs(b.pitch()+8)<.1,"Tripod angle not saved on server: "+(b==null?"session missing":b.yaw()+", "+b.pitch()));});
             context.runOnClient(c->{check(c.gameRenderer.getMainCamera().getPosition().distanceTo(CameraOptics.anchor())<.05,"Tripod viewpoint did not move to head");});
             double[] bright={0},dark={0};
             world.getServer().runCommand("time set noon");context.waitTicks(30);context.runOnClient(c->bright[0]=new SceneMeter().read(c));

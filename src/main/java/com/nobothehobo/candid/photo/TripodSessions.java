@@ -23,7 +23,7 @@ public final class TripodSessions {
         if(stand.camera().isEmpty())throw new IllegalStateException("Place a camera on this tripod first");
         RollManager.sync(p,stand.camera());stand.changed();
         SESSIONS.put(p.getUUID(),new Session(stand.getBlockPos(),p.level().dimension().location().toString(),CameraData.cameraId(stand.camera()),remote));
-        ServerPlayNetworking.send(p,new TripodViewPayload(stand.getBlockPos()));
+        ServerPlayNetworking.send(p,new TripodViewPayload(stand.getBlockPos(),stand.yaw(),stand.pitch()));
     }
     public static TripodBlockEntity active(ServerPlayer p){
         var s=SESSIONS.get(p.getUUID());if(s==null)return null;
