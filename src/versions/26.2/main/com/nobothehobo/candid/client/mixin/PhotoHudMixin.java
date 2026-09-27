@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Hud.class)
 public abstract class PhotoHudMixin {
     @Inject(method="extractRenderState",at=@At("HEAD"),cancellable=true)
-    private void candid$hideHud(CallbackInfo ci){if(Minecraft.getInstance().screen instanceof CameraScreen||PhotoCapture.hiding())ci.cancel();}
+    private void candid$hideHud(CallbackInfo ci){if(com.nobothehobo.candid.client.CameraOptics.hideHud())ci.cancel();}
 }
