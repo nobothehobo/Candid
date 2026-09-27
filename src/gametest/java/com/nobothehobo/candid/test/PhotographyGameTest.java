@@ -126,8 +126,8 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 negative.setCount(0);
                 p.getOffhandItem().useOn(new net.minecraft.world.item.context.UseOnContext(p,net.minecraft.world.InteractionHand.OFF_HAND,
                     new net.minecraft.world.phys.BlockHitResult(p.position(),net.minecraft.core.Direction.UP,p.blockPosition().below(),false)));
-                RollManager.give(p,p.getOffhandItem());p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,ItemStack.EMPTY);
-                check(p.containerMenu instanceof ContactSheet,"Contact sheet not opened");
+                var carried=p.getOffhandItem();p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,ItemStack.EMPTY);RollManager.give(p,carried);
+                check(p.containerMenu instanceof ContactSheet&&p.containerMenu.stillValid(p),"Contact sheet not opened or roll custody lost");
                 p.containerMenu.clicked(0,1,ClickType.PICKUP,p);
                 check(RollManager.store(p).get(rollId[0]).frames().getFirst().mapId()==-1,"Preview allocated map IDs");
                 check(p.getInventory().getItem(3).getCount()==8,"Preview consumed paper");
