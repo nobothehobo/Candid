@@ -31,6 +31,7 @@ source framebuffer dynamic range. Shader tone mapping and auto-exposure are bake
 captures and cannot be reversed into scene-linear RAW data. Grain, shoulder and color
 character are applied to that rendered image; a blown shader highlight cannot be recovered.
 
-Validated before the focus/lever follow-up: direct negative use, five-version in-game workflow, remote aiming and mounted-camera saves.
+Validated including the focus/lever follow-up: 49 unit tests, direct negative use,
+five-version in-game workflow, remote aiming and mounted-camera saves.
 Release checks also passed camera removal and animation screenshots. Remaining manual checks include
 physical controller feel, arm/barrel alignment at varied FOVs, and third-party shader packs.

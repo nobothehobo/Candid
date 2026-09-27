@@ -2,10 +2,11 @@
 
 ## Tested
 
-GitHub Actions builds version-specific Fabric JARs and runs **42 JUnit tests**,
+GitHub Actions builds version-specific Fabric JARs and runs **49 JUnit tests**,
 plus the actual Minecraft client and integrated single-player server. The gameplay
 revision passed on **1.21.10, 1.21.11, 26.1.2, 26.2 and 26.3** in
-[run 36318985371](https://github.com/nobothehobo/Candid/actions/runs/36318985371).
+[run 36338689020](https://github.com/nobothehobo/Candid/actions/runs/36338689020),
+code commit `c3396f455d8116813cf083315313995e36351ca5`.
 The same run passed the 1.21.10 Iris/Sodium capture fixture. The same acceptance run includes HUD-free animation screenshots, a visible mounted
 camera, and exactly one returned camera when the tripod is broken. Only passing
 targets produce downloads.
@@ -13,13 +14,20 @@ targets produce downloads.
 26.3 also passed the real client workflow after installing EGL/software graphics
 dependencies in CI. Physical Steam Deck testing remains manual.
 
-Follow-up under validation: selected focus plus near/far depth-of-field limits,
-an independently pivoting advance lever with skinned-hand motion, seven additional
-core tests (49 total), and a winding screenshot/assertion in the real client workflow.
+This includes selected focus plus near/far depth-of-field limits, an independently
+pivoting advance lever with skinned-hand motion, seven additional core tests, and a
+winding screenshot/assertion in the real client workflow. Screenshots were inspected
+at 854 × 480 on 1.21.10 and 26.3, including the hand anchored to the rotating lever
+grip and unobstructed near/far scale. All five final JARs were downloaded, checked
+for ZIP integrity, exact version metadata, included winding assets/classes and
+absence of the game-test class.
 
 The integrated test covers:
 
 - Server-acknowledged loading and winding; screenshot of the camera back and skinned hands.
+- Physical lever advance in the finder, retaining exactly 35 remaining frames after winding.
+- Reference depth-of-field limits, aperture/lens changes, infinity, malformed optics,
+  agreement with image blur, and bounded lever stroke/return.
 - Firing through the actual Space-key handler, releasing jump input, keeping the
   capture screen open until completion, and consuming exactly one exposure.
 - Rewind and cartridge-removal screenshots, early skipping of unloading, partial-roll reload, retained frame count and custody.
@@ -102,6 +110,7 @@ red test tint belongs only to this fixture; it is not a shipped Candid film effe
 - [ ] Fire repeatedly with A; verify no jump and no duplicate action from Steam Input.
 - [ ] Load/unload through the labeled button and Y; skip both animations early.
 - [ ] Check skin/arm alignment while loading at different FOVs and GUI scales.
+- [ ] Wind with R / X; check lever/hand contact and return. Shoot as soon as READY.
 - [ ] Compare noon, sunset, night, rain, indoor shade and torch-lit scenes.
 - [ ] Photograph the same subject at −2, −1, 0, +1 and +2 EV; compare free scans.
 - [ ] Compare 28/35/50/90 mm framing and near/far focus at f/2 and f/16.

@@ -13,7 +13,7 @@ mod for single player and Fabric multiplayer**, not a Paper plugin.
 3. Put the **Candid JAR labeled with your exact Minecraft version** in `mods` and launch. All models, textures and audio
    are included. Single player needs no separate server.
 4. Open the **Candid Photography** creative tab for a quick test, or craft normally.
-   The **Candid Field Guide** has instructions and diagrams for all 18 shipped recipes.
+   The **Candid Field Guide** has instructions and diagrams for all 19 shipped recipes.
 
 For multiplayer, both client and server need the same Candid version. Optional
 Iris/Sodium and shader packs are client-side; they are not bundled or required.
@@ -39,6 +39,10 @@ For the 26.1 series, use its final patch **26.1.2**.
 - Updated screens, live finder and animated hands for modern rendering.
 - Tripods now hold the real camera, save pan/tilt, and support a paired Cable Release.
 - Separate mounted lens barrels, animated rewinding and a brief raise-to-eye gesture.
+- A separately pivoting advance lever follows a skinned-hand winding stroke without
+  leaving the finder or making a ready shutter wait for the animation.
+- Selected focus distance plus aperture/lens-dependent **Near / Far** depth-of-field
+  limits, including infinity, with matching green subject confirmation.
 - Finished rolls open away from the basin, including when used on ordinary terrain.
 - Shutter feedback starts immediately; depth sampling no longer delays the capture.
 - SDL gamepad support on 26.3; GLFW support retained for earlier releases.
@@ -119,7 +123,9 @@ full-color detail that was never stored.
 Camera controls use real buttons: click, **Tab + Enter**, or **D-pad + A**.
 **U / Y** operates load/unload there. If you skip loading before winding,
 use **Wind / advance** once. The center focus patch turns green when the
-selected focus is near the metered subject. It is a focus aid, not autofocus tracking.
+subject is inside the displayed Near / Far range. Stop down (higher f-number) to
+widen it. These are approximate 35 mm depth-of-field limits using a 0.03 mm circle
+of confusion, not a hard sharpness boundary or autofocus tracking.
 
 Place a tripod and **Use it while holding the camera**. The camera leaves your hand
 and stays on the stand. Use the occupied stand to compose; right-drag or the right
