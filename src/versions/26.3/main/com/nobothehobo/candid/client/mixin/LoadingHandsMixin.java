@@ -31,18 +31,33 @@ public abstract class LoadingHandsMixin {
         FilmLoadScreen loading=screen instanceof FilmLoadScreen f?f:null;
         FilmUnloadScreen unloading=screen instanceof FilmUnloadScreen f?f:null;
         CameraRaiseScreen raising=screen instanceof CameraRaiseScreen f?f:null;
-        if(loading==null&&unloading==null&&raising==null)return;
+        CameraScreen finder=screen instanceof CameraScreen f&&f.winding()?f:null;
+        if(loading==null&&unloading==null&&raising==null&&finder==null)return;
         var player=Minecraft.getInstance().player;if(player==null||playerState.avatarRenderState==null)return;
         int light=playerState.avatarRenderState.lightCoords;
         ItemStack held=CameraOptics.camera();if(held.isEmpty())return;
-        float age=(loading!=null?loading.animationAge():unloading!=null?unloading.animationAge():raising.animationAge())+partialTick;
+        float age=(loading!=null?loading.animationAge():unloading!=null?unloading.animationAge():raising!=null?raising.animationAge():finder.windingAge())+partialTick;
+        boolean advancing=finder!=null||raising!=null&&raising.winding();
+        float leverAngle=advancing?com.nobothehobo.candid.core.WindingMotion.angle(age):0;
         int phase=loading!=null?(age<8?0:age<16?1:age<32?2:age<40?3:age<53?4:age<61?1:0):unloading!=null?(age<40?0:age<50?2:age<56?1:0):0;
         ItemStack camera=held.copy();
         if(phase>0)camera.set(DataComponents.ITEM_MODEL,Candid.id("camera_loading_"+phase+"_"+com.nobothehobo.candid.data.CameraData.lens(held)));
+        if(advancing)camera.set(DataComponents.ITEM_MODEL,Candid.id("camera_winding_"+com.nobothehobo.candid.data.CameraData.lens(held)));
         pose.pushPose();pose.translate(0,raising==null?-.30:-.45+.50*Math.min(1,age/12),raising==null?-1.25:-1.25+.55*Math.min(1,age/12));pose.rotate(Axis.XP.rotationDegrees(18));pose.scale(1.15f,1.15f,1.15f);
-        renderItem(player,camera,ItemDisplayContext.NONE,pose,collector,light);pose.popPose();
+        if(finder!=null)pose.translate(.20,-.24,0);
+        renderItem(player,camera,ItemDisplayContext.NONE,pose,collector,light);
+        if(advancing){
+            var lever=held.copy();lever.set(DataComponents.ITEM_MODEL,Candid.id("camera_advance_lever"));
+            // Item models are centered at (8,8,8); pivot is the inner end of the lever.
+            double px=(10.8-8)/16,py=(13.1-8)/16,pz=(9.3-8)/16;
+            pose.translate(px,py,pz);pose.rotate(Axis.YP.rotationDegrees(-leverAngle));pose.translate(-px,-py,-pz);
+            renderItem(player,lever,ItemDisplayContext.NONE,pose,collector,light);
+        }
+        pose.popPose();
         // Minecraft renders the player's actual skin, including the chosen arm width.
-        pose.pushPose();pose.translate(-.34,-.02,-.28);renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT,playerState);pose.popPose();
+        pose.pushPose();pose.translate(-.34+leverAngle/700,-.02+(advancing?.12:0),-.28-leverAngle/900);
+        if(advancing)pose.rotate(Axis.ZP.rotationDegrees(-leverAngle*.35f));
+        renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT,playerState);pose.popPose();
         float reach=raising==null&&age>=16&&age<50?(float)Math.sin(Math.PI*Math.min(1,(age-16)/34))*.25f:0;
         pose.pushPose();pose.translate(.22+reach,unloading!=null&&age<10?-.35:.02,-.23-reach);
         if(unloading!=null&&age>=10&&age<40)pose.mulPose(Axis.ZP.rotationDegrees((float)Math.sin(age*.7)*24));renderPlayerArm(pose,collector,light,0,0,HumanoidArm.LEFT,playerState);pose.popPose();
@@ -58,6 +73,6 @@ public abstract class LoadingHandsMixin {
     // Cancelling that outer method silently discards every model/skin submitted above.
     @Inject(method="submitArmWithItem",at=@At("HEAD"),cancellable=true)
     private void candid$replaceVanillaArms(CallbackInfo ci){
-        if((Minecraft.getInstance().screen instanceof FilmLoadScreen||Minecraft.getInstance().screen instanceof FilmUnloadScreen||Minecraft.getInstance().screen instanceof CameraRaiseScreen)&&!CameraOptics.camera().isEmpty())ci.cancel();
+        if((Minecraft.getInstance().screen instanceof FilmLoadScreen||Minecraft.getInstance().screen instanceof FilmUnloadScreen||Minecraft.getInstance().screen instanceof CameraRaiseScreen||Minecraft.getInstance().screen instanceof CameraScreen f&&f.winding())&&!CameraOptics.camera().isEmpty())ci.cancel();
     }
 }

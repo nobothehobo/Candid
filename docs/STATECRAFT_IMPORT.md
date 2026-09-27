@@ -1,6 +1,6 @@
 # Future StateCraft integration — not performed
 
-This branch targets Fabric 1.21.10, not StateCraft's unknown server baseline.
+This branch targets the versioned Fabric baselines in COMPATIBILITY.md, not StateCraft's unknown server baseline.
 Do not install this JAR on Paper or assume a Bedrock client can run it.
 
 ## Reusable components
@@ -35,3 +35,7 @@ Iris framebuffer path require a modded client and cannot be promised to Bedrock
 or a server-only deployment. Server-side photography needs its own renderer and
 resource-pack-compatible feedback. PNG sharing could be exposed by a separately
 reviewed server download mechanism; this version deliberately exports locally.
+
+Version 0.6 tripod storage, rendering, remote pairing and hand choreography are
+Fabric platform adapters. Their custody/distance invariants should carry over, but
+Paper/Nexo furniture and server-side controls need separate implementations.

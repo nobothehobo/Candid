@@ -46,7 +46,11 @@ It affects the finished photograph, not a continuously blurred optical viewfinde
 Thin objects, water, glass, reflections and shader geometry can disagree with depth
 samples. The focus-distance indicator meters the center block surface. Long exposures
 average 2–16 actual samples in linear color over the selected duration; trails are
-approximate, not a continuous simulation. A mounted camera remains in hand.
+approximate, not a continuous simulation. A mounted camera is stored in the tripod
+block entity, removed from the player's hand, synchronized for rendering, and saved
+with yaw/pitch. Removing or breaking the station returns that same stack. There are
+no persistent display entities. A paired release validates camera ID, dimension,
+loaded chunk and distance; film/lens handling requires approaching the station.
 
 The meter uses reflected material brightness, directional sun/shade, ambient skylight,
 block light, time and weather. It is deliberately calibrated for playable Sunny-16-like

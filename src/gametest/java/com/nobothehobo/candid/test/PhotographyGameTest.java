@@ -85,6 +85,12 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             context.waitFor(c->c.screen instanceof CameraScreen);context.waitTicks(5);context.takeScreenshot("candid-viewfinder");
             context.runOnClient(c->{c.options.keyJump.setDown(true);c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_SPACE,0,0));check(PhotoCapture.busy(),"Shutter did not start capture");check(c.screen instanceof CaptureScreen,"Capture must keep an input-blocking screen open");check(!c.options.keyJump.isDown(),"Shutter leaked jump input");});
             context.waitFor(c->CameraData.frames(CameraOptics.camera())==35,600);
+            context.waitFor(c->!PhotoCapture.busy(),600);
+            context.setScreen(CameraScreen::new);
+            context.runOnClient(c->c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_R,0,0)));
+            context.waitTicks(7);context.takeScreenshot("candid-advance-lever");
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera()));
+            context.runOnClient(c->check(CameraData.frames(CameraOptics.camera())==35,"Winding consumed a frame"));
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();rollId[0]=UUID.fromString(CameraData.rollId(p.getMainHandItem()));});
             context.setScreen(FilmUnloadScreen::new);
             context.waitTicks(23);context.takeScreenshot("candid-rewind-hands");

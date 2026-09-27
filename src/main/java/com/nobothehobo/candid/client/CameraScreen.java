@@ -16,6 +16,8 @@ public class CameraScreen extends Screen {
     private int apertureIndex = 4;
     private int shutterIndex = 3;
     private int windAnim;
+    public boolean winding(){return windAnim>0&&CameraOptics.mountedPosition()==null;}
+    public float windingAge(){return com.nobothehobo.candid.core.WindingMotion.TICKS-windAnim;}
     private final SceneMeter sceneMeter=new SceneMeter();
     private long lastAim=System.nanoTime();
     private final boolean[] pad = new boolean[15];
@@ -68,12 +70,15 @@ public class CameraScreen extends Screen {
         graphics.fill(frame.x()+frame.width(),frame.y(),width,frame.y()+frame.height(),0xA9090B0D);
         graphics.submitOutline(frame.x(),frame.y(),frame.width(),frame.height(),0xF2F4EBD2);
         double target=sceneMeter.subjectDistance();
-        boolean inFocus=com.nobothehobo.candid.core.Optics.blurRadius(CameraData.lens(camera),CameraData.APERTURES[apertureIndex],CameraData.focus(camera),target,504)<.8;
+        var focusRange=com.nobothehobo.candid.core.Optics.focusRange(CameraData.lens(camera),CameraData.APERTURES[apertureIndex],CameraData.focus(camera));
+        boolean inFocus=focusRange.contains(target>=1000?Double.POSITIVE_INFINITY:target);
         graphics.submitOutline(cx-14,cy-10,28,20,inFocus?0xff97d9ab:0xffeed29c);
         graphics.drawCenteredString(font,target>=1000?"Subject: infinity":"Subject: "+String.format(java.util.Locale.ROOT,"%.1f m",target),cx,frame.y()+frame.height()-12,0xffe6dfce);
         graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
         graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
         graphics.drawCenteredString(font,CameraData.lens(camera)+" mm • focus "+(CameraData.focus(camera)>=1000?"infinity":CameraData.focus(camera)+" m")+" • "+(CameraData.tripod(camera,minecraft.player)==null?"handheld":"tripod"),cx,23,0xFFB7B3A5);
+        String range="Near "+com.nobothehobo.candid.core.Optics.distanceLabel(focusRange.nearMeters())+" — Far "+com.nobothehobo.candid.core.Optics.distanceLabel(focusRange.farMeters());
+        graphics.drawCenteredString(font,range,cx,35,0xFFD4DEC9);
         String filmText = stock == null
                 ? "NO FILM • Crouch + Use for camera controls"
                 : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
@@ -144,7 +149,7 @@ public class CameraScreen extends Screen {
         ItemStack camera = camera();
         if (camera.isEmpty() || CameraData.film(camera) == null || CameraData.frames(camera) <= 0 || CameraData.isWound(camera)) return;
         ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.WIND, 0));
-        windAnim = 12;
+        windAnim = com.nobothehobo.candid.core.WindingMotion.TICKS;
         CandidClient.playLocal(CandidSounds.WIND);
     }
 
