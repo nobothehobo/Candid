@@ -8,9 +8,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 def transform(source, target):
+    if target != "1.21.10":
+        source = source.replace("ResourceLocation", "Identifier").replace("net.minecraft.Util", "net.minecraft.util.Util")
     if target.startswith("26."):
         renames = {
-            "ResourceLocation": "Identifier",
+            "GuiGraphics": "GuiGraphicsExtractor",
+            "void render(": "void extractRenderState(",
+            "super.render(": "super.extractRenderState(",
+            "renderBackground(": "extractBackground(",
+            ".drawCenteredString(": ".centeredText(",
+            ".drawString(": ".text(",
+            ".renderItem(": ".item(",
+            ".submitOutline(": ".outline(",
+            "ClickType": "ContainerInput",
+            ".getDayTime()": ".getOverworldClockTime()",
+            ".playC2S()": ".serverboundPlay()",
+            ".playS2C()": ".clientboundPlay()",
+            ".modifyEntriesEvent(": ".modifyOutputEvent(",
             "net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup": "net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab",
             "net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents": "net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents",
             "FabricItemGroup": "FabricCreativeModeTab",
@@ -18,6 +32,26 @@ def transform(source, target):
         }
         for old, new in renames.items():
             source = source.replace(old, new)
+        # Overlay messages replaced the former message+boolean overload. Match
+        # only that call, with balanced parentheses so nested Components survive.
+        needle = ".displayClientMessage("
+        while needle in source:
+            start = source.index(needle)
+            cursor = start + len(needle)
+            depth = 1
+            while depth:
+                depth += (source[cursor] == "(") - (source[cursor] == ")")
+                cursor += 1
+            args = source[start + len(needle):cursor - 1]
+            component, overlay = args.rsplit(",", 1)
+            assert overlay.strip() == "true", "Only overlay messages are used by Candid"
+            source = source[:start] + ".sendOverlayMessage(" + component + ")" + source[cursor:]
+    if target in ("26.2", "26.3"):
+        source = source.replace(".setScreen(", ".gui.setScreen(")
+        source = re.sub(r"\.screen\b(?!\()", ".gui.screen()", source)
+        source = source.replace(".getMainRenderTarget()", ".gameRenderer.mainRenderTarget()")
+        for color in ("LIME", "GRAY"):
+            source = source.replace(f"Items.{color}_DYE", f"Items.DYE.get(net.minecraft.world.item.DyeColor.{color})")
     return source
 
 def generate(target, output):
