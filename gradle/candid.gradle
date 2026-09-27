@@ -1,0 +1,72 @@
+import groovy.json.JsonSlurper
+
+def target = providers.gradleProperty('target').getOrElse('1.21.10')
+def definition = new JsonSlurper().parse(file('gradle/targets.json'))[target]
+def modern = definition.java == 25
+base { archivesName = 'candid' }
+version = "${project.version}+mc${target}"
+group = project.group
+layout.buildDirectory = file("build/${target}")
+repositories { mavenCentral() }
+dependencies {
+    minecraft "com.mojang:minecraft:${target}"
+    if (!modern) mappings loom.officialMojangMappings()
+    add(modern ? 'implementation' : 'modImplementation', "net.fabricmc:fabric-loader:${project.loader_version}")
+    add(modern ? 'implementation' : 'modImplementation', "net.fabricmc.fabric-api:fabric-api:${definition.api}")
+    if (System.getenv('CANDID_SHADER_TEST') == 'true') {
+        add(modern ? 'localRuntime' : 'modLocalRuntime', files('build/shader-test/dependencies/iris.jar', 'build/shader-test/dependencies/sodium.jar'))
+        runtimeOnly fileTree(dir: 'build/shader-test/dependencies/libraries', include: ['*.jar'])
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Shared sources are never edited by the build. Version layers override only
+// adapters affected by Minecraft changes; mechanical API renames live in one map.
+def generated = layout.buildDirectory.dir('generated/versionSources')
+def prepareSources = tasks.register('prepareVersionSources') {
+    inputs.dir('src')
+    inputs.file('gradle/targets.json')
+    inputs.file('tools/version_sources.py')
+    inputs.property('target', target)
+    outputs.dir(generated)
+    doLast {
+        providers.exec {
+            commandLine 'python3', 'tools/version_sources.py', target, generated.get().asFile.absolutePath
+        }.result.get().assertNormalExitValue()
+    }
+}
+sourceSets.main.java.setSrcDirs([generated.map { it.dir('main') }])
+sourceSets.test.java.setSrcDirs([generated.map { it.dir('test') }])
+test { useJUnitPlatform() }
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'candid-test'
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = false
+    }
+}
+sourceSets.gametest.java.setSrcDirs([generated.map { it.dir('gametest') }])
+tasks.withType(JavaCompile).configureEach {
+    dependsOn prepareSources
+    options.release = definition.java
+}
+loom.runs.named('clientGameTest') {
+    vmArg '-Dfabric.client.gametest.disableNetworkSynchronizer=true'
+}
+processResources {
+    inputs.property 'version', version
+    inputs.property 'minecraft', target
+    inputs.property 'java', definition.java
+    filesMatching('fabric.mod.json') {
+        expand version: version, minecraft: target, java: definition.java
+    }
+}
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.toVersion(definition.java)
+    targetCompatibility = JavaVersion.toVersion(definition.java)
+}
+tasks.named('sourcesJar') { dependsOn prepareSources }
