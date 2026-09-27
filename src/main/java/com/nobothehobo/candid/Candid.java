@@ -56,6 +56,9 @@ public class Candid implements ModInitializer {
             var stand=com.nobothehobo.candid.photo.TripodSessions.active(player);
             ItemStack camera=cameraInHands(player); if(camera.isEmpty())return;
             com.nobothehobo.candid.photo.RollManager.safely(player,()->{
+                if(stand!=null&&(payload.action()==CameraActionPayload.LOAD_FILM||payload.action()==CameraActionPayload.UNLOAD_FILM||payload.action()==CameraActionPayload.LENS||payload.action()==CameraActionPayload.UNMOUNT)
+                    &&player.distanceToSqr(stand.getBlockPos().getX()+.5,stand.getBlockPos().getY()+.5,stand.getBlockPos().getZ()+.5)>=64)
+                    throw new IllegalStateException("Walk up to the tripod to handle its camera, film or lens");
                 com.nobothehobo.candid.photo.RollManager.sync(player,camera);
                 switch(payload.action()) {
                     case CameraActionPayload.SET_APERTURE -> CameraData.setApertureIndex(camera,payload.value());

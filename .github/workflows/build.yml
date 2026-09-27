@@ -30,7 +30,7 @@ jobs:
         run: xvfb-run -a bash gradlew runClientGameTest -Ptarget=${{ matrix.minecraft }} --stacktrace
         env:
           LIBGL_ALWAYS_SOFTWARE: 'true'
-          SDL_VIDEO_X11_FORCE_EGL: '1'
+          SDL_VIDEO_FORCE_EGL: '1'
       - uses: actions/upload-artifact@v4
         if: success()
         with:
@@ -64,7 +64,7 @@ jobs:
         run: xvfb-run -a bash gradlew runClientGameTest --stacktrace
         env:
           LIBGL_ALWAYS_SOFTWARE: 'true'
-          SDL_VIDEO_X11_FORCE_EGL: '1'
+          SDL_VIDEO_FORCE_EGL: '1'
           CANDID_SHADER_TEST: 'true'
       - uses: actions/upload-artifact@v4
         if: always()

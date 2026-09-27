@@ -36,7 +36,11 @@ For the 26.1 series, use its final patch **26.1.2**.
 ## What changed in 0.6
 
 - Separate builds share the same film, optics, darkroom, image processing and saves.
-- Updated screens, live finder, tripod position and animated hands for modern rendering.
+- Updated screens, live finder and animated hands for modern rendering.
+- Tripods now hold the real camera, save pan/tilt, and support a paired Cable Release.
+- Separate mounted lens barrels, animated rewinding and a brief raise-to-eye gesture.
+- Finished rolls open away from the basin, including when used on ordinary terrain.
+- Shutter feedback starts immediately; depth sampling no longer delays the capture.
 - SDL gamepad support on 26.3; GLFW support retained for earlier releases.
 - Version labels and exact Minecraft requirements prevent accidental cross-version installs.
 - The complete single-player workflow is exercised independently by the CI version matrix.
@@ -117,9 +121,16 @@ Camera controls use real buttons: click, **Tab + Enter**, or **D-pad + A**.
 use **Wind / advance** once. The center focus patch turns green when the
 selected focus is near the metered subject. It is a focus aid, not autofocus tracking.
 
-Place a tripod and **Use it while holding the camera**, then open the finder.
-Aim normally; the viewpoint stays at the tripod head. Choose a seconds-long
-shutter. Stay near the tripod. **Detach tripod** in controls returns to handheld.
+Place a tripod and **Use it while holding the camera**. The camera leaves your hand
+and stays on the stand. Use the occupied stand to compose; right-drag or the right
+stick adjusts its saved pan/tilt. Choose a seconds-long shutter for night exposures.
+Crouch + Use the stand to retrieve the camera with its existing roll and settings.
+
+Craft a **Cable Release** from a stone button, copper ingot and string in a vertical
+column. Use it on the mounted camera to pair, then use the release within 32 blocks
+to enter its finder and fire. It works only in the same dimension and loaded area.
+Walk up to the stand to change film/lenses or retrieve the camera. Breaking a stand
+returns its camera; camera custody and angles persist with the world.
 The camera remains in your hand; this version has no unattended timed shutter.
 
 Steam Input can expose either a gamepad or keyboard/mouse controls. Avoid
