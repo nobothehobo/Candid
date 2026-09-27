@@ -55,8 +55,8 @@ public abstract class LoadingHandsMixin {
         }
         pose.popPose();
         // Minecraft renders the player's actual skin, including the chosen arm width.
-        pose.pushPose();pose.translate(-.34+leverAngle/700,-.02+(advancing?.12:0),-.28-leverAngle/900);
-        if(advancing)pose.rotate(Axis.ZP.rotationDegrees(-leverAngle*.35f));
+        pose.pushPose();pose.translate(advancing?.10+leverAngle/700:-.34,advancing?.32:-.02,advancing?-.12:-.28);
+        if(advancing)pose.rotate(Axis.ZP.rotationDegrees(leverAngle*.20f));
         renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT,playerState);pose.popPose();
         float reach=raising==null&&age>=16&&age<50?(float)Math.sin(Math.PI*Math.min(1,(age-16)/34))*.25f:0;
         pose.pushPose();pose.translate(.22+reach,unloading!=null&&age<10?-.35:.02,-.23-reach);
