@@ -1,7 +1,8 @@
-# Candid 0.5 integration and upgrade notes
+# Candid integration and upgrade notes
 
-Baseline: Minecraft Java 1.21.10, Java 21, Fabric Loader 0.19.5+,
-Fabric API 0.138.4+1.21.10, Loom 1.17.21, Gradle 9.5.1.
+The 0.6 compatibility line has separate builds listed in [COMPATIBILITY.md](COMPATIBILITY.md).
+The original baseline remains Minecraft Java 1.21.10 / Java 21; modern 26.x
+builds use Java 25. Shared tools: Fabric Loader 0.19.5+, Loom 1.17.21, Gradle 9.5.1.
 The Fabric JAR is not a Paper/Nexo plugin and cannot run on Bedrock.
 Back up worlds; replace the older Candid JAR rather than installing both.
 
@@ -15,7 +16,7 @@ networking, screens, world sampling and lifecycle hooks surround that core.
 
 - Roll records: `<world>/candid/rolls/<uuid>.json`, with previous-checkpoint `.bak`.
 - Full-color scans: `<world>/candid/scans/<frame-uuid>.png` (504 × 336).
-- Vanilla maps: world `data/map_*.dat`. Preserve the whole world when moving saves.
+- Vanilla maps: Minecraft-managed map data (layout varies by game version). Preserve the whole world when moving saves.
 - Player exports: `<Minecraft instance>/candid-exports/<frame-uuid>.png`.
 - Items carry compact identifiers and settings, not embedded scans.
 - Reprints reuse frame map IDs, including the four large-print tiles.

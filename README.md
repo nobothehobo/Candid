@@ -1,4 +1,4 @@
-# Candid 0.5 — film photography for Minecraft
+# Candid 0.6 — film photography for Minecraft
 
 Craft a mechanical camera, load a 36-shot roll, meter and photograph your world,
 then develop, preview, print and share your pictures. This is the Candid **Fabric
@@ -6,10 +6,11 @@ mod for single player and Fabric multiplayer**, not a Paper plugin.
 
 ## Install in Prism / Steam Deck
 
-1. Use **Minecraft Java 1.21.10**, **Java 21**, **Fabric Loader 0.19.5+** and
-   **Fabric API 0.138.4+1.21.10**.
+1. Choose a matching Minecraft / Java / Fabric API combination from the table below.
+   Use **Fabric Loader 0.19.5+**. In Prism, edit the instance to select Fabric and
+   the appropriate Java runtime (21 for 1.21.x; 25 for 26.x).
 2. Back up your world. Remove the older Candid JAR from this instance's `mods` folder.
-3. Put **`candid-0.5.0.jar`** in `mods` and launch. All models, textures and audio
+3. Put the **Candid JAR labeled with your exact Minecraft version** in `mods` and launch. All models, textures and audio
    are included. Single player needs no separate server.
 4. Open the **Candid Photography** creative tab for a quick test, or craft normally.
    The **Candid Field Guide** has instructions and diagrams for all 18 shipped recipes.
@@ -17,7 +18,33 @@ mod for single player and Fabric multiplayer**, not a Paper plugin.
 For multiplayer, both client and server need the same Candid version. Optional
 Iris/Sodium and shader packs are client-side; they are not bundled or required.
 
-## What changed in 0.5
+## Minecraft versions
+
+| Minecraft | Java | Fabric API baseline | Candid file |
+| --- | --- | --- | --- |
+| 1.21.10 | 21 | 0.138.4+1.21.10 | `candid-0.6.0+mc1.21.10.jar` |
+| 1.21.11 | 21 | 0.141.6+1.21.11 | `candid-0.6.0+mc1.21.11.jar` |
+| 26.1.2 | 25 | 0.155.3+26.1.2 | `candid-0.6.0+mc26.1.2.jar` |
+| 26.2 | 25 | 0.161.0+26.2 | `candid-0.6.0+mc26.2.jar` |
+| 26.3 | 25 | 0.161.0+26.3 | `candid-0.6.0+mc26.3.jar` |
+
+Install **one** Candid JAR per instance. These are separate builds of the same mod,
+not five mods to install together. Future Minecraft releases and snapshots need
+verification and their own release; changing the filename does not make a JAR compatible.
+For the 26.1 series, use its final patch **26.1.2**.
+
+## What changed in 0.6
+
+- Separate builds share the same film, optics, darkroom, image processing and saves.
+- Updated screens, live finder, tripod position and animated hands for modern rendering.
+- SDL gamepad support on 26.3; GLFW support retained for earlier releases.
+- Version labels and exact Minecraft requirements prevent accidental cross-version installs.
+- The complete single-player workflow is exercised independently by the CI version matrix.
+
+See [compatibility and upgrade notes](docs/COMPATIBILITY.md) and
+[the test report](docs/TEST_REPORT.md) for validation status.
+
+## Photography features (carried forward from 0.5)
 
 - **Clickable darkroom stations:** film and chemistry/paper input slots, development
   progress, safe supply return when closing, free frame previews, repeat printing.
@@ -115,10 +142,17 @@ See [test report](docs/TEST_REPORT.md) for the tested Iris setup and remaining l
 
 ## Build, assets and technical notes
 
-With Java 21: `bash gradlew build`. The installable artifact is
-`build/libs/candid-0.5.0.jar`. Run the real client/integrated-world regression on
-Linux with `xvfb-run -a bash gradlew runClientGameTest`.
-GitHub Actions also builds and tests each push/PR; download its `Candid-0.5.0-Mod` artifact.
+With Java 21 (1.21.x targets) or Java 25 (all targets), and Python 3:
+
+```sh
+bash gradlew build -Ptarget=26.3
+xvfb-run -a bash gradlew runClientGameTest -Ptarget=26.3
+```
+
+The installable artifact is `build/26.3/libs/candid-0.6.0+mc26.3.jar`.
+Replace `26.3` with your chosen supported target. The default is `1.21.10`.
+GitHub Actions builds and tests each version; download the matching
+`Candid-0.6.0-mc<version>` artifact after its workflow passes.
 
 Editable models are in `assets/blockbench`; run `python3 tools/export_models.py`
 to export them. See [assets](assets/README.md), [audio provenance](SOUND_ASSETS.md),

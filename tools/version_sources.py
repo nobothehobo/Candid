@@ -54,6 +54,7 @@ def transform(source, target):
         source = re.sub(r"(Minecraft\.getInstance\(\)|minecraft|mc|client|c)\.setScreen\(", r"\1.gui.setScreen(", source)
         source = re.sub(r"\.screen\b(?!\()", ".gui.screen()", source)
         source = source.replace(".getMainRenderTarget()", ".gameRenderer.mainRenderTarget()")
+        source = source.replace(".getMainCamera()", ".mainCamera()")
         for color in ("LIME", "GRAY"):
             source = source.replace(f"Items.{color}_DYE", f"Items.DYE.{color.lower()}()")
     if target == "26.3":
