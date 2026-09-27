@@ -177,9 +177,10 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 mount.place(p.getMainHandItem(),32,-12);check(p.getMainHandItem().isEmpty(),"Mount left a duplicate camera in hand");
                 p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(CandidItems.REMOTE));
                 com.nobothehobo.candid.photo.TripodSessions.bind(p,p.getMainHandItem(),mount);
-                com.nobothehobo.candid.photo.TripodSessions.remote(p,p.getMainHandItem());
             });
-            context.runOnClient(c->c.player.getInventory().setSelectedSlot(0));
+            context.runOnClient(c->{c.player.getInventory().setSelectedSlot(0);c.setScreen(null);c.player.setYRot(0);c.player.setXRot(0);});
+            context.waitTicks(10);context.takeScreenshot("candid-camera-mounted");
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();com.nobothehobo.candid.photo.TripodSessions.remote(p,p.getMainHandItem());});
             context.waitFor(c->CameraData.tripod(CameraOptics.camera(),c.player)!=null&&CameraData.isWound(CameraOptics.camera()));
             context.setScreen(CameraScreen::new);context.waitTicks(10);context.takeScreenshot("candid-tripod-viewfinder");
             context.runOnClient(c->CameraOptics.aim(10,4));context.waitTicks(5);
@@ -205,7 +206,12 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 for(int tile:r.frames().getFirst().tiles())check(p.level().getMapData(new MapId(tile))!=null,"Large print tile missing after reopen");
                 var tripod=(com.nobothehobo.candid.block.TripodBlockEntity)p.level().getBlockEntity(p.blockPosition().offset(0,0,1));
                 check(tripod!=null&&CameraData.frames(tripod.camera())==35&&Math.abs(tripod.yaw()-42)<.1,"Mounted camera or angle did not survive reopen");
-                var recovered=tripod.take();check(!recovered.isEmpty()&&tripod.take().isEmpty(),"Camera retrieval duplicated the stack");RollManager.give(p,recovered);
+                var recovered=tripod.take();check(!recovered.isEmpty()&&tripod.take().isEmpty(),"Camera retrieval duplicated the stack");tripod.place(recovered,42,-8);
+                String mountedId=CameraData.cameraId(tripod.camera());var position=tripod.getBlockPos();
+                p.level().destroyBlock(position,false);
+                long drops=p.level().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(position).inflate(3))
+                    .stream().filter(e->mountedId.equals(CameraData.cameraId(e.getItem()))).count();
+                check(drops==1,"Breaking the tripod lost or duplicated the camera: "+drops);
                 var map=p.level().getMapData(new MapId(mapId[0]));check(map!=null&&map.locked,"Print not saved");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Saved map colors changed");
             });
         }
