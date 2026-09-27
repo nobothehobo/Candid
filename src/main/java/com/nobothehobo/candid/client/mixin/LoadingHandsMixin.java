@@ -46,12 +46,16 @@ public abstract class LoadingHandsMixin {
             double px=(10.8-8)/16,py=(13.1-8)/16,pz=(9.3-8)/16;
             pose.translate(px,py,pz);pose.mulPose(Axis.YP.rotationDegrees(-leverAngle));pose.translate(-px,-py,-pz);
             renderItem(player,lever,ItemDisplayContext.NONE,pose,collector,light);
+            // Anchor the block-hand tip to the grip in the lever's own rotating space.
+            // The second translation cancels the vanilla resting right-hand tip pose.
+            pose.translate((14.2-8)/16,(13.55-8)/16,(9.45-8)/16);
+            pose.translate(-.75517044,.43795376,1.09521622);
+            renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT);
         }
         pose.popPose();
         // Minecraft renders the player's actual skin, including the chosen arm width.
-        pose.pushPose();pose.translate(advancing?.10+leverAngle/700:-.34,advancing?.32:-.02,advancing?-.12:-.28);
-        if(advancing)pose.mulPose(Axis.ZP.rotationDegrees(leverAngle*.20f));
-        renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT);pose.popPose();
+        if(!advancing){pose.pushPose();pose.translate(-.34,-.02,-.28);
+            renderPlayerArm(pose,collector,light,0,0,HumanoidArm.RIGHT);pose.popPose();}
         float reach=raising==null&&age>=16&&age<50?(float)Math.sin(Math.PI*Math.min(1,(age-16)/34))*.25f:0;
         pose.pushPose();pose.translate(.22+reach,unloading!=null&&age<10?-.35:.02,-.23-reach);
         if(unloading!=null&&age>=10&&age<40)pose.mulPose(Axis.ZP.rotationDegrees((float)Math.sin(age*.7)*24));renderPlayerArm(pose,collector,light,0,0,HumanoidArm.LEFT);pose.popPose();
