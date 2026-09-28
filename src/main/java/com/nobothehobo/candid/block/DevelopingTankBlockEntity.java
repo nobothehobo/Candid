@@ -12,9 +12,11 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /** Real station custody; GUI decorations are never persisted or dropped. */
 public final class DevelopingTankBlockEntity extends BlockEntity {
-    private final SimpleContainer inputs=new SimpleContainer(2);
+    private final SimpleContainer inputs=new SimpleContainer(2){
+        @Override public void setChanged(){super.setChanged();DevelopingTankBlockEntity.this.setChanged();}
+    };
     public DevelopingTankBlockEntity(BlockPos pos,BlockState state){
-        super(CandidBlocks.TANK_ENTITY,pos,state);inputs.addListener(c->setChanged());
+        super(CandidBlocks.TANK_ENTITY,pos,state);
     }
     public SimpleContainer inputs(){return inputs;}
     @Override protected void saveAdditional(ValueOutput out){
