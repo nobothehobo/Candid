@@ -28,6 +28,9 @@ public final class CandidBlocks {
         BuiltInRegistries.BLOCK_ENTITY_TYPE,Candid.id("tripod"),
         net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(com.nobothehobo.candid.block.TripodBlockEntity::new,TRIPOD).build());
     private CandidBlocks() { }
+    public static final net.minecraft.world.level.block.entity.BlockEntityType<com.nobothehobo.candid.block.DevelopingTankBlockEntity> TANK_ENTITY = Registry.register(
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,Candid.id("developing_tank"),
+        net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(com.nobothehobo.candid.block.DevelopingTankBlockEntity::new,DARKROOM_BASIN).build());
 
     private static Block register(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties props) {
         ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, Candid.id(name));

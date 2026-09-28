@@ -27,15 +27,14 @@ public final class ContactSheet extends ChestMenu {
         if(type!=ClickType.PICKUP||slot<0||slot>=36)return;
         RollManager.safely(owner,()->{
             var roll=RollManager.store(owner).get(rollId);
-            if(button==1)Photos.preview(owner,roll,slot);
-            else if(button==0){int paper=RollManager.find(owner,CandidItems.PHOTO_PAPER);Photos.print(owner,roll,slot,paper<0?ItemStack.EMPTY:owner.getInventory().getItem(paper),false);}
+            if(button==0||button==1)Photos.preview(owner,roll,slot);
             refresh();broadcastChanges();
         });
     }
     private void refresh(){
         var r=RollManager.store(owner).get(rollId);
         for(int i=0;i<r.frames().size();i++){var f=r.frames().get(i);var s=new ItemStack(Items.PAPER);s.set(DataComponents.CUSTOM_NAME,Component.literal("Frame "+f.number()+" • "+f.photographer()));
-            s.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(Component.literal(Photos.date(f)),Component.literal(Photos.stockName(r)+" • ISO "+f.iso()),Component.literal(Photos.exposure(f)),Component.literal("Left: print (1 paper) • Right: free preview"))));icons.setItem(i,s);}
-        var help=new ItemStack(CandidItems.PHOTO_PAPER);help.set(DataComponents.CUSTOM_NAME,Component.literal("Each print costs 1 Photo Paper. Negatives are reusable."));icons.setItem(49,help);
+            s.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(Component.literal(Photos.date(f)),Component.literal(Photos.stockName(r)+" • ISO "+f.iso()),Component.literal(Photos.exposure(f)),Component.literal("Click: free preview • Print at an enlarger"))));icons.setItem(i,s);}
+        var help=new ItemStack(CandidItems.PHOTO_PAPER);help.set(DataComponents.CUSTOM_NAME,Component.literal("Preview here. Print at an enlarger with Photo Paper."));icons.setItem(49,help);
     }
 }

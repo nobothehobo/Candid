@@ -15,7 +15,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class DarkroomBasinBlock extends Block {
+public class DarkroomBasinBlock extends Block implements net.minecraft.world.level.block.EntityBlock {
+    @Override public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos,BlockState state){return new DevelopingTankBlockEntity(pos,state);}
     private static final net.minecraft.world.phys.shapes.VoxelShape SHAPE = Block.box(2, 1, 2, 14, 14.5, 14);
     public DarkroomBasinBlock(BlockBehaviour.Properties properties) { super(properties); }
 

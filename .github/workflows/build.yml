@@ -7,6 +7,12 @@ concurrency:
   group: candid-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  audio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - run: python3 tools/check_audio.py
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -44,8 +50,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: Candid-0.6.0-mc${{ matrix.minecraft }}
-          path: build/${{ matrix.minecraft }}/libs/candid-0.6.0+mc${{ matrix.minecraft }}.jar
+          name: Candid-0.6.1-mc${{ matrix.minecraft }}
+          path: build/${{ matrix.minecraft }}/libs/candid-0.6.1+mc${{ matrix.minecraft }}.jar
       - uses: actions/upload-artifact@v4
         if: always()
         with:

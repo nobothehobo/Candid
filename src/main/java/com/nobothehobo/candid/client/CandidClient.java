@@ -14,7 +14,7 @@ public class CandidClient implements ClientModInitializer {
     public void onInitializeClient() {
         net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(com.nobothehobo.candid.content.CandidBlocks.TRIPOD_ENTITY,TripodRenderer::new);
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.TripodViewPayload.ID,(payload,context)->{
-            CameraOptics.mount(payload.pos(),payload.yaw(),payload.pitch());var mc=context.client();mc.setScreen(new CameraScreen());
+            CameraOptics.mount(payload.pos(),payload.yaw(),payload.pitch());var mc=context.client();mc.setScreen(new CameraScreen(payload.release()));
         });
         ClientTickEvents.END_CLIENT_TICK.register(CameraOptics::tick);
         UseItemCallback.EVENT.register((player, level, hand) -> {

@@ -29,6 +29,12 @@ public class Candid implements ModInitializer {
         CandidSounds.initialize();
 
         PayloadTypeRegistry.playS2C().register(com.nobothehobo.candid.network.TripodViewPayload.ID,com.nobothehobo.candid.network.TripodViewPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(com.nobothehobo.candid.network.TripodUsePayload.ID,com.nobothehobo.candid.network.TripodUsePayload.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.TripodUsePayload.ID,(payload,context)->{
+            var p=context.player();
+            if(payload.pos().equals(com.nobothehobo.candid.photo.TripodTarget.find(p)))
+                com.nobothehobo.candid.block.TripodBlock.interact(p.getMainHandItem(),p.level(),payload.pos(),p);
+        });
         PayloadTypeRegistry.playC2S().register(CapturePhotoPayload.ID, CapturePhotoPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(CameraActionPayload.ID, CameraActionPayload.CODEC);
 

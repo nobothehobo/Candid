@@ -16,8 +16,7 @@ public class CameraScreen extends Screen {
     private int apertureIndex = 4;
     private int shutterIndex = 3;
     private int windAnim;
-    public boolean winding(){return windAnim>0&&CameraOptics.mountedPosition()==null;}
-    public float windingAge(){return com.nobothehobo.candid.core.WindingMotion.TICKS-windAnim;}
+    private boolean releaseOnOpen;
     private final SceneMeter sceneMeter=new SceneMeter();
     private long lastAim=System.nanoTime();
     private final boolean[] pad = new boolean[15];
@@ -26,6 +25,7 @@ public class CameraScreen extends Screen {
     public CameraScreen() {
         super(Component.literal("Candid Viewfinder"));
     }
+    public CameraScreen(boolean release){this();releaseOnOpen=release;}
 
     private ItemStack camera() {
         return CameraOptics.camera();
@@ -33,6 +33,7 @@ public class CameraScreen extends Screen {
 
     @Override
     protected void init() {
+        CameraOptics.enterView();
         ClientPlayNetworking.send(new CameraActionPayload(CameraActionPayload.SYNC,0));
         ItemStack camera = camera();
         if (!camera.isEmpty()) {
@@ -44,6 +45,8 @@ public class CameraScreen extends Screen {
     @Override
     public void tick() {
         if (windAnim > 0) windAnim--;
+        PhotoCapture.prepareFocus(minecraft);
+        if(releaseOnOpen&&!camera().isEmpty()){releaseOnOpen=false;shoot();}
     }
 
     @Override
@@ -73,6 +76,13 @@ public class CameraScreen extends Screen {
         var focusRange=com.nobothehobo.candid.core.Optics.focusRange(CameraData.lens(camera),CameraData.APERTURES[apertureIndex],CameraData.focus(camera));
         boolean inFocus=focusRange.contains(target>=1000?Double.POSITIVE_INFINITY:target);
         graphics.submitOutline(cx-14,cy-10,28,20,inFocus?0xff97d9ab:0xffeed29c);
+        double focus=CameraData.focus(camera);
+        int split=inFocus?0:(int)Math.copySign(Math.max(2,Math.min(10,Math.abs(1/focus-1/target)*35)),focus-target);
+        int focusColor=inFocus?0xff97d9ab:0xffeed29c;
+        graphics.fill(cx-6+split,cy-7,cx+7+split,cy-5,focusColor);
+        graphics.fill(cx-6-split,cy+5,cx+7-split,cy+7,focusColor);
+        String focusHint=(inFocus?"In focus":focus<target?"Focus farther →":"← Focus nearer")+" • "+(GamepadInput.present()?"LB/RB • L3: match":"Wheel / [ ] • F: match");
+        graphics.drawCenteredString(font,focusHint,cx,cy+16,focusColor);
         graphics.drawCenteredString(font,target>=1000?"Subject: infinity":"Subject: "+String.format(java.util.Locale.ROOT,"%.1f m",target),cx,frame.y()+frame.height()-12,0xffe6dfce);
         graphics.fill(cx-5,cy,cx+6,cy+1,0xCCFFFFFF);
         graphics.fill(cx,cy-5,cx+1,cy+6,0xCCFFFFFF);
@@ -81,7 +91,7 @@ public class CameraScreen extends Screen {
         graphics.drawCenteredString(font,range,cx,35,0xFFD4DEC9);
         String filmText = stock == null
                 ? "NO FILM • Crouch + Use for camera controls"
-                : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (wound ? "READY" : "WIND");
+                : stock.displayName() + "  ISO " + stock.iso() + "  " + frames + "/36  " + (PhotoCapture.busy()?"RECORDING":wound ? "READY" : "WIND");
         graphics.drawCenteredString(font, filmText, cx, 9,
                 stock == null ? 0xFFFF7070 : (wound ? 0xFFFFFFFF : 0xFFFFD060));
 
@@ -156,7 +166,8 @@ public class CameraScreen extends Screen {
     private void shoot() {
         ItemStack camera = camera();
         FilmStock stock = camera.isEmpty() ? null : CameraData.film(camera);
-        if (stock == null || CameraData.frames(camera) <= 0 || minecraft == null) return;
+        if (minecraft == null) return;
+        if(stock==null||CameraData.frames(camera)<=0){if(minecraft.player!=null)minecraft.player.displayClientMessage(Component.literal(stock==null?"Load film before firing the shutter":"Roll finished • rewind and unload"),true);return;}
         if (!CameraData.isWound(camera)) {
             if (minecraft.player != null) minecraft.player.displayClientMessage(Component.literal("Wind the film first • X / R"), true);
             return;

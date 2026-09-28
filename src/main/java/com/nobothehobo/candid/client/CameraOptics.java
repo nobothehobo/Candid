@@ -11,6 +11,12 @@ public final class CameraOptics {
     private static Object mountedLevel;
     private static float yaw,pitch;
     private static boolean dirty;
+    private static net.minecraft.client.CameraType previousView;
+    public static void enterView(){
+        var mc=Minecraft.getInstance();
+        if(previousView==null)previousView=mc.options.getCameraType();
+        mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+    }
     private CameraOptics(){}
     public static void mount(net.minecraft.core.BlockPos pos,float initialYaw,float initialPitch){
         var mc=Minecraft.getInstance();mounted=pos;mountedLevel=mc.level;
@@ -23,6 +29,8 @@ public final class CameraOptics {
     public static Vec3 direction(){return Vec3.directionFromRotation(pitch(),yaw());}
     public static void aim(float dx,float dy){var p=Minecraft.getInstance().player;if(p==null)return;if(mounted==null){p.setYRot(p.getYRot()+dx);p.setXRot(Math.max(-85,Math.min(85,p.getXRot()+dy)));}else{yaw=net.minecraft.util.Mth.wrapDegrees(yaw+dx);pitch=Math.max(-85,Math.min(85,pitch+dy));dirty=true;}}
     public static void tick(Minecraft mc){
+        if(mc.player!=null&&!camera().isEmpty()&&(mc.screen instanceof CameraScreen||mc.screen instanceof CaptureScreen||mc.screen instanceof CameraRaiseScreen||mc.screen instanceof FilmLoadScreen||mc.screen instanceof FilmUnloadScreen||mc.screen instanceof CameraControlScreen))enterView();
+        else if(previousView!=null){mc.options.setCameraType(previousView);previousView=null;}
         if(mounted==null)return;
         if(mc.level!=mountedLevel||mc.player==null||mc.player.distanceToSqr(mounted.getX()+.5,mounted.getY()+.5,mounted.getZ()+.5)>1024||!(mc.level.getBlockEntity(mounted) instanceof com.nobothehobo.candid.block.TripodBlockEntity b)||b.camera().isEmpty()){clearMount();return;}
         if(dirty){dirty=false;

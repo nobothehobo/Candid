@@ -23,7 +23,7 @@ public final class TripodSessions {
         if(stand.camera().isEmpty())throw new IllegalStateException("Place a camera on this tripod first");
         RollManager.sync(p,stand.camera());stand.changed();
         SESSIONS.put(p.getUUID(),new Session(stand.getBlockPos(),p.level().dimension().location().toString(),CameraData.cameraId(stand.camera()),remote));
-        ServerPlayNetworking.send(p,new TripodViewPayload(stand.getBlockPos(),stand.yaw(),stand.pitch()));
+        ServerPlayNetworking.send(p,new TripodViewPayload(stand.getBlockPos(),stand.yaw(),stand.pitch(),remote&&!p.isShiftKeyDown()));
     }
     public static TripodBlockEntity active(ServerPlayer p){
         var s=SESSIONS.get(p.getUUID());if(s==null)return null;
@@ -39,7 +39,10 @@ public final class TripodSessions {
     public static void bind(ServerPlayer p,ItemStack remote,TripodBlockEntity stand){
         RollManager.sync(p,stand.camera());stand.changed();
         CustomData.update(DataComponents.CUSTOM_DATA,remote,t->{t.putString("camera",CameraData.cameraId(stand.camera()));t.putString("dimension",p.level().dimension().location().toString());t.putLong("position",stand.getBlockPos().asLong());});
-        p.displayClientMessage(net.minecraft.network.chat.Component.literal("Remote paired • use within 32 blocks to compose and release"),true);
+        remote.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(java.util.List.of(
+            net.minecraft.network.chat.Component.literal("Paired • Use: release shutter"),
+            net.minecraft.network.chat.Component.literal("Crouch + Use: compose • range 32 blocks"))));
+        p.displayClientMessage(net.minecraft.network.chat.Component.literal("Cable paired • Use: fire • Crouch + Use: compose (32 blocks)"),true);
     }
     public static void remote(ServerPlayer p,ItemStack remote){
         var t=remote.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var pos=BlockPos.of(t.getLongOr("position",0));
