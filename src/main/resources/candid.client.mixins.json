@@ -8,7 +8,8 @@
     "CameraFovMixin",
     "TripodCameraMixin",
     "LoadingHandsMixin",
-    "TripodUseMixin"
+    "TripodUseMixin",
+    "PhotoOutlineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

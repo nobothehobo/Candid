@@ -70,6 +70,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             world.getServer().runCommand("execute at @p run fill ~2 ~2 ~8 ~3 ~3 ~8 minecraft:glass");
             world.getServer().runCommand("execute at @p run fill ~ ~ ~8 ~ ~2 ~8 minecraft:dark_oak_planks");
             world.getServer().runCommand("execute at @p run fill ~-5 ~5 ~8 ~5 ~5 ~8 minecraft:stone_bricks");
+            world.getServer().runCommand("execute at @p run setblock ~ ~1 ~3 minecraft:glass");
             context.runOnClient(c->{c.player.setYRot(0);c.player.setXRot(0);});
             context.waitTicks(20);context.takeScreenshot("candid-camera-held");
             if("true".equals(System.getenv("CANDID_SHADER_TEST")))context.runOnClient(c->{
