@@ -29,7 +29,8 @@ networking, screens, world sampling and lifecycle hooks surround that core.
 
 The authoritative ledger checks camera custody, duplicate frame IDs, roll capacity,
 development state, frame validity and paper before printing. Station slots validate
-inputs and return items on close. Inventory saves and external files are not a single
+inputs; the tank persists them in its block entity, while the enlarger returns supplies
+on close. Inventory saves and external files are not a single
 atomic transaction: hard crashes can require backup recovery. This is not yet certified
 for a public-server economy. A modified multiplayer client can submit image pixels;
 image moderation, archive quotas and stronger transaction recovery are future work.
@@ -59,7 +60,7 @@ settings change the rendered pixels independently of this world-based meter.
 
 The real shutter sample is CC0; see SOUND_ASSETS.md. Loading models animate in world
 with the player's skin while the server alone performs inventory changes. These are
-staged poses rather than physically simulated finger/film contact.
+continuous door/leader transforms and eased hand motion, not physically simulated finger/film contact.
 
 ## Performance protections
 
@@ -98,6 +99,6 @@ shader-colored pixels in the persisted scan. These dependencies and test classes
 are excluded from the release mod. The async-network test setting handles 1.21.10
 login correctly; assertions await real state changes.
 
-The in-game guide reads diagrams from the same 18 JSON recipe definitions as the
+The in-game guide reads diagrams from the same 19 JSON recipe definitions as the
 mod. A data pack overriding recipes may differ from the shipped guide.
 Dodging/burning and an expanded darkroom remain deliberately deferred.

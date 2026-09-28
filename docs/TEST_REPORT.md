@@ -1,4 +1,48 @@
-# Candid 0.6 validation
+# Candid validation
+
+## 0.6.1 playtest fix validation
+
+Final release code `d4698dcb839a601f2b23b37a5373229901267675` passed all five
+version builds, 52 JUnit tests per build, integrated gameplay, decoded audio and
+the shader fixture in [run 36382655063](https://github.com/nobothehobo/Candid/actions/runs/36382655063).
+This final run also verifies cancellation leaves the roll at 33 frames and wound,
+after three completed exposures. The timer screenshot was inspected and sits
+outside the photo crop. All five downloaded JARs pass ZIP integrity, exact target
+metadata, repaired shutter-byte comparison and test-class exclusion checks.
+
+The expanded 1-, 8- and 30-second exposure workflow passed on Minecraft 1.21.10,
+1.21.11, 26.1.2, 26.2 and 26.3, plus the Iris/Sodium fixture, in
+[run 36382372583](https://github.com/nobothehobo/Candid/actions/runs/36382372583).
+This exercises actual rendered samples and checks elapsed wall-clock duration,
+one frame per release and persistence after reopening the world. The reported
+long-exposure failure was not reproduced in this revised capture path.
+
+The release includes 52 JUnit tests and real client/integrated-server checks for:
+
+- Tank custody while closed; retrieval locked during processing; actual completion
+  delay; retained inventory after world reopen; one film drop when broken.
+- Both contact-sheet click buttons preview without paper consumption or map allocation.
+  Only explicit enlarger printing consumes paper.
+- First-person capture and restoration of the previous third-person perspective.
+- Above-block tripod-camera targeting, actual cable item Use/UseOn, saved head angles.
+- Continuous loading-door/leader calculations and unobstructed finder winding.
+- Audio decoding for all five OGG assets; shutter onset under 50 ms, peak -1.3 dBFS
+  and RMS -21.0 dBFS. The old shutter decoded to near-silence and loading foley was corrupt.
+
+Screenshots from 1.21.10 and 26.3 were inspected: separated hands, hinged back,
+raise pose, focus scale, clean finder winding and a photo without selection outlines.
+143 resource JSON files parse successfully; 46 editable Blockbench sources are retained.
+
+Manual limits: no physical Deck controller/speaker test or subjective animation
+smoothness measurement. Film remains an original approximation, not measured stock
+emulation. The depth grid and 16-sample long exposure are approximations. Shader
+coverage is the named fixture, not every shader pack. Hard crashes during writes
+and an actual restart halfway through chemistry processing still need stress tests.
+
+## Historical 0.6.0 baseline
+
+The following records the previous release; tank return-on-close and contact-sheet
+printing behavior below were superseded by 0.6.1.
 
 ## Tested
 

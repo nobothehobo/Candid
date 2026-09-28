@@ -1,6 +1,6 @@
 # Candid 0.6.1 playtest fixes
 
-Implemented; build and in-game verification pending when this file was first written.
+Implemented. See TEST_REPORT.md for the exact acceptance run and remaining manual checks.
 
 - Repaired the silent shutter OGG (old peak -91 dBFS); reset timestamps before fading.
   Added decoded-audio regression checks, and repaired corrupt film-loading foley.
@@ -15,6 +15,10 @@ Implemented; build and in-game verification pending when this file was first wri
   Finder returns while processing finishes; RECORDING indicates the one-job limit.
 - First-person viewpoint is enforced during camera use, and the previous perspective
   is restored on exit. No third-person selfie captures.
+- Vanilla block-selection outlines are suppressed in both finder and photo readback.
+- Seconds-long exposures show elapsed time outside the captured crop. Native gamepad B
+  now cancels as Escape does. Regression coverage includes 1, 8 and 30 seconds,
+  paired cable firing and cancellation without consuming a frame.
 - Developing Tank now has persistent real input slots. Closing leaves contents inside;
   processing rolls are locked until ready. Reopening finishes elapsed jobs from their
   saved timestamps. Breaking drops contents once. No hopper automation or extra tick loop.
