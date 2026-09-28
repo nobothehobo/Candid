@@ -44,6 +44,10 @@ public class CandidClient implements ClientModInitializer {
     }
 
     public static void playLocal(SoundEvent sound) {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F));
+        // Physical camera feedback follows Players volume, not the UI-click slider.
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(sound.location(),
+            net.minecraft.sounds.SoundSource.PLAYERS,.85F,1.0F,
+            net.minecraft.client.resources.sounds.SoundInstance.createUnseededRandom(),false,0,
+            net.minecraft.client.resources.sounds.SoundInstance.Attenuation.NONE,0,0,0,true));
     }
 }

@@ -194,6 +194,8 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 CameraData.setShutterIndex(p.getMainHandItem(),10);
                 var stand=p.blockPosition().offset(0,0,1);p.level().setBlockAndUpdate(stand,com.nobothehobo.candid.content.CandidBlocks.TRIPOD.defaultBlockState());var mount=(com.nobothehobo.candid.block.TripodBlockEntity)p.level().getBlockEntity(stand);
                 mount.place(p.getMainHandItem(),32,-12);check(p.getMainHandItem().isEmpty(),"Mount left a duplicate camera in hand");
+                p.setYRot(0);p.setXRot(0);
+                check(stand.equals(com.nobothehobo.candid.photo.TripodTarget.find(p)),"Mounted camera above block could not be targeted");
                 p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(CandidItems.REMOTE));
                 com.nobothehobo.candid.photo.TripodSessions.bind(p,p.getMainHandItem(),mount);
             });

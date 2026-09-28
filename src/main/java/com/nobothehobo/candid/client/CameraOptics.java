@@ -40,9 +40,9 @@ public final class CameraOptics {
     }
     public static ItemStack camera(){var p=Minecraft.getInstance().player;if(p==null)return ItemStack.EMPTY;if(mounted!=null&&p.level().getBlockEntity(mounted) instanceof com.nobothehobo.candid.block.TripodBlockEntity b)return b.camera();return p.getMainHandItem().is(CandidItems.CAMERA)?p.getMainHandItem():p.getOffhandItem().is(CandidItems.CAMERA)?p.getOffhandItem():ItemStack.EMPTY;}
     public static boolean hideHud(){var screen=Minecraft.getInstance().screen;
-        return screen instanceof CameraScreen||screen instanceof CaptureScreen||screen instanceof FilmLoadScreen||screen instanceof FilmUnloadScreen||screen instanceof CameraRaiseScreen||PhotoCapture.busy();
+        return screen instanceof CameraScreen||screen instanceof CaptureScreen||screen instanceof FilmLoadScreen||screen instanceof FilmUnloadScreen||screen instanceof CameraRaiseScreen||PhotoCapture.hiding();
     }
-    public static boolean active(){var mc=Minecraft.getInstance();return (mc.screen instanceof CameraScreen||mc.screen instanceof CaptureScreen||PhotoCapture.busy())&&!camera().isEmpty();}
+    public static boolean active(){var mc=Minecraft.getInstance();return (mc.screen instanceof CameraScreen||mc.screen instanceof CaptureScreen||PhotoCapture.hiding())&&!camera().isEmpty();}
     public static Vec3 anchor(){var p=Minecraft.getInstance().player;if(p==null)return Vec3.ZERO;var pos=CameraData.tripod(camera(),p);return pos==null?p.getEyePosition():new Vec3(pos.getX()+.5,pos.getY()+1.62,pos.getZ()+.5).add(direction().scale(.28));}
     public static void focus(int direction){
         var c=camera();if(c.isEmpty())return;
