@@ -212,11 +212,20 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             world.getServer().runCommand("time set noon");context.waitTicks(30);context.runOnClient(c->bright[0]=new SceneMeter().read(c));
             world.getServer().runCommand("time set midnight");context.waitTicks(30);context.runOnClient(c->dark[0]=new SceneMeter().read(c));
             check(bright[0]-dark[0]>7,"Live meter did not respond to day/night sunlight");
+            for(int shutterIndex:new int[]{10,13,15}){
+            int seconds=-CameraData.SHUTTERS[shutterIndex];
+            int remaining=shutterIndex==10?35:shutterIndex==13?34:33;
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var mount=com.nobothehobo.candid.photo.TripodSessions.active(p);
+                CameraData.setShutterIndex(mount.camera(),shutterIndex);CameraData.wind(mount.camera());RollManager.sync(p,mount.camera());mount.changed();
+            });
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera())&&CameraData.shutterIndex(CameraOptics.camera())==shutterIndex,100);
             long start=System.currentTimeMillis();
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(p,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.phys.BlockHitResult(p.position(),net.minecraft.core.Direction.UP,p.blockPosition().below(),false)));});
             context.waitFor(c->PhotoCapture.busy(),100);
-            context.waitFor(c->CameraData.frames(CameraOptics.camera())==35,1000);
-            check(System.currentTimeMillis()-start>=1000,"Long exposure did not wait for actual scene samples");
+            context.waitFor(c->CameraData.frames(CameraOptics.camera())==remaining,1600);
+            check(System.currentTimeMillis()-start>=seconds*1000L,"Long exposure did not wait for "+seconds+" seconds of actual scene samples");
+            context.waitFor(c->!PhotoCapture.busy(),100);
+            }
             context.runOnClient(c->c.player.closeContainer());
             context.runOnClient(c->{c.setScreen(null);CameraOptics.tick(c);check(c.options.getCameraType()==net.minecraft.client.CameraType.THIRD_PERSON_FRONT,"Previous third-person view was not restored");});
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var negative=rollItem(p,rollId[0]);
@@ -232,7 +241,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(r.frames().getFirst().highColors()!=null&&r.frames().getFirst().tiles().size()==4,"Large negative or tile IDs not saved");
                 for(int tile:r.frames().getFirst().tiles())check(p.level().getMapData(new MapId(tile))!=null,"Large print tile missing after reopen");
                 var tripod=(com.nobothehobo.candid.block.TripodBlockEntity)p.level().getBlockEntity(p.blockPosition().offset(0,0,1));
-                check(tripod!=null&&CameraData.frames(tripod.camera())==35&&Math.abs(tripod.yaw()-42)<.1,"Mounted camera or angle did not survive reopen");
+                check(tripod!=null&&CameraData.frames(tripod.camera())==33&&Math.abs(tripod.yaw()-42)<.1,"Mounted camera or angle did not survive reopen");
                 var recovered=tripod.take();check(!recovered.isEmpty()&&tripod.take().isEmpty(),"Camera retrieval duplicated the stack");tripod.place(recovered,42,-8);
                 String mountedId=CameraData.cameraId(tripod.camera());var position=tripod.getBlockPos();
                 p.level().destroyBlock(position,false);
