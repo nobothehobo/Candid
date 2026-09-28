@@ -1,4 +1,4 @@
-# Candid 0.6 — film photography for Minecraft
+# Candid 0.6.1 — film photography for Minecraft
 
 Craft a mechanical camera, load a 36-shot roll, meter and photograph your world,
 then develop, preview, print and share your pictures. This is the Candid **Fabric
@@ -22,25 +22,37 @@ Iris/Sodium and shader packs are client-side; they are not bundled or required.
 
 | Minecraft | Java | Fabric API baseline | Candid file |
 | --- | --- | --- | --- |
-| 1.21.10 | 21 | 0.138.4+1.21.10 | `candid-0.6.0+mc1.21.10.jar` |
-| 1.21.11 | 21 | 0.141.6+1.21.11 | `candid-0.6.0+mc1.21.11.jar` |
-| 26.1.2 | 25 | 0.155.3+26.1.2 | `candid-0.6.0+mc26.1.2.jar` |
-| 26.2 | 25 | 0.161.0+26.2 | `candid-0.6.0+mc26.2.jar` |
-| 26.3 | 25 | 0.161.0+26.3 | `candid-0.6.0+mc26.3.jar` |
+| 1.21.10 | 21 | 0.138.4+1.21.10 | `candid-0.6.1+mc1.21.10.jar` |
+| 1.21.11 | 21 | 0.141.6+1.21.11 | `candid-0.6.1+mc1.21.11.jar` |
+| 26.1.2 | 25 | 0.155.3+26.1.2 | `candid-0.6.1+mc26.1.2.jar` |
+| 26.2 | 25 | 0.161.0+26.2 | `candid-0.6.1+mc26.2.jar` |
+| 26.3 | 25 | 0.161.0+26.3 | `candid-0.6.1+mc26.3.jar` |
 
 Install **one** Candid JAR per instance. These are separate builds of the same mod,
 not five mods to install together. Future Minecraft releases and snapshots need
 verification and their own release; changing the filename does not make a JAR compatible.
 For the 26.1 series, use its final patch **26.1.2**.
 
-## What changed in 0.6
+## What changed in 0.6.1
+
+- Repaired silent shutter audio and corrupt loading audio; shutter uses the Players volume slider.
+- Faster raise-to-eye, continuous back-door/film-leader motion, and restrained winding-hand rotation.
+- Finder winding stays unobstructed. A short mirror-style blackout follows capture.
+- Tank contents stay in the tank until retrieved; negatives preview freely and print only at an enlarger.
+- Mounted-camera targeting works above the stand. Cable Use fires; Crouch + Use composes.
+- First-person capture prevents accidental third-person selfies; block-selection outlines are hidden.
+- Focus alignment bars and nearer/farther guidance complement the depth-of-field scale.
+
+See [0.6.1 fix details](docs/HOTFIX_061.md).
+
+## Modern-version foundation (0.6)
 
 - Separate builds share the same film, optics, darkroom, image processing and saves.
 - Updated screens, live finder and animated hands for modern rendering.
 - Tripods now hold the real camera, save pan/tilt, and support a paired Cable Release.
 - Separate mounted lens barrels, animated rewinding and a brief raise-to-eye gesture.
-- A separately pivoting advance lever follows a skinned-hand winding stroke without
-  leaving the finder or making a ready shutter wait for the animation.
+- A separately pivoting advance lever follows a skinned-hand winding stroke during
+  handling; finder winding uses sound and a small status cue.
 - Selected focus distance plus aperture/lens-dependent **Near / Far** depth-of-field
   limits, including infinity, with matching green subject confirmation.
 - Finished rolls open away from the basin, including when used on ordinary terrain.
@@ -55,7 +67,7 @@ See [compatibility and upgrade notes](docs/COMPATIBILITY.md) and
 ## Photography features (carried forward from 0.5)
 
 - **Clickable darkroom stations:** film and chemistry/paper input slots, development
-  progress, safe supply return when closing, free frame previews, repeat printing.
+  progress, persistent tank contents, free frame previews, repeat printing.
 - **Full-color 504 × 336 scans** with PNG export. New held prints reopen their scans.
   Ordinary maps remain palette-limited; an enlarger can make a matted 2 × 2 map display.
 - **Lighting-aware metering:** scene reflectance, sunlight direction and shade,
@@ -83,13 +95,13 @@ See [compatibility and upgrade notes](docs/COMPATIBILITY.md) and
    from the controls; a partial roll keeps its original frames when reloaded.
 5. Click the **Darkroom Basin / Developing Tank**. Put exposed film in the first
    input slot and one **Developer Chemistry** in the second. Click **Start**.
-   Processing takes 20 seconds. Closing returns your roll and supplies safely;
-   development continues on the roll.
+   Processing takes 20 seconds. Closing leaves film and supplies in the tank;
+   return when ready and retrieve your developed roll.
 6. Click the **Photo Enlarger**. Insert the developed roll and Photo Paper.
    Select a frame for a **free preview**. Print only when happy: one sheet per
    print, including a complete four-map large print. Negatives are reusable.
-7. Use a developed roll for its contact sheet: **right-click a frame to preview**,
-   **left-click to print** using paper from your inventory.
+7. Use a developed roll for its contact sheet: **click a frame to preview**.
+   Either mouse button previews; printing is available at the enlarger.
 8. Display ordinary prints in item frames. For a large print, arrange its four
    labeled maps in a 2 × 2 square, all in the same rotation.
 
@@ -134,10 +146,11 @@ Crouch + Use the stand to retrieve the camera with its existing roll and setting
 
 Craft a **Cable Release** from a stone button, copper ingot and string in a vertical
 column. Use it on the mounted camera to pair, then use the release within 32 blocks
-to enter its finder and fire. It works only in the same dimension and loaded area.
+to fire. **Crouch + Use** the release to compose without firing. Load and wind first.
+It works only in the same dimension and loaded area.
 Walk up to the stand to change film/lenses or retrieve the camera. Breaking a stand
 returns its camera; camera custody and angles persist with the world.
-The camera remains in your hand; this version has no unattended timed shutter.
+The mounted camera stays on its tripod; this version has no unattended timed shutter.
 
 Steam Input can expose either a gamepad or keyboard/mouse controls. Avoid
 assigning the same physical button through both paths. Physical Deck/controller
@@ -166,10 +179,10 @@ bash gradlew build -Ptarget=26.3
 xvfb-run -a bash gradlew runClientGameTest -Ptarget=26.3
 ```
 
-The installable artifact is `build/26.3/libs/candid-0.6.0+mc26.3.jar`.
+The installable artifact is `build/26.3/libs/candid-0.6.1+mc26.3.jar`.
 Replace `26.3` with your chosen supported target. The default is `1.21.10`.
 GitHub Actions builds and tests each version; download the matching
-`Candid-0.6.0-mc<version>` artifact after its workflow passes.
+`Candid-0.6.1-mc<version>` artifact after its workflow passes.
 
 Editable models are in `assets/blockbench`; run `python3 tools/export_models.py`
 to export them. See [assets](assets/README.md), [audio provenance](SOUND_ASSETS.md),

@@ -222,10 +222,20 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             long start=System.currentTimeMillis();
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(p,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.phys.BlockHitResult(p.position(),net.minecraft.core.Direction.UP,p.blockPosition().below(),false)));});
             context.waitFor(c->PhotoCapture.busy(),100);
+            if(seconds==8){context.waitTicks(20);context.takeScreenshot("candid-long-exposure-progress");}
             context.waitFor(c->CameraData.frames(CameraOptics.camera())==remaining,1600);
             check(System.currentTimeMillis()-start>=seconds*1000L,"Long exposure did not wait for "+seconds+" seconds of actual scene samples");
             context.waitFor(c->!PhotoCapture.busy(),100);
             }
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var mount=com.nobothehobo.candid.photo.TripodSessions.active(p);
+                CameraData.wind(mount.camera());RollManager.sync(p,mount.camera());mount.changed();
+            });
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera()),100);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getMainHandItem().use(p.level(),p,net.minecraft.world.InteractionHand.MAIN_HAND);});
+            context.waitFor(c->PhotoCapture.busy(),100);context.waitTicks(10);
+            context.runOnClient(c->{check(c.screen instanceof com.nobothehobo.candid.client.CaptureScreen,"Long exposure lost input capture");c.screen.onClose();});
+            context.waitTicks(10);
+            context.runOnClient(c->check(!PhotoCapture.busy()&&CameraData.frames(CameraOptics.camera())==33&&CameraData.isWound(CameraOptics.camera()),"Cancelled exposure consumed film or locked the camera"));
             context.runOnClient(c->c.player.closeContainer());
             context.runOnClient(c->{c.setScreen(null);CameraOptics.tick(c);check(c.options.getCameraType()==net.minecraft.client.CameraType.THIRD_PERSON_FRONT,"Previous third-person view was not restored");});
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var negative=rollItem(p,rollId[0]);

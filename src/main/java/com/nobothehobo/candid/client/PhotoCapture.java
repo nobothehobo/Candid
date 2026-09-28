@@ -44,6 +44,8 @@ public final class PhotoCapture {
         preparedFocus.tick(mc);
     }
     public static boolean busy(){return pending!=null||reading||processing;}
+    public static double exposureSeconds(){return pending==null?0:Optics.seconds(CameraData.SHUTTERS[pending.shutter]);}
+    public static double elapsedSeconds(){return exposureStart==0?0:Math.max(0,(System.currentTimeMillis()-exposureStart)/1000.0);}
     public static boolean queue(ItemStack camera,int aperture,int shutter,float offset){
         Minecraft mc=Minecraft.getInstance();FilmStock stock=CameraData.film(camera);
         if(busy()||stock==null||CameraData.frames(camera)<=0||!CameraData.isWound(camera)||CameraData.cameraId(camera).isEmpty()||CameraData.rollId(camera).isEmpty())return false;
