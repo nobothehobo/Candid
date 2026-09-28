@@ -11,11 +11,20 @@ final class FocusSampler {
     private final double tangent;
     private final float[] depth=new float[32*21];
     private int next;
+    private final Object level;
+    private final int lens;
+    private final long created=System.nanoTime();
     FocusSampler(Minecraft mc,int lens){
-        origin=CameraOptics.anchor();forward=mc.player.getLookAngle();double yaw=Math.toRadians(mc.player.getYRot());
+        level=mc.level;this.lens=lens;
+        origin=CameraOptics.anchor();forward=CameraOptics.direction();double yaw=Math.toRadians(CameraOptics.yaw());
         right=new Vec3(-Math.cos(yaw),0,-Math.sin(yaw));up=right.cross(forward);tangent=Math.tan(Math.toRadians(Optics.verticalFov(lens))/2);
     }
+    boolean matches(Minecraft mc,int lens){
+        return level==mc.level&&this.lens==lens&&System.nanoTime()-created<1_000_000_000L
+            &&origin.distanceToSqr(CameraOptics.anchor())<.0025&&forward.dot(CameraOptics.direction())>.99999;
+    }
     boolean tick(Minecraft mc){
+        if(next==depth.length)return true;
         int end=Math.min(depth.length,next+64);
         var entities=mc.level.getEntities(mc.player,new AABB(origin,origin.add(forward.scale(64))).inflate(16)).stream().limit(32).toList();
         for(;next<end;next++){

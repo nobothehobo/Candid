@@ -6,3 +6,10 @@ pluginManagement {
     }
 }
 rootProject.name = 'candid'
+
+// Select the correct Loom generation before Gradle resolves the build plugins.
+def target = providers.gradleProperty('target').getOrElse('1.21.10')
+if (!new groovy.json.JsonSlurper().parse(file('gradle/targets.json')).containsKey(target)) {
+    throw new GradleException("Unsupported Minecraft target: $target. See gradle/targets.json")
+}
+rootProject.buildFileName = target.startsWith('26.') ? 'build-modern.gradle' : 'build.gradle'

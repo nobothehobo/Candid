@@ -12,12 +12,13 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.*;
 import java.util.*;
 
-/** A supervised work tray. Closing returns all real inputs, including a processing roll. */
+/** Tank inputs belong to its block entity; the enlarger remains a supervised work tray. */
 public final class DarkroomMenu extends AbstractContainerMenu {
     private final ServerPlayer owner;
     private final BlockPos position;
     private final boolean enlarger;
     private final SimpleContainer tray = new SimpleContainer(54);
+    private final SimpleContainer inputs;
     private int selected;
     private long refreshed;
     private boolean returned;
@@ -25,14 +26,19 @@ public final class DarkroomMenu extends AbstractContainerMenu {
     private DarkroomMenu(int id, ServerPlayer player, BlockPos pos, boolean enlarger) {
         super(MenuType.GENERIC_9x6, id);
         this.owner = player; this.position = pos.immutable(); this.enlarger = enlarger;
+        this.inputs=enlarger?tray:((com.nobothehobo.candid.block.DevelopingTankBlockEntity)player.level().getBlockEntity(pos)).inputs();
         for (int i=0;i<54;i++) {
             final int index=i;
-            addSlot(new Slot(tray,i,8+(i%9)*18,18+(i/9)*18) {
+            addSlot(new Slot(i<2?inputs:tray,i,8+(i%9)*18,18+(i/9)*18) {
                 @Override public boolean mayPlace(ItemStack s) {
                     return index==0 ? CandidItems.stockFor(s.getItem())!=null && s.getCount()==1
                         : index==1 && s.is(enlarger?CandidItems.PHOTO_PAPER:CandidItems.DEVELOPER);
                 }
-                @Override public boolean mayPickup(Player p) { return index<2; }
+                @Override public boolean mayPickup(Player p) {
+                    if(index>=2)return false;
+                    if(!enlarger&&index==0){try{return roll().stage()!=RollState.Stage.DEVELOPING;}catch(IllegalArgumentException|IllegalStateException e){return true;}}
+                    return true;
+                }
                 @Override public int getMaxStackSize() { return index==0?1:64; }
             });
         }
@@ -50,11 +56,12 @@ public final class DarkroomMenu extends AbstractContainerMenu {
     }
     @Override public void removed(Player p) {
         super.removed(p);
-        if(!returned){returned=true;for(int i=0;i<2;i++){var s=tray.removeItemNoUpdate(i);if(!s.isEmpty())RollManager.give(owner,s);}}
+        if(enlarger&&!returned){returned=true;for(int i=0;i<2;i++){var s=inputs.removeItemNoUpdate(i);if(!s.isEmpty())RollManager.give(owner,s);}}
     }
     @Override public ItemStack quickMoveStack(Player p,int index) {
         if(index<0||index>=slots.size()||index>=2&&index<54)return ItemStack.EMPTY;
         Slot slot=slots.get(index);ItemStack s=slot.getItem();if(s.isEmpty())return ItemStack.EMPTY;
+        if(!slot.mayPickup(p))return ItemStack.EMPTY;
         ItemStack old=s.copy();
         if(index<2){if(!moveItemStackTo(s,54,90,true))return ItemStack.EMPTY;}
         else if(CandidItems.stockFor(s.getItem())!=null){if(!moveItemStackTo(s,0,1,false))return ItemStack.EMPTY;}
@@ -70,13 +77,13 @@ public final class DarkroomMenu extends AbstractContainerMenu {
                 var roll=roll();
                 if(enlarger){
                     if(index>=9&&index<45){selected=index-9;Photos.preview(owner,roll,selected);}
-                    else if(index==49)Photos.print(owner,roll,selected,tray.getItem(1),false);
-                    else if(index==50)Photos.print(owner,roll,selected,tray.getItem(1),true);
+                    else if(index==49)Photos.print(owner,roll,selected,inputs.getItem(1),false);
+                    else if(index==50)Photos.print(owner,roll,selected,inputs.getItem(1),true);
                 }else if(index==49){
                     if(roll.stage()==RollState.Stage.EXPOSED){
                         var next=roll.develop(System.currentTimeMillis(),20_000);
-                        if(!tray.getItem(1).is(CandidItems.DEVELOPER))throw new IllegalStateException("Place Developer Chemistry in the second slot");
-                        RollManager.store(owner).put(next);tray.getItem(1).shrink(1);tray.setItem(0,RollManager.item(next));
+                        if(!inputs.getItem(1).is(CandidItems.DEVELOPER))throw new IllegalStateException("Place Developer Chemistry in the second slot");
+                        RollManager.store(owner).put(next);inputs.getItem(1).shrink(1);inputs.setItem(0,RollManager.item(next));inputs.setChanged();
                     }
                 }
                 refresh();
@@ -85,12 +92,12 @@ public final class DarkroomMenu extends AbstractContainerMenu {
         broadcastChanges();
     }
     private RollState roll(){
-        var s=tray.getItem(0);UUID id=RollManager.token(s);
+        var s=inputs.getItem(0);UUID id=RollManager.token(s);
         if(CandidItems.stockFor(s.getItem())==null||id==null)throw new IllegalStateException("Insert an unloaded roll with exposed frames in the first slot");
         var r=RollManager.store(owner).get(id);
         if(r.camera()!=null)throw new IllegalStateException("This roll is loaded in a camera");
         if(r.stage()==RollState.Stage.DEVELOPING && System.currentTimeMillis()>=r.readyAt()){
-            r=r.finish(System.currentTimeMillis());RollManager.store(owner).put(r);tray.setItem(0,RollManager.item(r));
+            r=r.finish(System.currentTimeMillis());RollManager.store(owner).put(r);inputs.setItem(0,RollManager.item(r));
         }
         return r;
     }
@@ -102,7 +109,7 @@ public final class DarkroomMenu extends AbstractContainerMenu {
         refreshed=System.currentTimeMillis();
         for(int i=2;i<54;i++)tray.setItem(i,ItemStack.EMPTY);
         tray.setItem(4,label(Items.BOOK,enlarger?"Insert film + paper • select a frame to preview":"Insert exposed film + developer • click Start",
-            "Closing returns your supplies. Processing continues on the roll."));
+            enlarger?"Closing returns your supplies.":"Film stays in this tank. Retrieve it here when ready."));
         try {
             var r=roll();
             if(enlarger){

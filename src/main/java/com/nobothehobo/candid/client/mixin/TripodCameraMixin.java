@@ -12,9 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Camera.class)
 public abstract class TripodCameraMixin {
     @Shadow protected abstract void setPosition(Vec3 pos);
+    @Shadow protected abstract void setRotation(float yaw,float pitch);
     @Inject(method="setup",at=@At("TAIL"))
     private void candid$tripod(CallbackInfo ci){
         var p=Minecraft.getInstance().player;
-        if(CameraOptics.active()&&p!=null&&CameraData.tripod(CameraOptics.camera(),p)!=null)setPosition(CameraOptics.anchor());
+        if(CameraOptics.active()&&p!=null&&CameraData.tripod(CameraOptics.camera(),p)!=null){setPosition(CameraOptics.anchor());setRotation(CameraOptics.yaw(),CameraOptics.pitch());}
     }
 }

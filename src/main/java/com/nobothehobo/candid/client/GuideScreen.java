@@ -9,8 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -18,16 +16,17 @@ import java.util.*;
 /** Recipe pages read the shipped recipe JSON, so ingredient changes do not leave stale diagrams. */
 public final class GuideScreen extends Screen {
     private int page;private boolean primed;private final boolean[] pad=new boolean[15];
-    private static final String[] RECIPES={"camera","film_daylight_100","film_sun_200","film_everyday_400","film_portrait_400","film_night_800","film_mono_400","film_fine_mono_400","darkroom_basin","developer","enlarger","photo_paper","guide","tripod","lens_28","lens_35","lens_50","lens_90"};
-    private static final String[] TITLES={"Welcome to Candid","Camera controls","Reading the light","Film character","Your darkroom","Lenses and focus","Tripods and long exposures","Scans and sharing"};
+    private static final String[] RECIPES={"camera","film_daylight_100","film_sun_200","film_everyday_400","film_portrait_400","film_night_800","film_mono_400","film_fine_mono_400","darkroom_basin","developer","enlarger","photo_paper","guide","tripod","lens_28","lens_35","lens_50","lens_90","remote_release"};
+    private static final String[] TITLES={"Welcome to Candid","Camera controls","Reading the light","Film character","Your darkroom","Interchangeable lenses","Focus and depth of field","Tripods and long exposures","Scans and sharing"};
     private static final String[] TEXT={
         "Craft a camera and one film roll. Every roll holds 36 exposures. Crouch + Use opens the camera controls. Click the film name to choose a stock, then Load selected film. The matching roll must be in your inventory. Watch the cartridge load, the back close and the first frame wind. Use normally to enter the viewfinder.",
         "Viewfinder: arrows or D-pad adjust aperture and shutter. Enter / A fires. R / X winds. C / Y opens controls. Escape / B closes. Aim with the right stick, or hold right mouse and drag. In body controls every control is clickable. Select with Tab or D-pad, then Enter or A. Load and rewind are clearly labeled.",
         "The bright 3:2 frame is the photograph. ISO comes from the film. Smaller f-number or slower shutter gives more exposure. Aim the meter near zero. Minus means darker; plus means brighter. It samples the scene ahead, including shade, lamps, sky and weather.",
         "Golden 200: warm everyday color. Everyday 400: punchier color. Portrait 400/800: gentler color and contrast; 800 is useful in dim light. Vivid 100: fine grain. Classic Mono: stronger B&W grain; Fine Mono: smoother B&W. These are inspired looks, not exact Kodak emulations.",
-        "Rewind and unload full or partial rolls. Partial rolls can be reloaded without losing frames. Click the tank. Put exposed film in slot 1 and Developer in slot 2, then Start. After 20 seconds, take the roll to the enlarger. Insert it with paper. Click a frame for a FREE preview; print only when happy. Closing a station returns supplies. A large print has four labeled maps: place them in a 2 by 2 grid of item frames.",
-        "Your camera includes a 35 mm lens. Craft 28 mm for wide scenes, 50 mm for tighter framing or 90 mm for portraits. Carry the lens, choose it in controls and Attach. Your previous lens returns. Mouse wheel or [ and ] adjusts focus in the finder. Controller bumpers adjust focus too. F / left-stick click matches the center subject distance; green means near focus. Wide apertures soften subjects away from the selected distance in the finished photo.",
-        "Craft and place a tripod, then Use it while holding your camera. Open the finder and aim with right-drag or right stick. The viewpoint stays at the tripod head. Choose 1, 2, 4, 8, 15 or 30 seconds in the shutter controls. Long exposures combine real samples over that time. Escape cancels without spending film. Stay near the tripod; Detach in controls to return to handheld.",
+        "Rewind and unload full or partial rolls. Click the tank. Insert film and Developer, then Start. Film stays in that tank while processing, even when you close it. Return after 20 seconds and retrieve your negatives. Use the roll for FREE previews. Printing only happens at an enlarger: insert negatives and paper, select a frame, then choose Print. Negatives are reusable. A large print has four labeled maps for a 2 by 2 grid of item frames. Breaking a tank drops its stored supplies.",
+        "Your camera includes a 35 mm lens. Craft 28 mm for wide scenes, 50 mm for tighter framing or 90 mm for portraits. Carry the lens, choose it in controls and Attach. Your previous lens returns. Each lens has its own barrel and changes framing. R / X advances film in the finder using sound and a small status cue. Physical hand animations stay outside the finder. Use the camera in first person; your previous viewpoint returns when you leave.",
+        "Wheel / [ ] / controller bumpers adjust focus. F / left-stick click matches the center subject distance. Focus is your selected distance; Near and Far estimate acceptable sharpness. Green means the subject is inside that range. A higher f-number widens it; a longer lens narrows it. These are approximate 35 mm limits, not a sharp cutoff. Finished photos soften out-of-focus subjects.",
+        "Place a tripod and Use it while holding your camera. Use the stand OR its mounted camera to compose. Right-drag / right stick saves the angle. Crouch + Use retrieves the camera. Choose up to 30-second exposures; Escape cancels. Use a Cable Release on the mounted camera to pair it. Then Use the release within 32 blocks to FIRE; Crouch + Use composes instead. Load and wind the camera first. The release also works when aimed at ordinary terrain.",
         "Preview a developed frame FREE at the enlarger, or right-click a contact-sheet frame. Scan / map proof compares full color with the Minecraft print. Export PNG saves to your instance’s candid-exports folder and opens it. Share that file through your usual apps. Use a held new print to reopen its scan. Shaders active at capture appear in the scan. Existing older negatives can export their map proof."
     };
     public GuideScreen(){super(Component.literal("Candid Field Guide"));}
@@ -65,10 +64,10 @@ public final class GuideScreen extends Screen {
     }
     private static ItemStack stack(String id){return new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id)));}
     private void move(int direction){page=Math.floorMod(page+direction,TITLES.length+RECIPES.length);}
-    @Override public boolean keyPressed(KeyEvent e){if(e.key()==GLFW.GLFW_KEY_LEFT){move(-1);return true;}if(e.key()==GLFW.GLFW_KEY_RIGHT){move(1);return true;}return super.keyPressed(e);}
-    private void poll(){if(!GLFW.glfwJoystickIsGamepad(GLFW.GLFW_JOYSTICK_1))return;try(var s=GLFWGamepadState.calloc()){if(!GLFW.glfwGetGamepadState(GLFW.GLFW_JOYSTICK_1,s))return;
-        if(!primed){for(int i=0;i<pad.length;i++)pad[i]=s.buttons(i)==GLFW.GLFW_PRESS;primed=true;return;}
-        edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT,()->move(-1));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,()->move(1));edge(s,GLFW.GLFW_GAMEPAD_BUTTON_B,this::onClose);
+    @Override public boolean keyPressed(KeyEvent e){if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_LEFT){move(-1);return true;}if(e.key()==com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT){move(1);return true;}return super.keyPressed(e);}
+    private void poll(){if(!GamepadInput.present())return;try(var s=GamepadInput.read()){if(!s.connected())return;
+        if(!primed){for(int i=0;i<pad.length;i++)pad[i]=s.buttons(i)==1;primed=true;return;}
+        edge(s,GamepadInput.DPAD_LEFT,()->move(-1));edge(s,GamepadInput.DPAD_RIGHT,()->move(1));edge(s,GamepadInput.B,this::onClose);
     }}
-    private void edge(GLFWGamepadState s,int b,Runnable action){boolean now=s.buttons(b)==GLFW.GLFW_PRESS;if(now&&!pad[b])action.run();pad[b]=now;}
+    private void edge(GamepadInput.State s,int b,Runnable action){boolean now=s.buttons(b)==1;if(now&&!pad[b])action.run();pad[b]=now;}
 }

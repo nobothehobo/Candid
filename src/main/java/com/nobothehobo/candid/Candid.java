@@ -28,6 +28,13 @@ public class Candid implements ModInitializer {
         CandidBlocks.initialize();
         CandidSounds.initialize();
 
+        PayloadTypeRegistry.playS2C().register(com.nobothehobo.candid.network.TripodViewPayload.ID,com.nobothehobo.candid.network.TripodViewPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(com.nobothehobo.candid.network.TripodUsePayload.ID,com.nobothehobo.candid.network.TripodUsePayload.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.TripodUsePayload.ID,(payload,context)->{
+            var p=context.player();
+            if(payload.pos().equals(com.nobothehobo.candid.photo.TripodTarget.find(p)))
+                com.nobothehobo.candid.block.TripodBlock.interact(p.getMainHandItem(),p.level(),payload.pos(),p);
+        });
         PayloadTypeRegistry.playC2S().register(CapturePhotoPayload.ID, CapturePhotoPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(CameraActionPayload.ID, CameraActionPayload.CODEC);
 
@@ -36,7 +43,7 @@ public class Candid implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(com.nobothehobo.candid.network.ScanChunkPayload.ID,(payload,context)->{
             if(!cameraInHands(context.player()).isEmpty())com.nobothehobo.candid.photo.ScanUploads.accept(context.player(),payload);
         });
-        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.DISCONNECT.register((handler,server)->com.nobothehobo.candid.photo.ScanUploads.clear(handler.player.getUUID()));
+        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.DISCONNECT.register((handler,server)->{com.nobothehobo.candid.photo.ScanUploads.clear(handler.player.getUUID());com.nobothehobo.candid.photo.TripodSessions.clear(handler.player.getUUID());});
         net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player,level,hand)->{
             var stack=player.getItemInHand(hand);
             if(!stack.is(net.minecraft.world.item.Items.FILLED_MAP))return net.minecraft.world.InteractionResult.PASS;
@@ -50,8 +57,14 @@ public class Candid implements ModInitializer {
         });
         com.nobothehobo.candid.photo.RollManager.initialize();
         ServerPlayNetworking.registerGlobalReceiver(CameraActionPayload.ID, (payload, context) -> {
-            ServerPlayer player=context.player(); ItemStack camera=cameraInHands(player); if(camera.isEmpty())return;
+            ServerPlayer player=context.player();
+            if(payload.action()==CameraActionPayload.CLOSE_TRIPOD){com.nobothehobo.candid.photo.TripodSessions.clear(player.getUUID());return;}
+            var stand=com.nobothehobo.candid.photo.TripodSessions.active(player);
+            ItemStack camera=cameraInHands(player); if(camera.isEmpty())return;
             com.nobothehobo.candid.photo.RollManager.safely(player,()->{
+                if(stand!=null&&(payload.action()==CameraActionPayload.LOAD_FILM||payload.action()==CameraActionPayload.UNLOAD_FILM||payload.action()==CameraActionPayload.LENS||payload.action()==CameraActionPayload.UNMOUNT)
+                    &&player.distanceToSqr(stand.getBlockPos().getX()+.5,stand.getBlockPos().getY()+.5,stand.getBlockPos().getZ()+.5)>=64)
+                    throw new IllegalStateException("Walk up to the tripod to handle its camera, film or lens");
                 com.nobothehobo.candid.photo.RollManager.sync(player,camera);
                 switch(payload.action()) {
                     case CameraActionPayload.SET_APERTURE -> CameraData.setApertureIndex(camera,payload.value());
@@ -61,9 +74,12 @@ public class Candid implements ModInitializer {
                     case CameraActionPayload.UNLOAD_FILM -> com.nobothehobo.candid.photo.RollManager.unload(player,camera);
                     case CameraActionPayload.FOCUS -> CameraData.setFocus(camera,payload.value());
                     case CameraActionPayload.LENS -> com.nobothehobo.candid.photo.RollManager.swapLens(player,camera,payload.value());
-                    case CameraActionPayload.UNMOUNT -> CameraData.unmount(camera);
+                    case CameraActionPayload.UNMOUNT -> {if(stand!=null){com.nobothehobo.candid.photo.RollManager.give(player,stand.take());com.nobothehobo.candid.photo.TripodSessions.clear(player.getUUID());}else CameraData.unmount(camera);}
+                    case CameraActionPayload.AIM_YAW -> {if(stand!=null)stand.aim(payload.value()/100f,stand.pitch());}
+                    case CameraActionPayload.AIM_PITCH -> {if(stand!=null)stand.aim(stand.yaw(),payload.value()/100f);}
                     default -> { }
                 }
+                if(stand!=null)stand.changed();
             });
         });
         ServerPlayNetworking.registerGlobalReceiver(CapturePhotoPayload.ID,(payload,context)->{
@@ -73,9 +89,11 @@ public class Candid implements ModInitializer {
     }
 
     private static ItemStack cameraInHands(ServerPlayer player) {
+        var mounted=com.nobothehobo.candid.photo.TripodSessions.active(player);if(mounted!=null)return mounted.camera();
         if (player.getMainHandItem().is(CandidItems.CAMERA)) return player.getMainHandItem();
         if (player.getOffhandItem().is(CandidItems.CAMERA)) return player.getOffhandItem();
-        return ItemStack.EMPTY;
+        var stand=com.nobothehobo.candid.photo.TripodSessions.active(player);
+        return stand==null?ItemStack.EMPTY:stand.camera();
     }
 
 }

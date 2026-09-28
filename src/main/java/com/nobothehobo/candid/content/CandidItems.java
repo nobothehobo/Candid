@@ -35,6 +35,7 @@ public final class CandidItems {
     public static final Item LENS_50 = register("lens_50",Item::new,new Item.Properties().stacksTo(1));
     public static final Item LENS_90 = register("lens_90",Item::new,new Item.Properties().stacksTo(1));
     public static Item lensItem(int index){return switch(index){case 0->LENS_28;case 1->LENS_35;case 2->LENS_50;case 3->LENS_90;default->throw new IllegalArgumentException("Unknown lens");};}
+    public static final Item REMOTE = register("remote_release",com.nobothehobo.candid.item.RemoteReleaseItem::new,new Item.Properties().stacksTo(1));
     public static final Item GUIDE = register("guide", Item::new, new Item.Properties().stacksTo(1));
 
     public static final ResourceKey<CreativeModeTab> GROUP_KEY = ResourceKey.create(
@@ -88,7 +89,7 @@ public final class CandidItems {
             entries.accept(FILM_FINE_MONO_400);
             entries.accept(DEVELOPER);
             entries.accept(PHOTO_PAPER);
-            entries.accept(GUIDE);
+            entries.accept(GUIDE);entries.accept(REMOTE);
             entries.accept(LENS_28);entries.accept(LENS_35);entries.accept(LENS_50);entries.accept(LENS_90);
         });
     }

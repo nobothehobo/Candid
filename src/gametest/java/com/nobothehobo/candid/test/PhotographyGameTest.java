@@ -54,7 +54,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 iris.getMethod("reload").invoke(null);
             }catch(Exception e){throw new AssertionError("Cannot enable shader fixture",e);}
         });
-        UUID[] rollId={null};int[] mapId={-1};
+        UUID[] rollId={null};int[] mapId={-1};net.minecraft.core.BlockPos[] tankPos={null};
         var world=createWorld(context);var save=world.getWorldSave();
         try(world){
             world.getServer().runCommand("time set noon");
@@ -70,6 +70,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             world.getServer().runCommand("execute at @p run fill ~2 ~2 ~8 ~3 ~3 ~8 minecraft:glass");
             world.getServer().runCommand("execute at @p run fill ~ ~ ~8 ~ ~2 ~8 minecraft:dark_oak_planks");
             world.getServer().runCommand("execute at @p run fill ~-5 ~5 ~8 ~5 ~5 ~8 minecraft:stone_bricks");
+            world.getServer().runCommand("execute at @p run setblock ~ ~1 ~3 minecraft:glass");
             context.runOnClient(c->{c.player.setYRot(0);c.player.setXRot(0);});
             context.waitTicks(20);context.takeScreenshot("candid-camera-held");
             if("true".equals(System.getenv("CANDID_SHADER_TEST")))context.runOnClient(c->{
@@ -81,11 +82,25 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             context.takeScreenshot("candid-loading-hands");
             context.waitFor(c->CameraData.isWound(c.player.getMainHandItem()),400);
             context.setScreen(CameraControlScreen::new);context.waitTicks(3);context.takeScreenshot("candid-controls");
-            context.setScreen(CameraScreen::new);context.waitTicks(5);context.takeScreenshot("candid-viewfinder");
-            context.runOnClient(c->{c.options.keyJump.setDown(true);c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE,0,0));check(PhotoCapture.busy(),"Shutter did not start capture");check(c.screen instanceof CaptureScreen,"Capture must keep an input-blocking screen open");check(!c.options.keyJump.isDown(),"Shutter leaked jump input");});
-            context.waitFor(c->CameraData.frames(c.player.getMainHandItem())==35,600);
+            context.runOnClient(c->{c.setScreen(null);CameraOptics.tick(c);c.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);});
+            context.setScreen(CameraRaiseScreen::new);context.waitTicks(2);context.takeScreenshot("candid-raise-camera");
+            context.runOnClient(c->check(c.options.getCameraType()==net.minecraft.client.CameraType.FIRST_PERSON,"Selfie viewpoint leaked into camera"));
+            context.waitFor(c->c.screen instanceof CameraScreen);context.waitTicks(5);context.takeScreenshot("candid-viewfinder");
+            context.runOnClient(c->{c.options.keyJump.setDown(true);c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_SPACE,0,0));check(PhotoCapture.busy(),"Shutter did not start capture");check(c.screen instanceof CaptureScreen,"Capture must keep an input-blocking screen open");check(!c.options.keyJump.isDown(),"Shutter leaked jump input");});
+            context.waitFor(c->PhotoCapture.exposureComplete(),100);
+            context.takeScreenshot("candid-shutter-feedback");
+            context.waitFor(c->c.screen instanceof CameraScreen,100);
+            context.waitFor(c->CameraData.frames(CameraOptics.camera())==35,600);
+            context.waitFor(c->!PhotoCapture.busy(),600);
+            context.setScreen(CameraScreen::new);
+            context.runOnClient(c->c.screen.keyPressed(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_R,0,0)));
+            context.waitTicks(7);context.takeScreenshot("candid-advance-lever");
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera()));
+            context.runOnClient(c->check(CameraData.frames(CameraOptics.camera())==35,"Winding consumed a frame"));
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();rollId[0]=UUID.fromString(CameraData.rollId(p.getMainHandItem()));});
             context.setScreen(FilmUnloadScreen::new);
+            context.waitTicks(23);context.takeScreenshot("candid-rewind-hands");
+            context.waitTicks(20);context.takeScreenshot("candid-unload-cartridge");
             context.runOnClient(c->c.screen.onClose());
             context.waitFor(c->CameraData.film(c.player.getMainHandItem())==null);
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var camera=p.getMainHandItem();
@@ -95,7 +110,7 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(java.util.stream.IntStream.range(0,pixels.length).map(i->pixels[i]&255).distinct().count()>3,"Capture was blank");
                 RollManager.load(p,camera,FilmStock.WARM_200.ordinal());check(CameraData.frames(camera)==35,"Partial reload reset count");RollManager.unload(p,camera);
                 check(r.frames().getFirst().highColors()!=null,"High-resolution scan missing");
-                var basin=p.blockPosition().offset(1,0,0);p.level().setBlockAndUpdate(basin,com.nobothehobo.candid.content.CandidBlocks.DARKROOM_BASIN.defaultBlockState());
+                var basin=p.blockPosition().offset(1,0,0);tankPos[0]=basin;p.level().setBlockAndUpdate(basin,com.nobothehobo.candid.content.CandidBlocks.DARKROOM_BASIN.defaultBlockState());
                 DarkroomMenu.open(p,basin,false);
                 var film=rollItem(p,rollId[0]);int filmSlot=-1;for(int i=0;i<36;i++)if(p.getInventory().getItem(i)==film)filmSlot=i;
                 p.containerMenu.quickMoveStack(p,filmSlot<9?81+filmSlot:54+filmSlot-9);
@@ -106,10 +121,13 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(p.containerMenu.getSlot(1).getItem().isEmpty(),"Developer not consumed by tank");
                 p.containerMenu.clicked(49,0,ClickType.PICKUP,p);
                 check(RollManager.store(p).get(rollId[0]).stage()==RollState.Stage.DEVELOPING,"Tank did not start");
+                check(p.containerMenu.quickMoveStack(p,0).isEmpty(),"Processing roll could be removed early");
             });
             context.waitTicks(5);context.takeScreenshot("candid-tank-menu");
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.closeContainer();
-                check(rollItem(p,rollId[0])!=null,"Closing tank lost film");
+                var tank=(com.nobothehobo.candid.block.DevelopingTankBlockEntity)p.level().getBlockEntity(tankPos[0]);
+                check(rollId[0].equals(RollManager.token(tank.inputs().getItem(0))),"Closing tank lost film custody");
+                for(int i=0;i<p.getInventory().getContainerSize();i++)check(!rollId[0].equals(RollManager.token(p.getInventory().getItem(i))),"Tank returned film before retrieval");
             });
             var scanFuture=world.getServer().computeOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();return RollManager.store(p).readScan(RollManager.store(p).get(rollId[0]).frames().getFirst().id());});
             byte[] png=scanFuture.join();check(png.length>0,"Full-color scan not saved");
@@ -119,9 +137,17 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             long ready=world.getServer().computeOnServer(s->RollManager.store(s.getPlayerList().getPlayers().getFirst()).get(rollId[0]).readyAt());
             context.setScreen(GuideScreen::new);
             context.takeScreenshot("candid-guide");
-            context.waitFor(c->System.currentTimeMillis()>=ready,2000);
-            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();RollManager.open(p,rollItem(p,rollId[0]));
-                check(p.containerMenu instanceof ContactSheet,"Contact sheet not opened");
+            context.waitFor(c->System.currentTimeMillis()>=ready+1100,2000);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();
+                DarkroomMenu.open(p,tankPos[0],false);
+                check(RollManager.store(p).get(rollId[0]).stage()==RollState.Stage.DEVELOPED,"Stored roll did not finish in tank");
+                p.containerMenu.quickMoveStack(p,0);p.closeContainer();var negative=rollItem(p,rollId[0]);
+                p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,negative.copy());
+                negative.setCount(0);
+                p.getOffhandItem().useOn(new net.minecraft.world.item.context.UseOnContext(p,net.minecraft.world.InteractionHand.OFF_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(p.position(),net.minecraft.core.Direction.UP,p.blockPosition().below(),false)));
+                var carried=p.getOffhandItem();p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,ItemStack.EMPTY);RollManager.give(p,carried);
+                check(p.containerMenu instanceof ContactSheet&&p.containerMenu.stillValid(p),"Contact sheet not opened or roll custody lost");
                 p.containerMenu.clicked(0,1,ClickType.PICKUP,p);
                 check(RollManager.store(p).get(rollId[0]).frames().getFirst().mapId()==-1,"Preview allocated map IDs");
                 check(p.getInventory().getItem(3).getCount()==8,"Preview consumed paper");
@@ -133,9 +159,8 @@ public final class PhotographyGameTest implements FabricClientGameTest {
             context.runOnClient(c->c.screen.onClose());
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();
                 p.containerMenu.clicked(0,0,ClickType.PICKUP,p);p.containerMenu.clicked(0,0,ClickType.PICKUP,p);
-                check(p.getInventory().getItem(3).getCount()==6,"Two prints must consume two paper");
-                var r=RollManager.store(p).get(rollId[0]);mapId[0]=r.frames().getFirst().mapId();var map=p.level().getMapData(new MapId(mapId[0]));
-                check(map!=null&&map.locked,"Print must be locked");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Print changed photo colors");
+                check(p.getInventory().getItem(3).getCount()==8,"Left-click preview consumed paper");
+                check(RollManager.store(p).get(rollId[0]).frames().getFirst().mapId()==-1,"Left-click preview printed a map");
             });
             context.waitTicks(4);context.takeScreenshot("candid-contact-sheet");
             world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();
@@ -143,6 +168,10 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 DarkroomMenu.open(p,station,true);var film=rollItem(p,rollId[0]);int slot=-1;
                 for(int i=0;i<36;i++)if(p.getInventory().getItem(i)==film)slot=i;
                 p.containerMenu.quickMoveStack(p,slot<9?81+slot:54+slot-9);p.containerMenu.quickMoveStack(p,84);
+                p.containerMenu.clicked(49,0,ClickType.PICKUP,p);p.containerMenu.clicked(49,0,ClickType.PICKUP,p);
+                check(p.containerMenu.getSlot(1).getItem().getCount()==6,"Two enlarger prints must consume two paper");
+                var r=RollManager.store(p).get(rollId[0]);mapId[0]=r.frames().getFirst().mapId();var map=p.level().getMapData(new MapId(mapId[0]));
+                check(map!=null&&map.locked,"Print must be locked");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Print changed photo colors");
                 p.containerMenu.clicked(50,0,ClickType.PICKUP,p);
                 var ids=RollManager.store(p).get(rollId[0]).frames().getFirst().tiles();check(ids!=null&&ids.size()==4,"Large print tiles missing");
                 p.containerMenu.clicked(50,0,ClickType.PICKUP,p);
@@ -164,21 +193,54 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 RollManager.swapLens(p,p.getMainHandItem(),1);check(CameraData.lens(p.getMainHandItem())==35,"Standard lens did not reattach");
                 RollManager.give(p,new ItemStack(CandidItems.FILM_SUN_200));RollManager.load(p,p.getMainHandItem(),FilmStock.WARM_200.ordinal());CameraData.wind(p.getMainHandItem());
                 CameraData.setShutterIndex(p.getMainHandItem(),10);
-                var stand=p.blockPosition().offset(0,0,1);p.level().setBlockAndUpdate(stand,com.nobothehobo.candid.content.CandidBlocks.TRIPOD.defaultBlockState());CameraData.mount(p.getMainHandItem(),stand);
+                var stand=p.blockPosition().offset(0,0,1);p.level().setBlockAndUpdate(stand,com.nobothehobo.candid.content.CandidBlocks.TRIPOD.defaultBlockState());var mount=(com.nobothehobo.candid.block.TripodBlockEntity)p.level().getBlockEntity(stand);
+                mount.place(p.getMainHandItem(),32,-12);check(p.getMainHandItem().isEmpty(),"Mount left a duplicate camera in hand");
+                p.setYRot(0);p.setXRot(0);
+                check(stand.equals(com.nobothehobo.candid.photo.TripodTarget.find(p)),"Mounted camera above block could not be targeted");
+                p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(CandidItems.REMOTE));
+                com.nobothehobo.candid.photo.TripodSessions.bind(p,p.getMainHandItem(),mount);
             });
-            context.runOnClient(c->c.player.getInventory().setSelectedSlot(0));
-            context.waitFor(c->CameraData.tripod(c.player.getMainHandItem(),c.player)!=null&&CameraData.isWound(c.player.getMainHandItem()));
+            context.runOnClient(c->{c.player.getInventory().setSelectedSlot(0);c.setScreen(null);c.player.setYRot(0);c.player.setXRot(0);});
+            context.waitTicks(10);context.takeScreenshot("candid-camera-mounted");
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.setShiftKeyDown(true);p.getMainHandItem().use(p.level(),p,net.minecraft.world.InteractionHand.MAIN_HAND);p.setShiftKeyDown(false);});
+            context.waitFor(c->CameraData.tripod(CameraOptics.camera(),c.player)!=null&&CameraData.isWound(CameraOptics.camera()));
             context.setScreen(CameraScreen::new);context.waitTicks(10);context.takeScreenshot("candid-tripod-viewfinder");
+            context.runOnClient(c->CameraOptics.aim(10,4));context.waitTicks(5);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var b=com.nobothehobo.candid.photo.TripodSessions.active(p);check(b!=null&&Math.abs(b.yaw()-42)<.1&&Math.abs(b.pitch()+8)<.1,"Tripod angle not saved on server: "+(b==null?"session missing":b.yaw()+", "+b.pitch()));});
             context.runOnClient(c->{check(c.gameRenderer.getMainCamera().getPosition().distanceTo(CameraOptics.anchor())<.05,"Tripod viewpoint did not move to head");});
             double[] bright={0},dark={0};
             world.getServer().runCommand("time set noon");context.waitTicks(30);context.runOnClient(c->bright[0]=new SceneMeter().read(c));
             world.getServer().runCommand("time set midnight");context.waitTicks(30);context.runOnClient(c->dark[0]=new SceneMeter().read(c));
             check(bright[0]-dark[0]>7,"Live meter did not respond to day/night sunlight");
+            for(int shutterIndex:new int[]{10,13,15}){
+            int seconds=-CameraData.SHUTTERS[shutterIndex];
+            int remaining=shutterIndex==10?35:shutterIndex==13?34:33;
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var mount=com.nobothehobo.candid.photo.TripodSessions.active(p);
+                CameraData.setShutterIndex(mount.camera(),shutterIndex);CameraData.wind(mount.camera());RollManager.sync(p,mount.camera());mount.changed();
+            });
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera())&&CameraData.shutterIndex(CameraOptics.camera())==shutterIndex,100);
             long start=System.currentTimeMillis();
-            context.runOnClient(c->check(PhotoCapture.queue(c.player.getMainHandItem(),4,10,0),"Tripod long exposure rejected"));
-            context.waitFor(c->CameraData.frames(c.player.getMainHandItem())==35,1000);
-            check(System.currentTimeMillis()-start>=1000,"Long exposure did not wait for actual scene samples");
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(p,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.phys.BlockHitResult(p.position(),net.minecraft.core.Direction.UP,p.blockPosition().below(),false)));});
+            context.waitFor(c->PhotoCapture.busy(),100);
+            if(seconds==8){context.waitTicks(20);context.takeScreenshot("candid-long-exposure-progress");}
+            context.waitFor(c->CameraData.frames(CameraOptics.camera())==remaining,1600);
+            check(System.currentTimeMillis()-start>=seconds*1000L,"Long exposure did not wait for "+seconds+" seconds of actual scene samples");
+            context.waitFor(c->!PhotoCapture.busy(),100);
+            }
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var mount=com.nobothehobo.candid.photo.TripodSessions.active(p);
+                CameraData.wind(mount.camera());RollManager.sync(p,mount.camera());mount.changed();
+            });
+            context.waitFor(c->CameraData.isWound(CameraOptics.camera()),100);
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();p.getMainHandItem().use(p.level(),p,net.minecraft.world.InteractionHand.MAIN_HAND);});
+            context.waitFor(c->PhotoCapture.busy(),100);context.waitTicks(10);
+            context.runOnClient(c->{check(c.screen instanceof com.nobothehobo.candid.client.CaptureScreen,"Long exposure lost input capture");c.screen.onClose();});
+            context.waitTicks(10);
+            context.runOnClient(c->check(!PhotoCapture.busy()&&CameraData.frames(CameraOptics.camera())==33&&CameraData.isWound(CameraOptics.camera()),"Cancelled exposure consumed film or locked the camera"));
             context.runOnClient(c->c.player.closeContainer());
+            context.runOnClient(c->{c.setScreen(null);CameraOptics.tick(c);check(c.options.getCameraType()==net.minecraft.client.CameraType.THIRD_PERSON_FRONT,"Previous third-person view was not restored");});
+            world.getServer().runOnServer(server->{var p=server.getPlayerList().getPlayers().getFirst();var negative=rollItem(p,rollId[0]);
+                var tank=(com.nobothehobo.candid.block.DevelopingTankBlockEntity)p.level().getBlockEntity(tankPos[0]);tank.inputs().setItem(0,negative.split(1));tank.inputs().setItem(1,new ItemStack(CandidItems.DEVELOPER,2));
+            });
 
         }
         try(var reopened=save.open()){
@@ -188,7 +250,20 @@ public final class PhotographyGameTest implements FabricClientGameTest {
                 check(r.stage()==RollState.Stage.DEVELOPED&&r.used()==1,"Roll did not survive restart");check(r.frames().getFirst().mapId()==mapId[0],"Map ID not preserved");
                 check(r.frames().getFirst().highColors()!=null&&r.frames().getFirst().tiles().size()==4,"Large negative or tile IDs not saved");
                 for(int tile:r.frames().getFirst().tiles())check(p.level().getMapData(new MapId(tile))!=null,"Large print tile missing after reopen");
+                var tripod=(com.nobothehobo.candid.block.TripodBlockEntity)p.level().getBlockEntity(p.blockPosition().offset(0,0,1));
+                check(tripod!=null&&CameraData.frames(tripod.camera())==33&&Math.abs(tripod.yaw()-42)<.1,"Mounted camera or angle did not survive reopen");
+                var recovered=tripod.take();check(!recovered.isEmpty()&&tripod.take().isEmpty(),"Camera retrieval duplicated the stack");tripod.place(recovered,42,-8);
+                String mountedId=CameraData.cameraId(tripod.camera());var position=tripod.getBlockPos();
+                p.level().destroyBlock(position,false);
+                long drops=p.level().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(position).inflate(3))
+                    .stream().filter(e->mountedId.equals(CameraData.cameraId(e.getItem()))).count();
+                check(drops==1,"Breaking the tripod lost or duplicated the camera: "+drops);
                 var map=p.level().getMapData(new MapId(mapId[0]));check(map!=null&&map.locked,"Print not saved");check(Arrays.equals(map.colors,Base64.getDecoder().decode(r.frames().getFirst().colors())),"Saved map colors changed");
+                var tank=(com.nobothehobo.candid.block.DevelopingTankBlockEntity)p.level().getBlockEntity(tankPos[0]);
+                check(tank!=null&&rollId[0].equals(RollManager.token(tank.inputs().getItem(0)))&&tank.inputs().getItem(1).getCount()==2,"Tank contents did not survive world reopen");
+                p.level().destroyBlock(tankPos[0],false);
+                long filmDrops=p.level().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(tankPos[0]).inflate(3)).stream().filter(e->rollId[0].equals(RollManager.token(e.getItem()))).count();
+                check(filmDrops==1,"Breaking tank lost or duplicated film");
             });
         }
     }

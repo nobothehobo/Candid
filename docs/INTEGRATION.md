@@ -1,7 +1,8 @@
-# Candid 0.5 integration and upgrade notes
+# Candid integration and upgrade notes
 
-Baseline: Minecraft Java 1.21.10, Java 21, Fabric Loader 0.19.5+,
-Fabric API 0.138.4+1.21.10, Loom 1.17.21, Gradle 9.5.1.
+The 0.6 compatibility line has separate builds listed in [COMPATIBILITY.md](COMPATIBILITY.md).
+The original baseline remains Minecraft Java 1.21.10 / Java 21; modern 26.x
+builds use Java 25. Shared tools: Fabric Loader 0.19.5+, Loom 1.17.21, Gradle 9.5.1.
 The Fabric JAR is not a Paper/Nexo plugin and cannot run on Bedrock.
 Back up worlds; replace the older Candid JAR rather than installing both.
 
@@ -15,7 +16,7 @@ networking, screens, world sampling and lifecycle hooks surround that core.
 
 - Roll records: `<world>/candid/rolls/<uuid>.json`, with previous-checkpoint `.bak`.
 - Full-color scans: `<world>/candid/scans/<frame-uuid>.png` (504 × 336).
-- Vanilla maps: world `data/map_*.dat`. Preserve the whole world when moving saves.
+- Vanilla maps: Minecraft-managed map data (layout varies by game version). Preserve the whole world when moving saves.
 - Player exports: `<Minecraft instance>/candid-exports/<frame-uuid>.png`.
 - Items carry compact identifiers and settings, not embedded scans.
 - Reprints reuse frame map IDs, including the four large-print tiles.
@@ -28,7 +29,8 @@ networking, screens, world sampling and lifecycle hooks surround that core.
 
 The authoritative ledger checks camera custody, duplicate frame IDs, roll capacity,
 development state, frame validity and paper before printing. Station slots validate
-inputs and return items on close. Inventory saves and external files are not a single
+inputs; the tank persists them in its block entity, while the enlarger returns supplies
+on close. Inventory saves and external files are not a single
 atomic transaction: hard crashes can require backup recovery. This is not yet certified
 for a public-server economy. A modified multiplayer client can submit image pixels;
 image moderation, archive quotas and stronger transaction recovery are future work.
@@ -45,7 +47,11 @@ It affects the finished photograph, not a continuously blurred optical viewfinde
 Thin objects, water, glass, reflections and shader geometry can disagree with depth
 samples. The focus-distance indicator meters the center block surface. Long exposures
 average 2–16 actual samples in linear color over the selected duration; trails are
-approximate, not a continuous simulation. A mounted camera remains in hand.
+approximate, not a continuous simulation. A mounted camera is stored in the tripod
+block entity, removed from the player's hand, synchronized for rendering, and saved
+with yaw/pitch. Removing or breaking the station returns that same stack. There are
+no persistent display entities. A paired release validates camera ID, dimension,
+loaded chunk and distance; film/lens handling requires approaching the station.
 
 The meter uses reflected material brightness, directional sun/shade, ambient skylight,
 block light, time and weather. It is deliberately calibrated for playable Sunny-16-like
@@ -54,7 +60,7 @@ settings change the rendered pixels independently of this world-based meter.
 
 The real shutter sample is CC0; see SOUND_ASSETS.md. Loading models animate in world
 with the player's skin while the server alone performs inventory changes. These are
-staged poses rather than physically simulated finger/film contact.
+continuous door/leader transforms and eased hand motion, not physically simulated finger/film contact.
 
 ## Performance protections
 
@@ -93,6 +99,6 @@ shader-colored pixels in the persisted scan. These dependencies and test classes
 are excluded from the release mod. The async-network test setting handles 1.21.10
 login correctly; assertions await real state changes.
 
-The in-game guide reads diagrams from the same 18 JSON recipe definitions as the
+The in-game guide reads diagrams from the same 19 JSON recipe definitions as the
 mod. A data pack overriding recipes may differ from the shipped guide.
 Dodging/burning and an expanded darkroom remain deliberately deferred.
